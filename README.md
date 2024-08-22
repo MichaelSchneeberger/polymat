@@ -3,6 +3,14 @@
 PolyMat is a library designed to represent and manipulate multivariate polynomial matrices.
 
 
+## Installation
+
+You can install PolyMat using pip:
+
+```
+pip install polymat
+```
+
 <!-- # Multivariate Polynomial Library
 
 `polymat` is a library designed to represent and manipulate multivariate polynomial matrices.
@@ -45,18 +53,16 @@ PolyMat is a library designed to represent and manipulate multivariate polynomia
 ### Matrix Representation
 
 - **Matrix Conversion**: Convert polynomial expressions to matrix representations using `polymat.to_array`.
-- **Evaluation**: To obtain the actual matrix representation, call the `apply(state)` method after conversion.
+- **Evaluation**: To obtain the actual matrix representation, call the `apply(state)` method after conversion. -->
 
 
 
-## Usage
+<!-- ## Usage
 
-To get started with `polymat`, you can:
-
-
+To get started with `polymat`, you can: -->
 
 
-## Example
+## Basic Usage
 
 In this example, two polynomial expressions are defined using `sympy` expressions
 
@@ -81,7 +87,7 @@ state = polymat.init_state()
 #######################################
 
 names = ('x1', 'x2')
-x1, x2 = (polymat.from_name(n) for n in names)
+x1, x2 = (polymat.define_variable(n) for n in names)
 x = polymat.v_stack((x1, x2))
 
 f1 = x1 + x2
@@ -90,11 +96,11 @@ f2 = x1 + x1*x2
 f3 = f1 + f2
 
 # prints a nicely printable string representation of the expression
-# ((x1 + x2) + (x1 + (x1 * x2)))
-print(f3)
+# add(add(x1, x2), add(x1, mul(x1, x2)))
+print(f'{f3}')
 
 # prints the string representation of the dataclass
-# ExpressionImpl(
+# f3 = ExpressionImpl(
 #   child=AdditionExprImpl(
 #       left=AdditionExprImpl(
 #           left=FromVariableImpl(variable='x1', nvar=1),
@@ -104,29 +110,29 @@ print(f3)
 #           right=ElementwiseMultImpl(
 #               left=FromVariableImpl(variable='x1', nvar=1),
 #               right=FromVariableImpl(variable='x2', nvar=1)))))
-print(repr(f3))
+print(f'{f3=}')
 
 
 # sympy representation
 ######################
 
 # computes the sympy representation of the expression
-sympy_repr = polymat.to_sympy(f3,).read(state)
+state, sympy_repr = polymat.to_sympy(f3,).apply(state)
 
 # prints the sympy representation
-# x1*x2 + 2*x1 + x2
-print(sympy_repr)
+# x1*x2 + 2.0*x1 + x2
+print(f'{sympy_repr}')
 
 
 # array representation
 ######################
 
 # computes the array representation of the expression
-array_repr = polymat.to_array(f3, x).read(state)
+state, array_repr = polymat.to_array(f3, x).apply(state)
 
 # prints the array representations
-# [[2. 1.]]
-print(array_repr.data[1])               # numpy array
-# [[0.  0.5 0.5 0. ]]
-print(array_repr.data[2].toarray())     # sparse scipy array converted to an numpy array
-``` -->
+# array_repr.data[1]=array([[2., 1.]])
+print(f'{array_repr.data[1]=}')               # numpy array
+# array_repr.data[2].toarray()=array([[0. , 0.5, 0.5, 0. ]])
+print(f'{array_repr.data[2].toarray()=}')     # sparse scipy array converted to an numpy array
+```
