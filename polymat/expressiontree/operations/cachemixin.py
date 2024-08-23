@@ -7,7 +7,7 @@ from polymat.sparserepr.operations.sparsereprfrompolynomialmixin import (
 from polymat.sparserepr.sparsereprmixin import SparseReprMixin
 from polymat.state import State
 from polymat.expressiontree.expressiontreemixin import SingleChildExpressionTreeMixin
-from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_exception
+from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_traceback
 
 
 class CacheMixin(FrameSummaryMixin, SingleChildExpressionTreeMixin):
@@ -23,7 +23,7 @@ class CacheMixin(FrameSummaryMixin, SingleChildExpressionTreeMixin):
                 return state, state.cache[self]
         except TypeError:
             raise TypeError(
-                to_operator_exception(
+                to_operator_traceback(
                     message="unhashable polynomial expression",
                     stack=self.stack,
                 )

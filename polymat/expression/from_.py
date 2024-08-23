@@ -1,6 +1,6 @@
 from typing import Iterable
 
-from polymat.utils.getstacklines import get_stack_lines
+from polymat.utils.getstacklines import get_frame_summary
 from polymat.variable import Variable
 from polymat.utils import typing
 from polymat.expression.abc import Expression, VectorExpression
@@ -44,7 +44,7 @@ def concat(expressions: Iterable[Iterable[Expression]]):
 
 
 def from_(value: typing.FROM_TYPES):
-    stack = get_stack_lines()
+    stack = get_frame_summary()
     return init_expression(init_from_(value, stack=stack))
 
 
@@ -71,7 +71,7 @@ def define_variable(
 
     return init_variable_expression(
         child=init_define_variable(
-            variable=variable, size=n_size, stack=get_stack_lines()
+            variable=variable, size=n_size, stack=get_frame_summary()
         ),
         variable=variable,
     )

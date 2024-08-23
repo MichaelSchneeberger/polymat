@@ -10,7 +10,7 @@ from polymat.sparserepr.sparsereprmixin import SparseReprMixin
 from polymat.state import State
 from polymat.utils.getstacklines import (
     FrameSummaryMixin,
-    to_operator_exception,
+    to_operator_traceback,
 )
 
 
@@ -58,7 +58,7 @@ class LinearInExprMixin(FrameSummaryMixin, SingleChildExpressionTreeMixin):
 
         if not (child.shape[1] == 1):
             raise AssertionError(
-                to_operator_exception(
+                to_operator_traceback(
                     message=f"{child.shape[1]=} is not 1",
                     stack=self.stack,
                 )

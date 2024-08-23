@@ -6,7 +6,7 @@ from polymat.sparserepr.data.polynomial import (
     constant_polynomial,
     multiply_polynomial_iterable,
 )
-from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_exception
+from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_traceback
 from polymat.expressiontree.expressiontreemixin import SingleChildExpressionTreeMixin
 from polymat.sparserepr.sparsereprmixin import SparseReprMixin
 from polymat.state import State
@@ -43,7 +43,7 @@ class CombinationsMixin(FrameSummaryMixin, SingleChildExpressionTreeMixin):
 
         if not (child.shape[1] == 1):
             raise AssertionError(
-                to_operator_exception(
+                to_operator_traceback(
                     message=f"{child.shape[1]=} is not 1",
                     stack=self.stack,
                 )

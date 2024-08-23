@@ -4,7 +4,7 @@ from typing import override
 from polymat.sparserepr.sparsereprmixin import SparseReprMixin
 from polymat.state import State
 from polymat.expressiontree.expressiontreemixin import SingleChildExpressionTreeMixin
-from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_exception
+from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_traceback
 from polymat.sparserepr.init import init_sparse_repr_from_data
 
 
@@ -24,7 +24,7 @@ class FilterMixin(FrameSummaryMixin, SingleChildExpressionTreeMixin):
 
         if not (child.shape[1] == 1):
             raise AssertionError(
-                to_operator_exception(
+                to_operator_traceback(
                     message=f"{child.shape[1]=} is not 1",
                     stack=self.stack,
                 )
@@ -32,7 +32,7 @@ class FilterMixin(FrameSummaryMixin, SingleChildExpressionTreeMixin):
 
         if not (child.shape[0] == len(self.predicator)):
             raise AssertionError(
-                to_operator_exception(
+                to_operator_traceback(
                     message=f"{child.shape[0]=} is not {len(self.predicator)=}",
                     stack=self.stack,
                 )

@@ -3,7 +3,7 @@ import abc
 from itertools import product
 
 from polymat.sparserepr.data.polynomial import multiply_polynomial_iterable
-from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_exception
+from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_traceback
 from polymat.expressiontree.expressiontreemixin import MultiChildrenExpressionTreeMixin
 from polymat.sparserepr.sparsereprmixin import SparseReprMixin
 from polymat.state import State
@@ -42,7 +42,7 @@ class ProductMixin(FrameSummaryMixin, MultiChildrenExpressionTreeMixin):
         for child in children:
             if not (child.shape[1] == 1):
                 raise AssertionError(
-                    to_operator_exception(
+                    to_operator_traceback(
                         message=f"{child.shape[1]=} is not 1",
                         stack=self.stack,
                     )

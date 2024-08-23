@@ -2,7 +2,7 @@ from typing import NamedTuple, Self
 from dataclasses import replace
 from dataclassabc import dataclassabc
 
-from polymat.utils.getstacklines import FrameSummary, to_operator_exception
+from polymat.utils.getstacklines import FrameSummary, to_operator_traceback
 from polymat.variable import Variable
 
 
@@ -51,7 +51,7 @@ class State:
                     f"with the same name with shape {(irange.start, irange.stop)}"
                 )
                 raise AssertionError(
-                    to_operator_exception(
+                    to_operator_traceback(
                         message=message,
                         stack=stack,
                     )

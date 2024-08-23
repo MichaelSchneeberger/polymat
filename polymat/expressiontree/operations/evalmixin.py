@@ -15,7 +15,7 @@ from polymat.expressiontree.expressiontreemixin import SingleChildExpressionTree
 from polymat.sparserepr.init import init_sparse_repr_from_iterable
 from polymat.utils.getstacklines import (
     FrameSummaryMixin,
-    to_operator_exception,
+    to_operator_traceback,
 )
 from polymat.variable import Variable
 
@@ -49,7 +49,7 @@ class EvalMixin(FrameSummaryMixin, SingleChildExpressionTreeMixin):
             else:
                 if not (len(index_range) == len(values)):
                     raise AssertionError(
-                        to_operator_exception(
+                        to_operator_traceback(
                             message=f"{variable=}, {index_range=} ({len(index_range)}), {values=} ({len(values)})",
                             stack=self.stack,
                         )

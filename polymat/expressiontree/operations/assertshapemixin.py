@@ -4,7 +4,7 @@ from typing import Callable, override
 from polymat.sparserepr.sparsereprmixin import SparseReprMixin
 from polymat.state import State
 from polymat.expressiontree.expressiontreemixin import SingleChildExpressionTreeMixin
-from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_exception
+from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_traceback
 
 class AssertShapeMixin(FrameSummaryMixin, SingleChildExpressionTreeMixin):
 
@@ -25,7 +25,7 @@ class AssertShapeMixin(FrameSummaryMixin, SingleChildExpressionTreeMixin):
 
         if not self.fn(*child.shape):
             raise AssertionError(
-                to_operator_exception(
+                to_operator_traceback(
                     message=self.msg(*child.shape),
                     stack=self.stack,
                 )

@@ -8,25 +8,26 @@ from dataclasses import fields
 @dataclass(frozen=True)
 class FrameSummary:
     filename: str
-    lineno: int
+    lineno: int | None
     name: str
-    line: str
+    line: str | None
 
 
-def get_stack_lines(index: int = 3) -> tuple[FrameSummary]:
+def get_frame_summary(index: int = 3) -> tuple[FrameSummary, ...]:
     def gen_stack_lines():
         for obj in traceback.extract_stack()[:-index]:
-            yield FrameSummary(
-                filename=obj.filename,
-                lineno=obj.lineno,
-                name=obj.name,
-                line=obj.line,
-            )
+            if '<frozen importlib._bootstrap' not in obj.filename:
+                yield FrameSummary(
+                    filename=obj.filename,
+                    lineno=obj.lineno,
+                    name=obj.name,
+                    line=obj.line,
+                )
 
     return tuple(gen_stack_lines())
 
 
-def to_operator_exception(
+def to_operator_traceback(
     message: str,
     stack: tuple[FrameSummary, ...],
 ) -> str:
@@ -34,7 +35,7 @@ def to_operator_exception(
 
     exception_lines = (
         message,
-        f"  Assertion traceback (most recent call last):",
+        "PolyMat Operation Traceback (most recent call last):",
         *(
             f'    File "{stack_line.filename}", line {stack_line.lineno}\n      {stack_line.line}'
             for stack_line in stack

@@ -6,7 +6,7 @@ from polymat.expressiontree.expressiontreemixin import TwoChildrenExpressionTree
 from polymat.sparserepr.data.polynomial import MaybePolynomialType
 from polymat.sparserepr.sparsereprmixin import SparseReprMixin
 from polymat.state import State
-from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_exception
+from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_traceback
 from polymat.sparserepr.init import (
     init_sparse_repr_from_data,
     init_sparse_repr_from_iterable,
@@ -91,7 +91,7 @@ class ElementwiseOpMixin(FrameSummaryMixin, TwoChildrenExpressionTreeMixin):
             case ((n_rows, n_cols), _):
                 if left.shape != right.shape:
                     raise AssertionError(
-                        to_operator_exception(
+                        to_operator_traceback(
                             message=(
                                 f"Cannot do element-wise {self.operator_name} of matrices"
                                 f"with shapes {left.shape} and {right.shape}."

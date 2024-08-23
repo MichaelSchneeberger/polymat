@@ -16,7 +16,7 @@ from polymat.state import State
 from polymat.sparserepr.init import init_sparse_repr_from_data
 from polymat.utils.getstacklines import (
     FrameSummaryMixin,
-    to_operator_exception,
+    to_operator_traceback,
 )
 from polymat.variable import Variable
 
@@ -58,7 +58,7 @@ class FromAnyMixin(FrameSummaryMixin, ExpressionTreeMixin):
 
                 if not (instance.shape == (1, 1)):
                     raise AssertionError(
-                        to_operator_exception(
+                        to_operator_traceback(
                             message=f"{instance.shape=} is not (1, 1)",
                             stack=self.stack,
                         )
@@ -132,7 +132,7 @@ class FromAnyMixin(FrameSummaryMixin, ExpressionTreeMixin):
 
             else:
                 raise AssertionError(
-                    to_operator_exception(
+                    to_operator_traceback(
                         message=f"unknown data type {type(value)=}",
                         stack=self.stack,
                     )

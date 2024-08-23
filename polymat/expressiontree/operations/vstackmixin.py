@@ -2,7 +2,7 @@ import itertools
 
 from typing import override
 
-from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_exception
+from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_traceback
 from polymat.sparserepr.sparsereprmixin import SparseReprMixin
 from polymat.sparserepr.init import init_vstack_sparse_repr
 from polymat.state import State
@@ -22,7 +22,7 @@ class VStackMixin(FrameSummaryMixin, MultiChildrenExpressionTreeMixin):
         for child in children[1:]:
             if not (child.shape[1] == n_col):
                 raise AssertionError(
-                    to_operator_exception(
+                    to_operator_traceback(
                         message=f"{child.shape[1]} not equal {n_col}",
                         stack=self.stack,
                     )

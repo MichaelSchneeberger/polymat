@@ -11,7 +11,7 @@ import statemonad
 from statemonad.abc import StateMonadNode
 from statemonad.typing import StateMonad
 
-from polymat.utils.getstacklines import get_stack_lines
+from polymat.utils.getstacklines import get_frame_summary
 from polymat.variable import Variable
 from polymat.arrayrepr.abc import ArrayRepr
 from polymat.arrayrepr.init import init_array_repr
@@ -58,7 +58,7 @@ def to_array(
         def apply(self, state: State):
             state, polymatrix = init_assert_vector(
                 child=expr,
-                stack=get_stack_lines(),
+                stack=get_frame_summary(),
             ).apply(state)
             state, variables = self.variables.apply(state)
 

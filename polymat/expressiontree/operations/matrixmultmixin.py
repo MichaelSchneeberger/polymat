@@ -7,7 +7,7 @@ from polymat.sparserepr.data.polynomial import (
 )
 from polymat.sparserepr.sparsereprmixin import SparseReprMixin
 from polymat.state import State
-from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_exception
+from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_traceback
 from polymat.sparserepr.init import init_sparse_repr_from_iterable
 
 
@@ -26,7 +26,7 @@ class MatrixMultMixin(FrameSummaryMixin, TwoChildrenExpressionTreeMixin):
                 f"{left.shape}, and {right.shape} do not match!"
             )
             raise AssertionError(
-                to_operator_exception(
+                to_operator_traceback(
                     message=msg,
                     stack=self.stack,
                 )

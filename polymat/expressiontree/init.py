@@ -24,7 +24,6 @@ from polymat.expressiontree.operations.linearinmixin import LinearInExprMixin
 from polymat.expressiontree.operations.linearmonomialsmixin import (
     LinearMonomialsMixin,
 )
-from polymat.expressiontree.operations.parametrizemixin import ParametrizeMixin
 from polymat.expressiontree.operations.productmixin import ProductMixin
 from polymat.expressiontree.operations.quadraticinmixin import (
     QuadraticInExprMixin,
@@ -68,13 +67,13 @@ from polymat.utils import typing
 class AdditionExprImpl(AdditionMixin):
     left: ExpressionTreeMixin
     right: ExpressionTreeMixin
-    stack: tuple[FrameSummary]
+    stack: tuple[FrameSummary, ...]
 
 
 def init_addition(
     left: ExpressionTreeMixin,
     right: ExpressionTreeMixin,
-    stack: tuple[FrameSummary],
+    stack: tuple[FrameSummary, ...],
 ):
     return AdditionExprImpl(left=left, right=right, stack=stack)
 
@@ -84,7 +83,7 @@ class AssertShapeImpl(AssertShapeMixin):
     child: ExpressionTreeMixin
     fn: Callable[[int, int], bool]
     msg: Callable[[int, int], str]
-    stack: tuple[FrameSummary]
+    stack: tuple[FrameSummary, ...]
 
     def __repr__(self):
         return repr(self.child)
@@ -93,7 +92,7 @@ class AssertShapeImpl(AssertShapeMixin):
 init_assert_shape = AssertShapeImpl
 
 
-def init_assert_vector(child: ExpressionTreeMixin, stack: tuple[FrameSummary]):
+def init_assert_vector(child: ExpressionTreeMixin, stack: tuple[FrameSummary, ...]):
     return init_assert_shape(
         child=child,
         stack=stack,
@@ -102,7 +101,7 @@ def init_assert_vector(child: ExpressionTreeMixin, stack: tuple[FrameSummary]):
     )
 
 
-def init_assert_polynomial(child: ExpressionTreeMixin, stack: tuple[FrameSummary]):
+def init_assert_polynomial(child: ExpressionTreeMixin, stack: tuple[FrameSummary, ...]):
     return init_assert_shape(
         child=child,
         stack=stack,
@@ -132,13 +131,13 @@ init_cache = CacheImpl
 class CombinationsImpl(CombinationsMixin):
     child: ExpressionTreeMixin
     degrees: tuple[int, ...]
-    stack: tuple[FrameSummary]
+    stack: tuple[FrameSummary, ...]
 
 
 def init_combinations(
     child: ExpressionTreeMixin,
     degrees: tuple[int, ...],
-    stack: tuple[FrameSummary],
+    stack: tuple[FrameSummary, ...],
 ):
     assert len(degrees)
 
@@ -153,7 +152,7 @@ def init_combinations(
 class DifferentiateImpl(DifferentiateMixin):
     child: ExpressionTreeMixin
     variables: ExpressionTreeMixin
-    stack: tuple[FrameSummary]
+    stack: tuple[FrameSummary, ...]
 
 
 init_differentiate = DifferentiateImpl
@@ -162,7 +161,7 @@ init_differentiate = DifferentiateImpl
 @dataclassabc(frozen=True, repr=False)
 class DiagImpl(DiagMixin):
     child: ExpressionTreeMixin
-    stack: tuple[FrameSummary]
+    stack: tuple[FrameSummary, ...]
 
 
 init_diag = DiagImpl
@@ -172,7 +171,7 @@ init_diag = DiagImpl
 class ElementwiseMultImpl(ElementwiseMultMixin):
     left: ExpressionTreeMixin
     right: ExpressionTreeMixin
-    stack: tuple[FrameSummary]
+    stack: tuple[FrameSummary, ...]
 
 
 init_elementwise_mult = ElementwiseMultImpl
@@ -182,13 +181,13 @@ init_elementwise_mult = ElementwiseMultImpl
 class EvalImpl(EvalMixin):
     child: ExpressionTreeMixin
     substitutions: EvalMixin.SUBSTITUTION_TYPE
-    stack: tuple[FrameSummary]
+    stack: tuple[FrameSummary, ...]
 
 
 def init_eval(
     child: ExpressionTreeMixin,
     substitutions: dict[Variable, tuple[float, ...]],
-    stack: tuple[FrameSummary],
+    stack: tuple[FrameSummary, ...],
 ):
     return EvalImpl(
         child=child,
@@ -201,7 +200,7 @@ def init_eval(
 class FilterImpl(FilterMixin):
     child: ExpressionTreeMixin
     predicator: FilterMixin.PREDICATOR_TYPE
-    stack: tuple[FrameSummary]
+    stack: tuple[FrameSummary, ...]
 
 
 # default constructor
@@ -357,13 +356,13 @@ class LinearInExprImpl(LinearInExprMixin):
     monomials: ExpressionTreeMixin
     variables: ExpressionTreeMixin
     ignore_unmatched: bool
-    stack: tuple[FrameSummary]
+    stack: tuple[FrameSummary, ...]
 
 
 def init_linear_in(
     child: ExpressionTreeMixin,
     variables: ExpressionTreeMixin,
-    stack: tuple[FrameSummary],
+    stack: tuple[FrameSummary, ...],
     monomials: ExpressionTreeMixin | None = None,
     ignore_unmatched: bool = False,
 ):
@@ -395,44 +394,22 @@ init_linear_monomials = LinearMonomialsImpl
 class MatrixMultImpl(MatrixMultMixin):
     left: ExpressionTreeMixin
     right: ExpressionTreeMixin
-    stack: tuple[FrameSummary]
+    stack: tuple[FrameSummary, ...]
 
 
 init_matrix_mult = MatrixMultImpl
 
 
 @dataclassabc(frozen=True, repr=False)
-class ParametrizeImpl(ParametrizeMixin):
-    child: ExpressionTreeMixin
-    variable: Variable
-    stack: tuple[FrameSummary]
-
-
-def init_parametrize(
-    child: ExpressionTreeMixin,
-    variable: Variable | str,
-    stack: tuple[FrameSummary],
-):
-    if not isinstance(variable, Variable):
-        variable = Variable(variable)
-
-    return ParametrizeImpl(
-        child=child,
-        variable=variable,
-        stack=stack,
-    )
-
-
-@dataclassabc(frozen=True, repr=False)
 class ProductImpl(ProductMixin):
     children: tuple[ExpressionTreeMixin, ...]
     degrees: ProductMixin.DEGREE_TYPES
-    stack: tuple[FrameSummary]
+    stack: tuple[FrameSummary, ...]
 
 
 def init_product(
     children: tuple[ExpressionTreeMixin, ...],
-    stack: tuple[FrameSummary],
+    stack: tuple[FrameSummary, ...],
     degrees: ProductMixin.DEGREE_TYPES,
 ):
     return ProductImpl(
@@ -448,13 +425,13 @@ class QuadraticInExprImpl(QuadraticInExprMixin):
     monomials: ExpressionTreeMixin
     variables: ExpressionTreeMixin
     ignore_unmatched: bool
-    stack: tuple[FrameSummary]
+    stack: tuple[FrameSummary, ...]
 
 
 def init_quadratic_in(
     child: ExpressionTreeMixin,
     variables: ExpressionTreeMixin,
-    stack: tuple[FrameSummary],
+    stack: tuple[FrameSummary, ...],
     monomials: ExpressionTreeMixin | None = None,
     ignore_unmatched: bool = False,
 ):
@@ -542,7 +519,7 @@ init_transpose = TransposeImpl
 @dataclassabc(frozen=True, repr=False)
 class VStackImpl(VStackMixin):
     children: tuple[ExpressionTreeMixin, ...]
-    stack: tuple[FrameSummary]
+    stack: tuple[FrameSummary, ...]
 
 
 init_v_stack = VStackImpl

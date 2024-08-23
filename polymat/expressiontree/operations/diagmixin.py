@@ -7,7 +7,7 @@ from polymat.sparserepr.init import (
     init_diag_matrix_from_vec_sparse_repr,
     init_vec_from_diag_matrix_sparse_repr,
 )
-from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_exception
+from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_traceback
 
 
 class DiagMixin(FrameSummaryMixin, SingleChildExpressionTreeMixin):
@@ -36,7 +36,7 @@ class DiagMixin(FrameSummaryMixin, SingleChildExpressionTreeMixin):
         else:
             if not (child.shape[0] == child.shape[1]):
                 raise AssertionError(
-                    to_operator_exception(
+                    to_operator_traceback(
                         message=f"{child.shape[0]=} is not {child.shape[1]=}",
                         stack=self.stack,
                     )

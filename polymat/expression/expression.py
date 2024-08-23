@@ -25,7 +25,6 @@ from polymat.expressiontree.init import (
     init_linear_monomials,
     init_linear_in,
     init_matrix_mult,
-    init_parametrize,
     init_product,
     init_quadratic_in,
     init_quadratic_monomials,
@@ -42,7 +41,7 @@ from polymat.expressiontree.operations.filtermixin import FilterMixin
 from polymat.expressiontree.operations.productmixin import ProductMixin
 from polymat.sparserepr.sparsereprmixin import SparseReprMixin
 from polymat.state import State
-from polymat.utils.getstacklines import FrameSummary, get_stack_lines
+from polymat.utils.getstacklines import FrameSummary, get_frame_summary
 from polymat.variable import Variable
 from polymat.utils import typing
 
@@ -105,7 +104,7 @@ class Expression(SingleChildExpressionTreeMixin, ABC):
         return False
 
     def _binary(self, op, left, right) -> Expression:
-        stack = get_stack_lines(index=4)
+        stack = get_frame_summary(index=4)
 
         if isinstance(left, Expression) and isinstance(right, Expression):
             child = op(left.child, right.child, stack)
@@ -158,7 +157,7 @@ class Expression(SingleChildExpressionTreeMixin, ABC):
         # """ Vertically stack expressions """
         return init_v_stack(
             children=self._get_children(others, stack=stack),
-            stack=get_stack_lines(),
+            stack=get_frame_summary(),
         )
 
     @override
@@ -166,13 +165,13 @@ class Expression(SingleChildExpressionTreeMixin, ABC):
         return self.child.apply(state)
 
     def assert_vector(self):
-        return self.copy(child=init_assert_vector(stack=get_stack_lines(), child=self))
+        return self.copy(child=init_assert_vector(stack=get_frame_summary(), child=self))
 
-    def assert_polynomial(self, stack=get_stack_lines()):
+    def assert_polynomial(self, stack=get_frame_summary()):
         return self.copy(child=init_assert_polynomial(stack=stack, child=self))
 
     def block_diag(self, others: Iterable[Expression]):
-        stack = get_stack_lines()
+        stack = get_frame_summary()
 
         return self.copy(
             child=init_block_diagonal(
@@ -181,7 +180,7 @@ class Expression(SingleChildExpressionTreeMixin, ABC):
         )
 
     def cache(self):
-        return self.copy(child=init_cache(self, stack=get_stack_lines()))
+        return self.copy(child=init_cache(self, stack=get_frame_summary()))
 
     # @abstractmethod
     # def create_expression(self, child: ExpressionTreeMixin) -> Expression:
@@ -193,7 +192,7 @@ class Expression(SingleChildExpressionTreeMixin, ABC):
             child=init_combinations(
                 child=self.child,
                 degrees=degrees,
-                stack=get_stack_lines(),
+                stack=get_frame_summary(),
             )
         )
 
@@ -205,7 +204,7 @@ class Expression(SingleChildExpressionTreeMixin, ABC):
         return self.copy(
             child=init_diag(
                 child=self.child,
-                stack=get_stack_lines(),
+                stack=get_frame_summary(),
             )
         )
 
@@ -214,7 +213,7 @@ class Expression(SingleChildExpressionTreeMixin, ABC):
             child=init_differentiate(
                 child=self.child,
                 variables=variables,
-                stack=get_stack_lines(),
+                stack=get_frame_summary(),
             )
         )
 
@@ -223,7 +222,7 @@ class Expression(SingleChildExpressionTreeMixin, ABC):
             child=init_eval(
                 child=self.child,
                 substitutions=substitutions,
-                stack=get_stack_lines(),
+                stack=get_frame_summary(),
             )
         )
 
@@ -233,7 +232,7 @@ class Expression(SingleChildExpressionTreeMixin, ABC):
             child=init_filter(
                 child=self.child,
                 predicator=predicator,
-                stack=get_stack_lines(),
+                stack=get_frame_summary(),
             )
         )
 
@@ -254,7 +253,7 @@ class Expression(SingleChildExpressionTreeMixin, ABC):
                 child=self.child,
                 monomials=monomials,
                 variables=variables,
-                stack=get_stack_lines(),
+                stack=get_frame_summary(),
             )
         )
 
@@ -266,17 +265,8 @@ class Expression(SingleChildExpressionTreeMixin, ABC):
             )
         )
 
-    def parametrize(self, variable: Variable | str):
-        return self.copy(
-            child=init_parametrize(
-                child=self.child,
-                variable=variable,
-                stack=get_stack_lines(),
-            )
-        )
-
     def product(self, others: Iterable[Expression], degrees: ProductMixin.DEGREE_TYPES):
-        stack = get_stack_lines()
+        stack = get_frame_summary()
 
         return self.copy(
             child=init_product(
@@ -298,7 +288,7 @@ class Expression(SingleChildExpressionTreeMixin, ABC):
                     child=self.child,
                     monomials=monomials,
                     variables=variables,
-                    stack=get_stack_lines(),
+                    stack=get_frame_summary(),
                 )
             )
         )
@@ -354,7 +344,7 @@ class Expression(SingleChildExpressionTreeMixin, ABC):
         return self.copy(child=init_transpose(self.child))
 
     def to_polynomial(self):
-        return self.assert_polynomial(stack=get_stack_lines())[0, 0]
+        return self.assert_polynomial(stack=get_frame_summary())[0, 0]
 
     def to_variable_vector(self):
         return self.copy(
@@ -370,5 +360,5 @@ class Expression(SingleChildExpressionTreeMixin, ABC):
         return self.diag().T.sum()
 
     def v_stack(self, others: Iterable[Expression]):
-        stack = get_stack_lines()
+        stack = get_frame_summary()
         return self.copy(child=self._v_stack(others=others, stack=stack))

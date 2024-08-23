@@ -9,7 +9,7 @@ from polymat.sparserepr.data.monomial import split_monomial_indices
 from polymat.sparserepr.init import init_sparse_repr_from_iterable
 from polymat.sparserepr.sparsereprmixin import SparseReprMixin
 from polymat.state import State
-from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_exception
+from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_traceback
 
 
 class QuadraticInExprMixin(FrameSummaryMixin, SingleChildExpressionTreeMixin):
@@ -36,7 +36,7 @@ class QuadraticInExprMixin(FrameSummaryMixin, SingleChildExpressionTreeMixin):
 
         if not (child.shape[1] == 1):
             raise AssertionError(
-                to_operator_exception(
+                to_operator_traceback(
                     message=f"{child.shape[1]=} is not 1",
                     stack=self.stack,
                 )
@@ -70,7 +70,7 @@ class QuadraticInExprMixin(FrameSummaryMixin, SingleChildExpressionTreeMixin):
                         col = monomials.index(left)
                     except ValueError:
                         raise AssertionError(
-                            to_operator_exception(
+                            to_operator_traceback(
                                 message=f"{left=} not in {monomials}",
                                 stack=self.stack,
                             )
@@ -80,7 +80,7 @@ class QuadraticInExprMixin(FrameSummaryMixin, SingleChildExpressionTreeMixin):
                         row = monomials.index(right)
                     except ValueError:
                         raise AssertionError(
-                            to_operator_exception(
+                            to_operator_traceback(
                                 message=f"{right=} not in {monomials}",
                                 stack=self.stack,
                             )
