@@ -135,11 +135,17 @@ init_repmat_sparse_repr = RepMatSparseReprImpl
 @dataclassabc(frozen=True)
 class ReshapeSparseReprImpl(ReshapeSparseReprMixin):
     child: SparseRepr
-    child_shape: tuple[int, int]
     shape: tuple[int, int]
 
 
-init_reshape_sparse_repr = ReshapeSparseReprImpl
+def init_reshape_sparse_repr(
+    child: SparseRepr,
+    shape: tuple[int, int],
+):
+    return ReshapeSparseReprImpl(
+        child=child,
+        shape=shape,
+    )
 
 
 @dataclassabc(frozen=True)
@@ -147,7 +153,8 @@ class TransposeSparseReprImpl(TransposeSparseReprMixin):
     child: SparseRepr
 
 
-init_transpose_sparse_repr = TransposeSparseReprImpl
+def init_transpose_sparse_repr(child: SparseRepr):
+    return TransposeSparseReprImpl(child=child)
 
 
 @dataclassabc(frozen=True)
