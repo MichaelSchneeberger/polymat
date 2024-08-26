@@ -103,13 +103,13 @@ print(f'{f3}')
 # f3 = ExpressionImpl(
 #   child=AdditionExprImpl(
 #       left=AdditionExprImpl(
-#           left=FromVariableImpl(variable='x1', nvar=1),
-#           right=FromVariableImpl(variable='x2', nvar=1)),
+#           left=FromVariableImpl(variable='x1', size=1),
+#           right=FromVariableImpl(variable='x2', size=1)),
 #       right=AdditionExprImpl(
-#           left=FromVariableImpl(variable='x1', nvar=1),
+#           left=FromVariableImpl(variable='x1', size=1),
 #           right=ElementwiseMultImpl(
-#               left=FromVariableImpl(variable='x1', nvar=1),
-#               right=FromVariableImpl(variable='x2', nvar=1)))))
+#               left=FromVariableImpl(variable='x1', size=1),
+#               right=FromVariableImpl(variable='x2', size=1)))))
 print(f'{f3=}')
 
 
