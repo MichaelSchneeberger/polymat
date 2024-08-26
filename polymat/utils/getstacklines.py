@@ -35,6 +35,7 @@ def to_operator_traceback(
 
     exception_lines = (
         message,
+        "",
         "PolyMat Operation Traceback (most recent call last):",
         *(
             f'    File "{stack_line.filename}", line {stack_line.lineno}\n      {stack_line.line}'

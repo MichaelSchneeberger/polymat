@@ -86,7 +86,7 @@ class ArrayRepr:
         result = sum(gen_value())
 
         if self.n_row:
-            return np.reshape(result, (self.n_row, -1))
+            return np.reshape(result, (self.n_row, -1), order='F')
         else:
             return result
 

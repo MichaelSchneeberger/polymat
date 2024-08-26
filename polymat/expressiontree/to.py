@@ -13,6 +13,7 @@ from statemonad.abc import StateMonadNode
 from statemonad.typing import StateMonad
 
 from polymat.sparserepr.data.polynomial import MaybePolynomialType
+from polymat.sparserepr.init import init_reshape_sparse_repr
 from polymat.utils.getstacklines import get_frame_summary
 from polymat.symbol import Symbol
 from polymat.arrayrepr.abc import ArrayRepr
@@ -58,12 +59,19 @@ def to_array(
             return f"to_array({self.expr}, {self.variables})"
 
         def apply(self, state: State):
-            # state, polymatrix = init_assert_vector(
-            #     child=expr,
-            #     stack=get_frame_summary(),
-            # ).apply(state)
             state, polymatrix = expr.apply(state)
+            n_row, n_col = polymatrix.shape
+            n_eq = polymatrix.n_entries
 
+            if 1 < n_col:
+                polymatrix = init_reshape_sparse_repr(
+                    child=polymatrix,
+                    shape=(-1, 1),
+                )
+                n_row_array = n_row
+            else:
+                n_row_array = None
+                
             if isinstance(self.variables, tuple):
                 indices = self.variables
             else:
@@ -75,12 +83,12 @@ def to_array(
             assert len(index_to_linear_column) == len(indices)
 
             array_repr = init_array_repr(
-                n_eq=polymatrix.n_entries,
-                n_row=polymatrix.shape[0],
+                n_eq=n_eq,
+                n_row=n_row_array,
                 n_param=n_param,
             )
-
-            for row in range(polymatrix.shape[0]):
+            
+            for row in range(n_eq):
                 polynomial = polymatrix.at(row, 0)
 
                 if polynomial is None:

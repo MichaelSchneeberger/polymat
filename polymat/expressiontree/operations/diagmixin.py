@@ -5,6 +5,7 @@ from polymat.state import State
 from polymat.expressiontree.expressiontree import SingleChildExpressionTreeMixin
 from polymat.sparserepr.init import (
     init_diag_matrix_from_vec_sparse_repr,
+    init_transpose_sparse_repr,
     init_vec_from_diag_matrix_sparse_repr,
 )
 from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_traceback
@@ -26,22 +27,29 @@ class DiagMixin(FrameSummaryMixin, SingleChildExpressionTreeMixin):
     def apply(self, state: State) -> tuple[State, SparseRepr]:
         state, child = self.child.apply(state=state)
 
-        # Vector to diagonal matrix
-        if child.shape[1] == 1:
-            return state, init_diag_matrix_from_vec_sparse_repr(
-                child=child, shape=(child.shape[0], child.shape[0])
-            )
+        match child.shape:
 
-        # Diagonal matrix to vector
-        else:
-            if not (child.shape[0] == child.shape[1]):
+            # Vector to diagonal matrix
+            case (n_row, 1):
+                return state, init_diag_matrix_from_vec_sparse_repr(
+                    child=child, shape=(n_row, n_row)
+                )
+            case (1, n_col):
+                return state, init_diag_matrix_from_vec_sparse_repr(
+                    child=init_transpose_sparse_repr(child), 
+                    shape=(n_col, n_col)
+                )
+
+            # Diagonal matrix to vector
+            case (n_row, n_col) if n_row == n_col:
+                return state, init_vec_from_diag_matrix_sparse_repr(
+                    child=child, shape=(n_row, 1)
+                )
+            
+            case _:
                 raise AssertionError(
                     to_operator_traceback(
                         message=f"{child.shape[0]=} is not {child.shape[1]=}",
                         stack=self.stack,
                     )
                 )
-
-            return state, init_vec_from_diag_matrix_sparse_repr(
-                child=child, shape=(child.shape[0], 1)
-            )

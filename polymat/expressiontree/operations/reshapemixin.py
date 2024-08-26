@@ -47,6 +47,5 @@ class ReshapeMixin(SingleChildExpressionTreeMixin):
 
         return state, init_reshape_sparse_repr(
             child=child,
-            child_shape=child.shape,
             shape=shape,
         )
