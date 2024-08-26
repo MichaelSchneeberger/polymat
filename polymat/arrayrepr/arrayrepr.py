@@ -7,7 +7,7 @@ import itertools
 from numpy.typing import NDArray
 
 
-class ArrayReprMixin:
+class ArrayRepr:
     @property
     @abstractmethod
     def data(self) -> dict[int, np.ndarray]: ...
@@ -19,6 +19,10 @@ class ArrayReprMixin:
     @property
     @abstractmethod
     def n_param(self) -> int: ...
+
+    @property
+    @abstractmethod
+    def n_row(self) -> int | None: ...
 
     def __getitem__(self, degree):
         if degree not in self.data:
@@ -79,8 +83,30 @@ class ArrayReprMixin:
                 else:
                     yield equation @ x_powers[idx - 2]
 
-        return sum(gen_value())
+        result = sum(gen_value())
+
+        if self.n_row:
+            return np.reshape(result, (self.n_row, -1))
+        else:
+            return result
 
     @cached_property
     def degree(self) -> int:
         return max(self.data.keys())
+    
+    @staticmethod
+    def to_column_indices(
+        n_var: int,
+        variable_indices: tuple[int, ...],
+    ) -> set[int]:
+        # NP: document this function, especially magic return line
+        
+        variable_indices_perm = itertools.permutations(variable_indices)
+
+        return set(
+            sum(
+                idx * (n_var**level)
+                for level, idx in enumerate(monomial)
+            )
+            for monomial in variable_indices_perm
+        )

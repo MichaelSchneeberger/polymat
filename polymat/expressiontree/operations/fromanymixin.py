@@ -9,6 +9,7 @@ import sympy
 from sympy.polys.polyerrors import GeneratorsNeeded
 
 from polymat.expressiontree.expressiontreemixin import ExpressionTreeMixin
+from polymat.sparserepr.data.monomial import sort_monomial
 from polymat.sparserepr.data.polynomialmatrix import MatrixIndexType
 from polymat.sparserepr.data.polynomial import PolynomialType, constant_polynomial
 from polymat.sparserepr.sparsereprmixin import SparseReprMixin
@@ -18,7 +19,7 @@ from polymat.utils.getstacklines import (
     FrameSummaryMixin,
     to_operator_traceback,
 )
-from polymat.variable import Variable
+from polymat.symbol import Symbol
 
 
 class FromAnyMixin(FrameSummaryMixin, ExpressionTreeMixin):
@@ -101,7 +102,7 @@ class FromAnyMixin(FrameSummaryMixin, ExpressionTreeMixin):
                 else:
                     for symbol in sympy_poly.gens:
                         state, _ = state.register(
-                            variable=Variable(str(symbol)),
+                            symbol=Symbol(str(symbol)),
                             size=1,
                             stack=self.stack,
                         )
@@ -118,13 +119,13 @@ class FromAnyMixin(FrameSummaryMixin, ExpressionTreeMixin):
                             def gen_monomial():
                                 for sympy_index, power in enumerate(variable_powers):
                                     if 0 < power:
-                                        variable = Variable(
+                                        variable = Symbol(
                                             str(sympy_poly.gens[sympy_index])
                                         )
                                         index = state.indices[variable]
                                         yield (index.start, power)
 
-                            monomial = tuple(gen_monomial())
+                            monomial = sort_monomial(tuple(gen_monomial()))
 
                             yield monomial, value
 

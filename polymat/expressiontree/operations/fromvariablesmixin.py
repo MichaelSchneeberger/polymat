@@ -4,14 +4,14 @@ from typing_extensions import override
 from polymat.expressiontree.expressiontreemixin import ExpressionTreeMixin
 from polymat.sparserepr.sparsereprmixin import SparseReprMixin
 from polymat.state import State
-from polymat.variable import Variable
+from polymat.symbol import Symbol
 from polymat.sparserepr.init import init_sparse_repr_from_data
 
 
 class FromVariablesMixin(ExpressionTreeMixin):
     """Underlying object for VariableExpression"""
 
-    VARIABLE_VALUE_TYPE = tuple[Variable, ...]
+    VARIABLE_VALUE_TYPE = tuple[Symbol, ...]
     VARIABLE_TYPE = VARIABLE_VALUE_TYPE
 
     def __str__(self):

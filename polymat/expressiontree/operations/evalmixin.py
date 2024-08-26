@@ -7,7 +7,7 @@ from polymat.sparserepr.data.polynomialmatrix import MatrixIndexType
 from polymat.sparserepr.data.polynomial import (
     CoefficientType,
     PolynomialType,
-    add_polynomial_terms_mutable,
+    add_polynomial_terms_iterable,
 )
 from polymat.sparserepr.sparsereprmixin import SparseReprMixin
 from polymat.state import State
@@ -17,11 +17,11 @@ from polymat.utils.getstacklines import (
     FrameSummaryMixin,
     to_operator_traceback,
 )
-from polymat.variable import Variable
+from polymat.symbol import Symbol
 
 
 class EvalMixin(FrameSummaryMixin, SingleChildExpressionTreeMixin):
-    SUBSTITUTION_TYPE = tuple[tuple[Variable, tuple[float, ...]], ...]
+    SUBSTITUTION_TYPE = tuple[tuple[Symbol, tuple[float, ...]], ...]
 
     @property
     @abstractmethod
@@ -98,8 +98,8 @@ class EvalMixin(FrameSummaryMixin, SingleChildExpressionTreeMixin):
 
                         yield eval_monomial, eval_coeff
 
-                result = add_polynomial_terms_mutable(
-                    mutable={}, other=gen_polynomial_data()
+                result = add_polynomial_terms_iterable(
+                    terms=gen_polynomial_data()
                 )
 
                 if result:

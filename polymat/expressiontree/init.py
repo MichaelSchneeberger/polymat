@@ -58,7 +58,7 @@ from polymat.expressiontree.operations.matrixmultmixin import MatrixMultMixin
 from polymat.expressiontree.operations.transposemixin import TransposeMixin
 from polymat.expressiontree.operations.vstackmixin import VStackMixin
 from polymat.sparserepr.sparsereprmixin import SparseReprMixin
-from polymat.variable import Variable
+from polymat.symbol import Symbol
 from polymat.utils.getstacklines import FrameSummary
 from polymat.utils import typing
 
@@ -186,7 +186,7 @@ class EvalImpl(EvalMixin):
 
 def init_eval(
     child: ExpressionTreeMixin,
-    substitutions: dict[Variable, tuple[float, ...]],
+    substitutions: dict[Symbol, tuple[float, ...]],
     stack: tuple[FrameSummary, ...],
 ):
     return EvalImpl(
@@ -242,20 +242,20 @@ def init_from_sparse_repr(sparse_repr: SparseReprMixin):
 
 @dataclassabc(frozen=True, repr=False)
 class DefineVariableImpl(DefineVariableMixin):
-    variable: Variable
+    symbol: Symbol
     size: int | ExpressionTreeMixin
     stack: tuple[FrameSummary, ...]
 
 
 def init_define_variable(
-    variable: Variable,
+    symbol: Symbol,
     stack: tuple[FrameSummary, ...],
     size: int | ExpressionTreeMixin | None = None,
 ):
     if size is None:
         size = 1
 
-    return DefineVariableImpl(variable=variable, size=size, stack=stack)
+    return DefineVariableImpl(symbol=symbol, size=size, stack=stack)
 
 
 @dataclassabc(frozen=True)

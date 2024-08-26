@@ -1,13 +1,16 @@
 from abc import abstractmethod
 
 from polymat.expression.expression import Expression as _Expression
-from polymat.variable import Variable
+from polymat.symbol import Symbol
 
 
 class VariableExpression(_Expression):
     @property
     @abstractmethod
-    def variable(self) -> Variable: ...
+    def symbol(self) -> Symbol: ...
+
+    def to_symbols(self):
+        yield self.symbol
 
 
 # These global variables serve as placeholders for classes that are defined only in the stub file for type checking. 

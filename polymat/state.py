@@ -3,7 +3,7 @@ from dataclasses import replace
 from dataclassabc import dataclassabc
 
 from polymat.utils.getstacklines import FrameSummary, to_operator_traceback
-from polymat.variable import Variable
+from polymat.symbol import Symbol
 
 
 @dataclassabc(frozen=True)
@@ -23,7 +23,7 @@ class State:
 
     n_indices: int
 
-    indices: dict[Variable, IndexRange]
+    indices: dict[Symbol, IndexRange]
     """ Map from variables to their indices given by a range. """
 
     cache: dict
@@ -36,18 +36,18 @@ class State:
         return replace(self, cache=cache)
 
     def register(
-        self, variable: Variable, size: int, stack: tuple[FrameSummary, ...]
+        self, symbol: Symbol, size: int, stack: tuple[FrameSummary, ...]
     ) -> tuple[Self, IndexRange]:
         """Index a variable and get its index range."""
 
-        if variable in self.indices:
-            irange = self.indices[variable]
+        if symbol in self.indices:
+            irange = self.indices[symbol]
             if size == irange.stop - irange.start:
                 return self, irange
             else:
                 message = (
                     f"Symbols must be unique names! Cannot index symbol "
-                    f"{variable} with shape {size} because there is already a symbol "
+                    f"{symbol} with shape {size} because there is already a symbol "
                     f"with the same name with shape {(irange.start, irange.stop)}"
                 )
                 raise AssertionError(
@@ -66,25 +66,25 @@ class State:
         return replace(
             self,
             n_indices=self.n_indices + size,
-            indices=self.indices | {variable: index},
+            indices=self.indices | {symbol: index},
         ), index
 
     # retrieval of indices
     ######################
 
-    def _get_variable(self, index: int) -> tuple[Variable, IndexRange]:
-        for variable, index_range in self.indices.items():
+    def _get_symbol(self, index: int) -> tuple[Symbol, IndexRange]:
+        for symbol, index_range in self.indices.items():
             if index_range.start <= index < index_range.stop:
-                return variable, index_range
+                return symbol, index_range
 
         raise IndexError(f"There is no variable with index {index}.")
 
-    def get_variable(self, index: int) -> Variable:
+    def get_symbol(self, index: int) -> Symbol:
         """Get the symbol that contains the given index."""
-        return self._get_variable(index)[0]
+        return self._get_symbol(index)[0]
 
-    def get_index_range(self, variable: Variable):
-        return self.indices[variable]
+    def get_index_range(self, symbol: Symbol):
+        return self.indices[symbol]
 
     def get_name(self, index: int) -> str:
         """
@@ -100,13 +100,13 @@ class State:
             str: The unique name of the variable associated with the specified index.
         """
 
-        variable, index_range = self._get_variable(index)
+        symbol, index_range = self._get_symbol(index)
 
         # Variable is not scalar
         if index_range.stop - index_range.start > 1:
-            return f"{variable}_{index - index_range.start}"
+            return f"{symbol}_{index - index_range.start}"
 
-        return str(variable)
+        return str(symbol)
 
 
 def init_state():

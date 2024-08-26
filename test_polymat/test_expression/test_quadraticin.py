@@ -21,13 +21,13 @@ class TestQuadraticIn(unittest.TestCase):
 
         monomial_terms = {
             (0, 0): {
-                tuple(): 1.0,
+                tuple(): 1.0,            # 1
             },
             (1, 0): {
-                ((0, 1),): 1.0,
+                ((0, 1),): 1.0,         # x1
             },
             (2, 0): {
-                ((0, 1), (1, 1)): 1.0,
+                ((0, 1), (1, 1)): 1.0,  # x1 x2
             },
         }
 

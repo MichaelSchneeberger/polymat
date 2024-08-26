@@ -1,5 +1,5 @@
 from polymat.arrayrepr import ArrayRepr as _ArrayRepr
-from polymat.variable import Variable as _Variable
+from polymat.symbol import Symbol as _Symbol
 from polymat.state import (
     State as _State,
 )
@@ -20,7 +20,7 @@ from polymat.expression.abc import (
 )
 
 State = _State
-Variable = _Variable
+Symbol = _Symbol
 
 ArrayRepr = _ArrayRepr
 

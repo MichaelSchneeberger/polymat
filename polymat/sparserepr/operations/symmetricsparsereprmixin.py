@@ -3,6 +3,7 @@ from typing import override
 from polymat.sparserepr.data.polynomial import (
     MaybePolynomialType,
     add_polynomials,
+    multiply_with_scalar,
     multiply_with_scalar_mutable,
 )
 from polymat.sparserepr.sparsereprmixin import SingleChildSparseReprMixin
@@ -19,17 +20,14 @@ class SymmetricSparseReprMixin(SingleChildSparseReprMixin):
         left = self.child.at(row, col)
         right = self.child.at(col, row)
 
-        if left and right:
-            result = add_polynomials(left, right)
+        scalar = 0.5
 
-        elif left:
-            result = left
+        match (left, right):
+            case (dict() as polynomial, None) | (None, dict() as polynomial):
+                return multiply_with_scalar(polynomial, scalar)
 
-        elif right:
-            result = right
+            case (dict(), dict()):
+                mutable = add_polynomials(left, right)
 
-        else:
-            result = None
-
-        if result:
-            return multiply_with_scalar_mutable(result, 0.5)
+                if mutable:
+                    return multiply_with_scalar_mutable(mutable=mutable, scalar=0.5)

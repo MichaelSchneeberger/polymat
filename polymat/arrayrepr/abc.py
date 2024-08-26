@@ -1,5 +1,8 @@
-from polymat.arrayrepr.arrayreprmixin import ArrayReprMixin
+from polymat.arrayrepr.arrayrepr import ArrayRepr as _ArrayRepr
 
 
-class ArrayRepr(ArrayReprMixin):
-    pass
+
+ArrayRepr = _ArrayRepr
+
+# class ArrayRepr(ArrayReprMixin):
+#     pass

@@ -4,7 +4,7 @@ import sympy
 from statemonad.typing import StateMonad
 
 from polymat.arrayrepr.abc import ArrayRepr
-from polymat.variable import Variable
+from polymat.symbol import Symbol
 from polymat.state import State
 from polymat.expressiontree.to import (
     to_array as _to_array,
@@ -22,7 +22,7 @@ from polymat.expression.abc import Expression, VariableVectorExpression
 
 def to_array(
     expr: Expression,
-    variables: VariableVectorExpression,
+    variables: VariableVectorExpression | tuple[int, ...],
 ) -> StateMonad[State, ArrayRepr]:
     return _to_array(expr.child, variables)
 
@@ -54,7 +54,7 @@ def to_tuple(expr: Expression) -> StateMonad[State, tuple[tuple[float, ...], ...
     return _to_tuple(expr.child)
 
 
-def to_variables(expr: Expression) -> StateMonad[State, tuple[Variable, ...]]:
+def to_variables(expr: Expression) -> StateMonad[State, tuple[Symbol, ...]]:
     return _to_variables(expr.child)
 
 

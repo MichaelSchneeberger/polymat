@@ -23,7 +23,7 @@ class FromVariableIndicesMixin(ExpressionTreeMixin):
                 monomial = ((index, 1),)
                 yield (row, 0), {monomial: 1.0}
 
-        shape = (len(self.indices), 1)
         return state, init_sparse_repr_from_iterable(
-            data=gen_polynomial_matrix(), shape=shape
+            data=gen_polynomial_matrix(), 
+            shape=(len(self.indices), 1)
         )

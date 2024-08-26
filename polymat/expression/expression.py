@@ -42,7 +42,7 @@ from polymat.expressiontree.operations.productmixin import ProductMixin
 from polymat.sparserepr.sparsereprmixin import SparseReprMixin
 from polymat.state import State
 from polymat.utils.getstacklines import FrameSummary, get_frame_summary
-from polymat.variable import Variable
+from polymat.symbol import Symbol
 from polymat.utils import typing
 
 
@@ -217,7 +217,7 @@ class Expression(SingleChildExpressionTreeMixin, ABC):
             )
         )
 
-    def eval(self, substitutions: dict[Variable, tuple[float, ...]]):
+    def eval(self, substitutions: dict[Symbol, tuple[float, ...]]):
         return self.copy(
             child=init_eval(
                 child=self.child,

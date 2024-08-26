@@ -18,12 +18,15 @@ class TestSymmetric(unittest.TestCase):
                 ((1, 1),): 1.0,
                 ((2, 1),): 1.0,
             },
+            (2, 0): {
+                ((1, 1),): 1.0,
+            }
         }
 
         expr = init_from_sparse_repr(
             init_sparse_repr_from_data(
                 data=expr_terms,
-                shape=(2, 2),
+                shape=(3, 3),
             )
         )
 
@@ -54,6 +57,22 @@ class TestSymmetric(unittest.TestCase):
             {
                 ((1, 1),): 1.0,
                 ((2, 1),): 0.5,
+            }.items()
+            <= data.items()
+        )
+
+        data = sparse_repr.at(2, 0)
+        self.assertTrue(
+            {
+                ((1, 1),): 0.5,
+            }.items()
+            <= data.items()
+        )
+
+        data = sparse_repr.at(0, 2)
+        self.assertTrue(
+            {
+                ((1, 1),): 0.5,
             }.items()
             <= data.items()
         )

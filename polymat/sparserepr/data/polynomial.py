@@ -18,9 +18,9 @@ type MaybePolynomialType = PolynomialType | None
 
 def add_polynomial_terms_mutable(
     mutable: PolynomialType,
-    other: Iterable[PolynomialTermType],
+    terms: Iterable[PolynomialTermType],
 ) -> PolynomialType:
-    for monomial, coefficient in other:
+    for monomial, coefficient in terms:
         sorted_monomial = sort_monomial(monomial)
 
         if sorted_monomial in mutable:
@@ -38,25 +38,32 @@ def add_polynomial_terms_mutable(
     return mutable
 
 
+def add_polynomial_terms_iterable(
+    terms: Iterable[PolynomialTermType],
+) -> MaybePolynomialType:
+    return add_polynomial_terms_mutable(mutable={}, terms=terms)
+    
+
 def add_polynomial_iterable(
     polynomials: Iterable[PolynomialType],
 ) -> MaybePolynomialType:
-    filter_polynomials = iter(p for p in polynomials if p is not None)
+    # filter_polynomials = iter(p for p in polynomials if p is not None)
+    polynomials_iter = iter(polynomials)
 
     try:
-        first = next(filter_polynomials)
+        first = next(polynomials_iter)
     except StopIteration:
         return None
 
-    # copy and sort monomials
+    # copy and sort monomial dictionary
     mutable = {
         sort_monomial(monomial): coefficient for monomial, coefficient in first.items()
     }
 
     assert len(mutable) == len(first)
 
-    for polynomial in filter_polynomials:
-        add_polynomial_terms_mutable(mutable=mutable, other=polynomial.items())
+    for polynomial in polynomials_iter:
+        add_polynomial_terms_mutable(mutable=mutable, terms=polynomial.items())
 
     return mutable
 
@@ -130,7 +137,7 @@ def multiply_polynomials(
 ) -> MaybePolynomialType:
     multiplication_terms = gen_multiplication_terms(left.items(), right.items())
 
-    result = add_polynomial_terms_mutable(mutable={}, other=multiplication_terms)
+    result = add_polynomial_terms_mutable(mutable={}, terms=multiplication_terms)
 
     # if empty dictionary, return None
     if result:
@@ -153,7 +160,7 @@ def multiply_polynomial_iterable(
         initial=first,
     )
 
-    result = add_polynomial_terms_mutable(mutable={}, other=multiplication_terms)
+    result = add_polynomial_terms_mutable(mutable={}, terms=multiplication_terms)
 
     # if empty dictionary, return None
     if result:
@@ -168,3 +175,14 @@ def multiply_with_scalar_mutable(
         mutable[monomial] = coefficient * scalar
 
     return mutable
+
+
+def multiply_with_scalar(
+    polynomial: PolynomialType,
+    scalar: float,
+):
+    def gen_terms():
+        for monomial, coefficient in polynomial.items():
+            yield monomial, coefficient * scalar
+
+    return dict(gen_terms())

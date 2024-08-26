@@ -1,7 +1,7 @@
 from typing import Iterable
 
 from polymat.utils.getstacklines import get_frame_summary
-from polymat.variable import Variable
+from polymat.symbol import Symbol
 from polymat.utils import typing
 from polymat.expression.abc import Expression, VectorExpression
 from polymat.expressiontree.operations.fromvariablesmixin import FromVariablesMixin
@@ -56,13 +56,13 @@ from_polynomial = from_
 
 
 def define_variable(
-    name: str | Variable,
+    name: str | Symbol,
     size: int | Expression | None = None,
 ):
-    if not isinstance(name, Variable):
-        variable = Variable(name)
+    if not isinstance(name, Symbol):
+        symbol = Symbol(name)
     else:
-        variable = name
+        symbol = name
 
     if isinstance(size, Expression):
         n_size = size.child
@@ -71,9 +71,9 @@ def define_variable(
 
     return init_variable_expression(
         child=init_define_variable(
-            variable=variable, size=n_size, stack=get_frame_summary()
+            symbol=symbol, size=n_size, stack=get_frame_summary()
         ),
-        variable=variable,
+        symbol=symbol,
     )
 
 

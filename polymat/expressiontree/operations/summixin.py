@@ -33,7 +33,11 @@ class SumMixin(SingleChildExpressionTreeMixin):
 
                 def gen_polynomials():
                     for col in range(child.shape[1]):
-                        yield child.at(row, col)
+                        polynomial = child.at(row, col)
+
+                        if polynomial:
+                            yield polynomial
+
 
                 result = add_polynomial_iterable(gen_polynomials())
 

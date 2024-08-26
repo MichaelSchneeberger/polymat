@@ -3,7 +3,7 @@ import unittest
 from polymat.expressiontree.init import init_from_sparse_repr, init_eval
 from polymat.sparserepr.init import init_sparse_repr_from_data
 from polymat.state import init_state
-from polymat.variable import Variable
+from polymat.symbol import Symbol
 
 
 class TestEval(unittest.TestCase):
@@ -29,8 +29,8 @@ class TestEval(unittest.TestCase):
 
         state = init_state()
 
-        x1 = Variable("x1")
-        x2 = Variable("x2")
+        x1 = Symbol("x1")
+        x2 = Symbol("x2")
 
         state, _ = state.register(x1, 1, stack=tuple())
         state, _ = state.register(x2, 1, stack=tuple())

@@ -11,7 +11,7 @@ from polymat.utils.getstacklines import (
     FrameSummary,
     FrameSummaryMixin,
 )
-from polymat.variable import Variable
+from polymat.symbol import Symbol
 from polymat.sparserepr.init import init_sparse_repr_from_iterable
 
 
@@ -19,7 +19,7 @@ class DefineVariableMixin(FrameSummaryMixin, ExpressionTreeMixin):
     """Underlying object for VariableExpression"""
 
     def __str__(self):
-        return self.variable
+        return self.symbol
 
     @property
     @abstractmethod
@@ -28,12 +28,12 @@ class DefineVariableMixin(FrameSummaryMixin, ExpressionTreeMixin):
 
     @property
     @abstractmethod
-    def variable(self) -> Variable:
+    def symbol(self) -> Symbol:
         """The symbol representing the variable."""
 
     @staticmethod
     def create_variable_vector(
-        state: State, variable: Variable, size: int, stack: tuple[FrameSummary, ...]
+        state: State, variable: Symbol, size: int, stack: tuple[FrameSummary, ...]
     ):
         state, sym_index_range = state.register(
             variable,
@@ -60,7 +60,7 @@ class DefineVariableMixin(FrameSummaryMixin, ExpressionTreeMixin):
 
         state, gen_polynomial_matrix = self.create_variable_vector(
             state,
-            variable=self.variable,
+            variable=self.symbol,
             size=nvar,
             stack=self.stack,
         )

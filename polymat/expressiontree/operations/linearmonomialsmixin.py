@@ -42,7 +42,6 @@ class LinearMonomialsMixin(SingleChildExpressionTreeMixin):
         state, child = self.child.apply(state=state)
         state, variable_vector = self.variables.apply(state=state)
 
-        # indices = set(to_indices(variables))
         indices = set(variable_vector.to_indices())
 
         def gen_linear_monomials():

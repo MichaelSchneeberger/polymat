@@ -42,9 +42,11 @@ class MatrixMultMixin(FrameSummaryMixin, TwoChildrenExpressionTreeMixin):
                             right_polynomial = right.at(k, col)
 
                             if left_polynomial and right_polynomial:
-                                yield multiply_polynomials(
+                                result = multiply_polynomials(
                                     left_polynomial, right_polynomial
                                 )
+                                if result:
+                                    yield result
 
                     summation = add_polynomial_iterable(gen_polynomials())
 

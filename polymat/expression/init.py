@@ -6,7 +6,7 @@ from polymat.expression.abc import (
     VariableExpression,
 )
 from polymat.expressiontree.expressiontreemixin import ExpressionTreeMixin
-from polymat.variable import Variable
+from polymat.symbol import Symbol
 
 
 @dataclassabc(frozen=True)
@@ -17,15 +17,15 @@ class ExpressionImpl(Expression):
     def copy(self, child: ExpressionTreeMixin):
         return init_expression(child=child)
 
-    def parametrize(self, variable: Variable | str) -> VariableExpression:
-        if not isinstance(variable, Variable):
-            variable = Variable(variable)
+    def parametrize(self, variable: Symbol | str) -> VariableExpression:
+        if not isinstance(variable, Symbol):
+            variable = Symbol(variable)
 
         expr = super().parametrize(variable)  # type: ignore
 
         return init_variable_expression(
             child=expr.child,
-            variable=variable,
+            symbol=variable,
         )
 
 
@@ -38,15 +38,15 @@ def init_expression(child: ExpressionTreeMixin):
 @dataclassabc(frozen=True)
 class VariableExpressionImpl(VariableExpression):
     child: ExpressionTreeMixin
-    variable: Variable
+    symbol: Symbol
 
     @override
     def copy(self, child: ExpressionTreeMixin):
         return init_expression(child=child)
 
 
-def init_variable_expression(child: ExpressionTreeMixin, variable: Variable):
+def init_variable_expression(child: ExpressionTreeMixin, symbol: Symbol):
     return VariableExpressionImpl(
         child=child,
-        variable=variable,
+        symbol=symbol,
     )
