@@ -17,44 +17,44 @@ from polymat.expressiontree.to import (
     to_variables as _to_variables,
     to_variable_indices as _to_variable_indices,
 )
-from polymat.expression.abc import Expression, VariableVectorExpression
+from polymat.expression.abc import MatrixExpression, VariableVectorExpression
 
 
 def to_array(
-    expr: Expression,
+    expr: MatrixExpression,
     variables: VariableVectorExpression | tuple[int, ...],
 ) -> StateMonad[State, ArrayRepr]:
     return _to_array(expr.child, variables)
 
 
 def to_degree(
-    expr: Expression,
+    expr: MatrixExpression,
     variables: VariableVectorExpression | None = None,
 ) -> StateMonad[State, NDArray]:
     return _to_degree(expr.child, variables)
 
 
-def to_numpy(expr: Expression) -> StateMonad[State, NDArray]:
+def to_numpy(expr: MatrixExpression) -> StateMonad[State, NDArray]:
     return _to_numpy(expr.child)
 
 
-def to_shape(expr: Expression) -> StateMonad[State, tuple[int, int]]:
+def to_shape(expr: MatrixExpression) -> StateMonad[State, tuple[int, int]]:
     return _to_shape(expr.child)
 
 
-def to_sparse_repr(expr: Expression):
+def to_sparse_repr(expr: MatrixExpression):
     return _to_sparse_repr(expr.child)
 
 
-def to_sympy(expr: Expression) -> StateMonad[State, sympy.Expr]:
+def to_sympy(expr: MatrixExpression) -> StateMonad[State, sympy.Expr]:
     return _to_sympy(expr.child)
 
 
-def to_tuple(expr: Expression) -> StateMonad[State, tuple[tuple[float, ...], ...]]:
+def to_tuple(expr: MatrixExpression) -> StateMonad[State, tuple[tuple[float, ...], ...]]:
     return _to_tuple(expr.child)
 
 
-def to_variables(expr: Expression) -> StateMonad[State, tuple[Symbol, ...]]:
+def to_variables(expr: MatrixExpression) -> StateMonad[State, tuple[Symbol, ...]]:
     return _to_variables(expr.child)
 
 

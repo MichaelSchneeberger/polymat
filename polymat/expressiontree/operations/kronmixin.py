@@ -1,8 +1,8 @@
 from typing import override
 
-from polymat.sparserepr.sparsereprmixin import SparseReprMixin
+from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
-from polymat.expressiontree.expressiontreemixin import TwoChildrenExpressionTreeMixin
+from polymat.expressiontree.expressiontree import TwoChildrenExpressionTreeMixin
 from polymat.sparserepr.init import init_kron_sparse_repr
 
 
@@ -11,7 +11,7 @@ class KronMixin(TwoChildrenExpressionTreeMixin):
         return f"kron({self.left}, {self.right})"
 
     @override
-    def apply(self, state: State) -> tuple[State, SparseReprMixin]:
+    def apply(self, state: State) -> tuple[State, SparseRepr]:
         state, left = self.left.apply(state)
         state, right = self.right.apply(state)
 

@@ -2,13 +2,13 @@ from abc import abstractmethod
 
 from typing_extensions import override
 
-from polymat.expressiontree.expressiontreemixin import TwoChildrenExpressionTreeMixin
+from polymat.expressiontree.expressiontree import TwoChildrenExpressionTreeMixin
 from polymat.sparserepr.data.polynomial import MaybePolynomialType
-from polymat.sparserepr.sparsereprmixin import SparseReprMixin
+from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
 from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_traceback
 from polymat.sparserepr.init import (
-    init_sparse_repr_from_data,
+    init_from_polynomial_matrix,
     init_sparse_repr_from_iterable,
 )
 
@@ -42,7 +42,7 @@ class ElementwiseOpMixin(FrameSummaryMixin, TwoChildrenExpressionTreeMixin):
     def is_addition(self) -> bool: ...
 
     @override
-    def apply(self, state: State) -> tuple[State, SparseReprMixin]:
+    def apply(self, state: State) -> tuple[State, SparseRepr]:
         state, left = self.left.apply(state=state)
         state, right = self.right.apply(state=state)
 
@@ -80,7 +80,7 @@ class ElementwiseOpMixin(FrameSummaryMixin, TwoChildrenExpressionTreeMixin):
                 else:
                     data = {}
 
-                sparse_repr = init_sparse_repr_from_data(data, shape=left.shape)
+                sparse_repr = init_from_polynomial_matrix(data, shape=left.shape)
 
             case ((1, 1), _):
                 sparse_repr = single_element_operation(left, right)

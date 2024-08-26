@@ -9,9 +9,9 @@ from polymat.sparserepr.data.polynomial import (
     PolynomialType,
     add_polynomial_terms_iterable,
 )
-from polymat.sparserepr.sparsereprmixin import SparseReprMixin
+from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
-from polymat.expressiontree.expressiontreemixin import SingleChildExpressionTreeMixin
+from polymat.expressiontree.expressiontree import SingleChildExpressionTreeMixin
 from polymat.sparserepr.init import init_sparse_repr_from_iterable
 from polymat.utils.getstacklines import (
     FrameSummaryMixin,
@@ -31,7 +31,7 @@ class EvalMixin(FrameSummaryMixin, SingleChildExpressionTreeMixin):
         return f"eval({self.child}, {self.substitutions})"
 
     @override
-    def apply(self, state: State) -> tuple[State, SparseReprMixin]:
+    def apply(self, state: State) -> tuple[State, SparseRepr]:
         state, child = self.child.apply(state=state)
 
         def acc_indices_and_values(acc, next):

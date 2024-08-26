@@ -1,12 +1,12 @@
 import abc
 from typing import override
 
-from polymat.expressiontree.expressiontreemixin import (
-    ExpressionTreeMixin,
+from polymat.expressiontree.expressiontree import (
+    ExpressionTree,
     SingleChildExpressionTreeMixin,
 )
 from polymat.sparserepr.init import init_sparse_repr_from_iterable
-from polymat.sparserepr.sparsereprmixin import SparseReprMixin
+from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
 from polymat.utils.getstacklines import (
     FrameSummaryMixin,
@@ -37,11 +37,11 @@ class LinearInExprMixin(FrameSummaryMixin, SingleChildExpressionTreeMixin):
 
     @property
     @abc.abstractmethod
-    def monomials(self) -> ExpressionTreeMixin: ...
+    def monomials(self) -> ExpressionTree: ...
 
     @property
     @abc.abstractmethod
-    def variables(self) -> ExpressionTreeMixin: ...
+    def variables(self) -> ExpressionTree: ...
 
     @property
     @abc.abstractmethod
@@ -51,7 +51,7 @@ class LinearInExprMixin(FrameSummaryMixin, SingleChildExpressionTreeMixin):
         return f"linear_in({self.child}, {self.variables})"
 
     @override
-    def apply(self, state: State) -> tuple[State, SparseReprMixin]:
+    def apply(self, state: State) -> tuple[State, SparseRepr]:
         state, child = self.child.apply(state=state)
         state, monomial_vector = self.monomials.apply(state=state)
         state, variable_vector = self.variables.apply(state=state)

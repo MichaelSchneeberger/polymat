@@ -2,10 +2,10 @@ from abc import abstractmethod
 from typing import Iterable
 from typing_extensions import override
 
-from polymat.expressiontree.expressiontreemixin import ExpressionTreeMixin
+from polymat.expressiontree.expressiontree import ExpressionTree
 from polymat.sparserepr.data.polynomialmatrix import MatrixIndexType
 from polymat.sparserepr.data.polynomial import PolynomialType
-from polymat.sparserepr.sparsereprmixin import SparseReprMixin
+from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
 from polymat.utils.getstacklines import (
     FrameSummary,
@@ -15,7 +15,7 @@ from polymat.symbol import Symbol
 from polymat.sparserepr.init import init_sparse_repr_from_iterable
 
 
-class DefineVariableMixin(FrameSummaryMixin, ExpressionTreeMixin):
+class DefineVariableMixin(FrameSummaryMixin, ExpressionTree):
     """Underlying object for VariableExpression"""
 
     def __str__(self):
@@ -23,7 +23,7 @@ class DefineVariableMixin(FrameSummaryMixin, ExpressionTreeMixin):
 
     @property
     @abstractmethod
-    def size(self) -> int | ExpressionTreeMixin:
+    def size(self) -> int | ExpressionTree:
         """Shape of the variable expression."""
 
     @property
@@ -51,8 +51,8 @@ class DefineVariableMixin(FrameSummaryMixin, ExpressionTreeMixin):
         return state, gen_polynomial_matrix
 
     @override
-    def apply(self, state: State) -> tuple[State, SparseReprMixin]:
-        if isinstance(self.size, ExpressionTreeMixin):
+    def apply(self, state: State) -> tuple[State, SparseRepr]:
+        if isinstance(self.size, ExpressionTree):
             state, polymat = self.size.apply(state)
             nvar = polymat.shape[0] * polymat.shape[1]
         else:

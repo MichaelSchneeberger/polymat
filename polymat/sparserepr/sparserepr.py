@@ -6,7 +6,7 @@ from polymat.sparserepr.data.polynomialmatrix import MatrixIndexType
 from polymat.sparserepr.data.polynomial import MaybePolynomialType, PolynomialType
 
 
-class SparseReprMixin(ABC):
+class SparseRepr(ABC):
     """
     Matrix with polynomial entries.
     """
@@ -69,23 +69,23 @@ class SparseReprMixin(ABC):
                 yield index
 
 
-class TwoChildrenSparseReprMixin(SparseReprMixin):
+class TwoChildrenSparseReprMixin(SparseRepr):
     @property
     @abstractmethod
-    def left(self) -> SparseReprMixin: ...
+    def left(self) -> SparseRepr: ...
 
     @property
     @abstractmethod
-    def right(self) -> SparseReprMixin: ...
+    def right(self) -> SparseRepr: ...
 
 
-class SingleChildSparseReprMixin(SparseReprMixin):
+class SingleChildSparseReprMixin(SparseRepr):
     @property
     @abstractmethod
-    def child(self) -> SparseReprMixin: ...
+    def child(self) -> SparseRepr: ...
 
 
-class MultiChildrenSparseReprMixin(SparseReprMixin):
+class MultiChildrenSparseReprMixin(SparseRepr):
     @property
     @abstractmethod
-    def children(self) -> tuple[SparseReprMixin, ...]: ...
+    def children(self) -> tuple[SparseRepr, ...]: ...

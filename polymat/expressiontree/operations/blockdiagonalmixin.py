@@ -1,9 +1,9 @@
 from itertools import accumulate, pairwise
 from typing import override
 
-from polymat.sparserepr.sparsereprmixin import SparseReprMixin
+from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
-from polymat.expressiontree.expressiontreemixin import MultiChildrenExpressionTreeMixin
+from polymat.expressiontree.expressiontree import MultiChildrenExpressionTreeMixin
 from polymat.sparserepr.init import init_block_diagonal_sparse_repr
 
 
@@ -13,7 +13,7 @@ class BlockDiagonalMixin(MultiChildrenExpressionTreeMixin):
         return f"block_diag({children})"
 
     @override
-    def apply(self, state: State) -> tuple[State, SparseReprMixin]:
+    def apply(self, state: State) -> tuple[State, SparseRepr]:
         state, children = self.apply_children(state)
 
         def acc_row_col_pairs(acc, child):

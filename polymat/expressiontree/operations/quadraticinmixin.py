@@ -1,13 +1,13 @@
 import abc
 from typing import override
 
-from polymat.expressiontree.expressiontreemixin import (
-    ExpressionTreeMixin,
+from polymat.expressiontree.expressiontree import (
+    ExpressionTree,
     SingleChildExpressionTreeMixin,
 )
 from polymat.sparserepr.data.monomial import split_monomial_indices
 from polymat.sparserepr.init import init_sparse_repr_from_iterable
-from polymat.sparserepr.sparsereprmixin import SparseReprMixin
+from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
 from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_traceback
 
@@ -15,11 +15,11 @@ from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_traceback
 class QuadraticInExprMixin(FrameSummaryMixin, SingleChildExpressionTreeMixin):
     @property
     @abc.abstractmethod
-    def monomials(self) -> ExpressionTreeMixin: ...
+    def monomials(self) -> ExpressionTree: ...
 
     @property
     @abc.abstractmethod
-    def variables(self) -> ExpressionTreeMixin: ...
+    def variables(self) -> ExpressionTree: ...
 
     @property
     @abc.abstractmethod
@@ -29,7 +29,7 @@ class QuadraticInExprMixin(FrameSummaryMixin, SingleChildExpressionTreeMixin):
         return f"quadratic_in({self.child}, {self.variables})"
 
     @override
-    def apply(self, state: State) -> tuple[State, SparseReprMixin]:
+    def apply(self, state: State) -> tuple[State, SparseRepr]:
         state, child = self.child.apply(state=state)
         state, monomial_vector = self.monomials.apply(state=state)
         state, variable_vector = self.variables.apply(state=state)

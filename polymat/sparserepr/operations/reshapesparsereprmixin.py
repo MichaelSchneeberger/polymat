@@ -2,7 +2,7 @@ from abc import abstractmethod
 from typing import override
 
 from polymat.sparserepr.data.polynomial import MaybePolynomialType
-from polymat.sparserepr.sparsereprmixin import SingleChildSparseReprMixin
+from polymat.sparserepr.sparserepr import SingleChildSparseReprMixin
 
 
 class ReshapeSparseReprMixin(SingleChildSparseReprMixin):

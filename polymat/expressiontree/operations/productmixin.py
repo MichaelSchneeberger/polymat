@@ -4,10 +4,10 @@ from itertools import product
 
 from polymat.sparserepr.data.polynomial import multiply_polynomial_iterable
 from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_traceback
-from polymat.expressiontree.expressiontreemixin import MultiChildrenExpressionTreeMixin
-from polymat.sparserepr.sparsereprmixin import SparseReprMixin
+from polymat.expressiontree.expressiontree import MultiChildrenExpressionTreeMixin
+from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
-from polymat.sparserepr.init import init_sparse_repr_from_data
+from polymat.sparserepr.init import init_from_polynomial_matrix
 
 
 class ProductMixin(FrameSummaryMixin, MultiChildrenExpressionTreeMixin):
@@ -36,7 +36,7 @@ class ProductMixin(FrameSummaryMixin, MultiChildrenExpressionTreeMixin):
         Vector or scalar expression, or a list of integers.
         """
 
-    def apply(self, state: State) -> tuple[State, SparseReprMixin]:
+    def apply(self, state: State) -> tuple[State, SparseRepr]:
         state, children = self.apply_children(state)
 
         for child in children:
@@ -70,7 +70,7 @@ class ProductMixin(FrameSummaryMixin, MultiChildrenExpressionTreeMixin):
 
         data = dict(gen_polynomial_matrix())
 
-        return state, init_sparse_repr_from_data(
+        return state, init_from_polynomial_matrix(
             data=data,
             shape=(len(data), 1),
         )

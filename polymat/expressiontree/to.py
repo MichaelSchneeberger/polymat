@@ -22,15 +22,15 @@ from polymat.sparserepr.data.monomial import (
     monomial_degree,
     monomial_degree_in,
 )
-from polymat.sparserepr.sparsereprmixin import SparseReprMixin
+from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
-from polymat.expressiontree.expressiontreemixin import ExpressionTreeMixin
+from polymat.expressiontree.expressiontree import ExpressionTree
 from polymat.expressiontree.init import init_assert_vector
 
 
 def to_array(
-    expr: ExpressionTreeMixin,
-    variables: ExpressionTreeMixin | tuple[int, ...],
+    expr: ExpressionTree,
+    variables: ExpressionTree | tuple[int, ...],
 ) -> StateMonad[State, ArrayRepr]:
     """
     Given a monomial of degree d, this function returns the indices of a monomial
@@ -51,8 +51,8 @@ def to_array(
 
     @dataclassabc(frozen=True)
     class ToArrayStateMonadTree(StateMonadNode):
-        expr: ExpressionTreeMixin
-        variables: ExpressionTreeMixin
+        expr: ExpressionTree
+        variables: ExpressionTree
 
         def __str__(self):
             return f"to_array({self.expr}, {self.variables})"
@@ -121,13 +121,13 @@ def to_array(
 
 def _to_tuple[U](
     name: str,
-    expr: ExpressionTreeMixin,
+    expr: ExpressionTree,
     func: Callable[[MaybePolynomialType], U],
 ) -> StateMonad[State, U]:
     @dataclassabc(frozen=True)
     class ToTupleStateMonadTree(StateMonadNode):
         name: str
-        expr: ExpressionTreeMixin
+        expr: ExpressionTree
 
         def __str__(self):
             return self.name
@@ -157,13 +157,13 @@ def _to_tuple[U](
 
 
 def to_degree(
-    expr: ExpressionTreeMixin,
-    variables: ExpressionTreeMixin | None = None,
+    expr: ExpressionTree,
+    variables: ExpressionTree | None = None,
 ) -> StateMonad[State, NDArray]:
     @dataclassabc(frozen=True)
     class ToDegreeStateMonadTree(StateMonadNode):
-        expr: ExpressionTreeMixin
-        variables: ExpressionTreeMixin | None = None
+        expr: ExpressionTree
+        variables: ExpressionTree | None = None
 
         def __str__(self):
             return f"to_degree({self.expr}, {self.variables})"
@@ -198,11 +198,11 @@ def to_degree(
 
 
 def to_numpy(
-    expr: ExpressionTreeMixin, assert_constant: bool = True
+    expr: ExpressionTree, assert_constant: bool = True
 ) -> StateMonad[State, NDArray]:
     @dataclassabc(frozen=True)
     class ToNumpyStateMonadTree(StateMonadNode):
-        expr: ExpressionTreeMixin
+        expr: ExpressionTree
         assert_constant: bool
 
         def __str__(self):
@@ -228,10 +228,10 @@ def to_numpy(
     )
 
 
-def to_shape(expr: ExpressionTreeMixin) -> StateMonad[State, tuple[int, int]]:
+def to_shape(expr: ExpressionTree) -> StateMonad[State, tuple[int, int]]:
     @dataclassabc(frozen=True)
     class ToShapeStateMonadTree(StateMonadNode):
-        expr: ExpressionTreeMixin
+        expr: ExpressionTree
 
         def __str__(self):
             return f"to_shape({self.expr})"
@@ -244,14 +244,14 @@ def to_shape(expr: ExpressionTreeMixin) -> StateMonad[State, tuple[int, int]]:
     return statemonad.from_node(ToShapeStateMonadTree(expr=expr))
 
 
-def to_sparse_repr(expr: ExpressionTreeMixin) -> StateMonad[State, SparseReprMixin]:
+def to_sparse_repr(expr: ExpressionTree) -> StateMonad[State, SparseRepr]:
     return statemonad.from_node(expr)
 
 
-def to_sympy(expr: ExpressionTreeMixin) -> StateMonad[State, sympy.Expr]:
+def to_sympy(expr: ExpressionTree) -> StateMonad[State, sympy.Expr]:
     @dataclassabc(frozen=True)
     class ToSympyStateMonadTree(StateMonadNode):
-        expr: ExpressionTreeMixin
+        expr: ExpressionTree
 
         def __str__(self):
             return f"to_sympy({self.expr})"
@@ -289,11 +289,11 @@ def to_sympy(expr: ExpressionTreeMixin) -> StateMonad[State, sympy.Expr]:
 
 
 def to_tuple(
-    expr: ExpressionTreeMixin, assert_constant: bool = True
+    expr: ExpressionTree, assert_constant: bool = True
 ) -> StateMonad[State, tuple[tuple[float, ...], ...]]:
     @dataclassabc(frozen=True)
     class ToTupleStateMonadTree(StateMonadNode):
-        expr: ExpressionTreeMixin
+        expr: ExpressionTree
         assert_constant: bool
 
         def __str__(self):
@@ -335,11 +335,11 @@ def to_tuple(
 
 
 def to_variable_indices(
-    expr: ExpressionTreeMixin,
+    expr: ExpressionTree,
 ) -> StateMonad[State, tuple[int, ...]]:
     @dataclassabc(frozen=True)
     class ToVariableIndicesStateMonadTree(StateMonadNode):
-        expr: ExpressionTreeMixin
+        expr: ExpressionTree
 
         def __str__(self):
             return f"to_variable_indices({self.expr})"
@@ -356,11 +356,11 @@ def to_variable_indices(
 
 
 def to_variables(
-    expr: ExpressionTreeMixin,
+    expr: ExpressionTree,
 ) -> StateMonad[State, tuple[Symbol, ...]]:
     @dataclassabc(frozen=True)
     class ToVariablesStateMonadTree(StateMonadNode[State, tuple[Symbol, ...]]):
-        expr: ExpressionTreeMixin
+        expr: ExpressionTree
 
         def __str__(self):
             return f"to_variables({self.expr})"

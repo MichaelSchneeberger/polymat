@@ -3,12 +3,12 @@ from polymat.symbol import Symbol as _Symbol
 from polymat.state import (
     State as _State,
 )
-from polymat.expressiontree.expressiontreemixin import (
-    ExpressionTreeMixin as _ExpressionTreeMixin,
+from polymat.expressiontree.expressiontree import (
+    ExpressionTree as _ExpressionTreeMixin,
 )
 from polymat.expression.abc import (
-    Expression as _Expression,
-    SymmetricExpression as _SymmetricExpression,
+    MatrixExpression as _MatrixExpression,
+    SymmetricMatrixExpression as _SymmetricMatrixExpression,
     VectorExpression as _VectorExpression,
     RowVectorExpression as _RowVectorExpression,
     PolynomialExpression as _PolynomialExpression,
@@ -26,8 +26,8 @@ ArrayRepr = _ArrayRepr
 
 ExpressionTreeMixin = _ExpressionTreeMixin
 
-Expression = _Expression
-SymmetricExpression = _SymmetricExpression
+MatrixExpression = _MatrixExpression
+SymmetricMatrixExpression = _SymmetricMatrixExpression
 VectorExpression = _VectorExpression
 RowVectorExpression = _RowVectorExpression
 PolynomialExpression = _PolynomialExpression

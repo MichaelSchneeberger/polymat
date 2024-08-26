@@ -1,9 +1,9 @@
 from abc import abstractmethod
 from typing import override
 
-from polymat.sparserepr.sparsereprmixin import SparseReprMixin
+from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
-from polymat.expressiontree.expressiontreemixin import (
+from polymat.expressiontree.expressiontree import (
     SingleChildExpressionTreeMixin,
 )
 from polymat.sparserepr.init import init_repmat_sparse_repr
@@ -18,7 +18,7 @@ class RepMatMixin(SingleChildExpressionTreeMixin):
         return f"rep_mat({self.child}, {self.repetition})"
 
     @override
-    def apply(self, state: State) -> tuple[State, SparseReprMixin]:
+    def apply(self, state: State) -> tuple[State, SparseRepr]:
         state, child = self.child.apply(state=state)
 
         return state, init_repmat_sparse_repr(

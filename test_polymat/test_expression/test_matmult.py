@@ -1,7 +1,7 @@
 import unittest
 
 from polymat.expressiontree.init import init_from_sparse_repr, init_matrix_mult
-from polymat.sparserepr.init import init_sparse_repr_from_data
+from polymat.sparserepr.init import init_from_polynomial_matrix
 from polymat.state import init_state
 
 
@@ -32,14 +32,14 @@ class TestMatrixMult(unittest.TestCase):
         }
 
         left = init_from_sparse_repr(
-            init_sparse_repr_from_data(
+            init_from_polynomial_matrix(
                 data=left_terms,
                 shape=(2, 2),
             )
         )
 
         right = init_from_sparse_repr(
-            init_sparse_repr_from_data(
+            init_from_polynomial_matrix(
                 data=right_terms,
                 shape=(2, 1),
             )

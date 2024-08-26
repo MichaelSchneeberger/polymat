@@ -1,9 +1,9 @@
 from abc import abstractmethod
 from typing import Callable, override
 
-from polymat.sparserepr.sparsereprmixin import SparseReprMixin
+from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
-from polymat.expressiontree.expressiontreemixin import SingleChildExpressionTreeMixin
+from polymat.expressiontree.expressiontree import SingleChildExpressionTreeMixin
 from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_traceback
 
 class AssertShapeMixin(FrameSummaryMixin, SingleChildExpressionTreeMixin):
@@ -20,7 +20,7 @@ class AssertShapeMixin(FrameSummaryMixin, SingleChildExpressionTreeMixin):
         return str(self.child)
 
     @override
-    def apply(self, state: State) -> tuple[State, SparseReprMixin]:
+    def apply(self, state: State) -> tuple[State, SparseRepr]:
         state, child = self.child.apply(state=state)
 
         if not self.fn(*child.shape):

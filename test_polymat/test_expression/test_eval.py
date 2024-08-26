@@ -1,7 +1,7 @@
 import unittest
 
 from polymat.expressiontree.init import init_from_sparse_repr, init_eval
-from polymat.sparserepr.init import init_sparse_repr_from_data
+from polymat.sparserepr.init import init_from_polynomial_matrix
 from polymat.state import init_state
 from polymat.symbol import Symbol
 
@@ -21,7 +21,7 @@ class TestEval(unittest.TestCase):
         }
 
         expr = init_from_sparse_repr(
-            init_sparse_repr_from_data(
+            init_from_polynomial_matrix(
                 data=expr_terms,
                 shape=(2, 1),
             )

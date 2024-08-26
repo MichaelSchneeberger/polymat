@@ -1,11 +1,11 @@
 from abc import abstractmethod
 from typing import override
 
-from polymat.sparserepr.sparsereprmixin import SparseReprMixin
+from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
-from polymat.expressiontree.expressiontreemixin import SingleChildExpressionTreeMixin
+from polymat.expressiontree.expressiontree import SingleChildExpressionTreeMixin
 from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_traceback
-from polymat.sparserepr.init import init_sparse_repr_from_data
+from polymat.sparserepr.init import init_from_polynomial_matrix
 
 
 class FilterMixin(FrameSummaryMixin, SingleChildExpressionTreeMixin):
@@ -19,7 +19,7 @@ class FilterMixin(FrameSummaryMixin, SingleChildExpressionTreeMixin):
         return f"filter({self.child})"
 
     @override
-    def apply(self, state: State) -> tuple[State, SparseReprMixin]:
+    def apply(self, state: State) -> tuple[State, SparseRepr]:
         state, child = self.child.apply(state=state)
 
         if not (child.shape[1] == 1):
@@ -50,7 +50,7 @@ class FilterMixin(FrameSummaryMixin, SingleChildExpressionTreeMixin):
         n_row = len(polymatrix)
         n_col = 0 if n_row == 0 else 1
 
-        return state, init_sparse_repr_from_data(
+        return state, init_from_polynomial_matrix(
             data=polymatrix,
             shape=(n_row, n_col),
         )

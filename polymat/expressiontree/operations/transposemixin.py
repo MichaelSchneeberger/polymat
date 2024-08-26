@@ -1,8 +1,8 @@
 from typing import override
 
-from polymat.sparserepr.sparsereprmixin import SparseReprMixin
+from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
-from polymat.expressiontree.expressiontreemixin import SingleChildExpressionTreeMixin
+from polymat.expressiontree.expressiontree import SingleChildExpressionTreeMixin
 from polymat.sparserepr.init import init_transpose_sparse_repr
 
 
@@ -11,7 +11,7 @@ class TransposeMixin(SingleChildExpressionTreeMixin):
         return f"{self.child}.T"
 
     @override
-    def apply(self, state: State) -> tuple[State, SparseReprMixin]:
+    def apply(self, state: State) -> tuple[State, SparseRepr]:
         state, child = self.child.apply(state=state)
 
         return state, init_transpose_sparse_repr(

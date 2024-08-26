@@ -7,8 +7,8 @@ from polymat.sparserepr.data.polynomial import (
     multiply_polynomial_iterable,
 )
 from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_traceback
-from polymat.expressiontree.expressiontreemixin import SingleChildExpressionTreeMixin
-from polymat.sparserepr.sparsereprmixin import SparseReprMixin
+from polymat.expressiontree.expressiontree import SingleChildExpressionTreeMixin
+from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
 from polymat.sparserepr.init import init_sparse_repr_from_iterable
 
@@ -38,7 +38,7 @@ class CombinationsMixin(FrameSummaryMixin, SingleChildExpressionTreeMixin):
     def apply(
         self,
         state: State,
-    ) -> tuple[State, SparseReprMixin]:
+    ) -> tuple[State, SparseRepr]:
         state, child = self.child.apply(state)
 
         if not (child.shape[1] == 1):

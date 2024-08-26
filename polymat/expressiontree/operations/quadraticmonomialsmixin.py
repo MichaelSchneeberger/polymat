@@ -1,13 +1,13 @@
 import abc
 from typing import override
 
-from polymat.expressiontree.expressiontreemixin import (
-    ExpressionTreeMixin,
+from polymat.expressiontree.expressiontree import (
+    ExpressionTree,
     SingleChildExpressionTreeMixin,
 )
 from polymat.sparserepr.data.monomial import sort_monomials, split_monomial_indices
 from polymat.sparserepr.init import init_sparse_repr_from_iterable
-from polymat.sparserepr.sparsereprmixin import SparseReprMixin
+from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
 
 
@@ -32,14 +32,14 @@ class QuadraticMonomialsMixin(SingleChildExpressionTreeMixin):
 
     @property
     @abc.abstractmethod
-    def variables(self) -> ExpressionTreeMixin: ...
+    def variables(self) -> ExpressionTree: ...
 
     def __str__(self):
         return f"quadratic_monomials_in({self.child}, {self.variables})"
 
     # overwrites the abstract method of `ExpressionBaseMixin`
     @override
-    def apply(self, state: State) -> tuple[State, SparseReprMixin]:
+    def apply(self, state: State) -> tuple[State, SparseRepr]:
         state, child = self.child.apply(state=state)
         state, variable_vector = self.variables.apply(state=state)
 

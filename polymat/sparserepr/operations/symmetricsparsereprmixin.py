@@ -6,7 +6,7 @@ from polymat.sparserepr.data.polynomial import (
     multiply_with_scalar,
     multiply_with_scalar_mutable,
 )
-from polymat.sparserepr.sparsereprmixin import SingleChildSparseReprMixin
+from polymat.sparserepr.sparserepr import SingleChildSparseReprMixin
 
 
 class SymmetricSparseReprMixin(SingleChildSparseReprMixin):

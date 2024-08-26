@@ -2,26 +2,26 @@ from abc import abstractmethod
 from typing import override
 
 from polymat.sparserepr.data.polynomial import differentiate_polynomial
-from polymat.sparserepr.sparsereprmixin import SparseReprMixin
+from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
-from polymat.expressiontree.expressiontreemixin import (
-    ExpressionTreeMixin,
+from polymat.expressiontree.expressiontree import (
+    ExpressionTree,
     SingleChildExpressionTreeMixin,
 )
 from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_traceback
-from polymat.sparserepr.init import init_sparse_repr_from_data
+from polymat.sparserepr.init import init_from_polynomial_matrix
 
 
 class DifferentiateMixin(FrameSummaryMixin, SingleChildExpressionTreeMixin):
     @property
     @abstractmethod
-    def variables(self) -> ExpressionTreeMixin: ...
+    def variables(self) -> ExpressionTree: ...
 
     def __str__(self):
         return f"diff({self.child}, {self.variables})"
 
     @override
-    def apply(self, state: State) -> tuple[State, SparseReprMixin]:
+    def apply(self, state: State) -> tuple[State, SparseRepr]:
         state, child = self.child.apply(state=state)
         state, variable_vector = self.variables.apply(state=state)
 
@@ -49,7 +49,7 @@ class DifferentiateMixin(FrameSummaryMixin, SingleChildExpressionTreeMixin):
 
         data = dict(gen_polynomial_matrix())
 
-        return state, init_sparse_repr_from_data(
+        return state, init_from_polynomial_matrix(
             data=data,
             shape=(child.shape[0], len(indices)),
         )

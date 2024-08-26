@@ -1,9 +1,9 @@
 from abc import abstractmethod
 from typing import override
 
-from polymat.sparserepr.sparsereprmixin import SparseReprMixin
+from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
-from polymat.expressiontree.expressiontreemixin import (
+from polymat.expressiontree.expressiontree import (
     SingleChildExpressionTreeMixin,
 )
 from polymat.sparserepr.init import init_get_item_sparse_repr
@@ -28,7 +28,7 @@ class GetItemMixin(SingleChildExpressionTreeMixin):
         return f"slice({self.child}, {self.key})"
 
     @override
-    def apply(self, state: State) -> tuple[State, SparseReprMixin]:
+    def apply(self, state: State) -> tuple[State, SparseRepr]:
         state, child = self.child.apply(state=state)
 
         def format_key(state: State, key: GetItemMixin.KEY_VALUE_TYPE):

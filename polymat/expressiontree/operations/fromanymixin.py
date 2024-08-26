@@ -8,13 +8,13 @@ import numpy as np
 import sympy
 from sympy.polys.polyerrors import GeneratorsNeeded
 
-from polymat.expressiontree.expressiontreemixin import ExpressionTreeMixin
+from polymat.expressiontree.expressiontree import ExpressionTree
 from polymat.sparserepr.data.monomial import sort_monomial
 from polymat.sparserepr.data.polynomialmatrix import MatrixIndexType
 from polymat.sparserepr.data.polynomial import PolynomialType, constant_polynomial
-from polymat.sparserepr.sparsereprmixin import SparseReprMixin
+from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
-from polymat.sparserepr.init import init_sparse_repr_from_data
+from polymat.sparserepr.init import init_from_polynomial_matrix
 from polymat.utils.getstacklines import (
     FrameSummaryMixin,
     to_operator_traceback,
@@ -22,9 +22,9 @@ from polymat.utils.getstacklines import (
 from polymat.symbol import Symbol
 
 
-class FromAnyMixin(FrameSummaryMixin, ExpressionTreeMixin):
+class FromAnyMixin(FrameSummaryMixin, ExpressionTree):
     VALUE_TYPES = float | int | np.number | sympy.Expr
-    ELEM_TYPES = VALUE_TYPES | ExpressionTreeMixin
+    ELEM_TYPES = VALUE_TYPES | ExpressionTree
 
     def __str__(self):
         if len(self.data) == 1:
@@ -44,7 +44,7 @@ class FromAnyMixin(FrameSummaryMixin, ExpressionTreeMixin):
         """The matrix of numbers in row major order."""
 
     @override
-    def apply(self, state: State) -> tuple[State, SparseReprMixin]:
+    def apply(self, state: State) -> tuple[State, SparseRepr]:
         def acc_polynomial_matrix_data(
             acc: tuple[State, tuple[tuple[MatrixIndexType, PolynomialType], ...]],
             next: tuple[int, int, FromAnyMixin.ELEM_TYPES],
@@ -54,7 +54,7 @@ class FromAnyMixin(FrameSummaryMixin, ExpressionTreeMixin):
 
             matrix_index = (row, col)
 
-            if isinstance(entry, ExpressionTreeMixin):
+            if isinstance(entry, ExpressionTree):
                 state, instance = entry.apply(state)
 
                 if not (instance.shape == (1, 1)):
@@ -150,7 +150,7 @@ class FromAnyMixin(FrameSummaryMixin, ExpressionTreeMixin):
             gen_entries(), acc_polynomial_matrix_data, initial=(state, tuple())
         )
 
-        return state, init_sparse_repr_from_data(
+        return state, init_from_polynomial_matrix(
             data=dict(data),
             shape=(len(self.data), len(self.data[0])),
         )

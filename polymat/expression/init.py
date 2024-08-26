@@ -2,19 +2,19 @@ from typing import override
 from dataclassabc import dataclassabc
 
 from polymat.expression.abc import (
-    Expression,
+    MatrixExpression,
     VariableExpression,
 )
-from polymat.expressiontree.expressiontreemixin import ExpressionTreeMixin
+from polymat.expressiontree.expressiontree import ExpressionTree
 from polymat.symbol import Symbol
 
 
 @dataclassabc(frozen=True)
-class ExpressionImpl(Expression):
-    child: ExpressionTreeMixin
+class ExpressionImpl(MatrixExpression):
+    child: ExpressionTree
 
     @override
-    def copy(self, child: ExpressionTreeMixin):
+    def copy(self, child: ExpressionTree):
         return init_expression(child=child)
 
     def parametrize(self, variable: Symbol | str) -> VariableExpression:
@@ -29,7 +29,7 @@ class ExpressionImpl(Expression):
         )
 
 
-def init_expression(child: ExpressionTreeMixin):
+def init_expression(child: ExpressionTree):
     return ExpressionImpl(
         child=child,
     )
@@ -37,15 +37,15 @@ def init_expression(child: ExpressionTreeMixin):
 
 @dataclassabc(frozen=True)
 class VariableExpressionImpl(VariableExpression):
-    child: ExpressionTreeMixin
+    child: ExpressionTree
     symbol: Symbol
 
     @override
-    def copy(self, child: ExpressionTreeMixin):
+    def copy(self, child: ExpressionTree):
         return init_expression(child=child)
 
 
-def init_variable_expression(child: ExpressionTreeMixin, symbol: Symbol):
+def init_variable_expression(child: ExpressionTree, symbol: Symbol):
     return VariableExpressionImpl(
         child=child,
         symbol=symbol,

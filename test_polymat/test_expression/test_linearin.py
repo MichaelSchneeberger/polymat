@@ -1,7 +1,7 @@
 import unittest
 
 from polymat.expressiontree.init import init_from_sparse_repr, init_linear_in
-from polymat.sparserepr.init import init_sparse_repr_from_data
+from polymat.sparserepr.init import init_from_polynomial_matrix
 from polymat.state import init_state
 
 
@@ -35,21 +35,21 @@ class TestQuadraticIn(unittest.TestCase):
         }
 
         child = init_from_sparse_repr(
-            init_sparse_repr_from_data(
+            init_from_polynomial_matrix(
                 data=child_terms,
                 shape=(2, 1),
             )
         )
 
         monomials = init_from_sparse_repr(
-            init_sparse_repr_from_data(
+            init_from_polynomial_matrix(
                 data=monomial_terms,
                 shape=(4, 1),
             )
         )
 
         variables = init_from_sparse_repr(
-            init_sparse_repr_from_data(
+            init_from_polynomial_matrix(
                 data=variable_terms,
                 shape=(2, 1),
             )

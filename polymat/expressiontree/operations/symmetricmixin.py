@@ -1,9 +1,9 @@
 from typing_extensions import override
 
 from polymat.sparserepr.init import init_symmetric_sparse_repr
-from polymat.sparserepr.sparsereprmixin import SparseReprMixin
+from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
-from polymat.expressiontree.expressiontreemixin import SingleChildExpressionTreeMixin
+from polymat.expressiontree.expressiontree import SingleChildExpressionTreeMixin
 
 
 class SymmetricMixin(SingleChildExpressionTreeMixin):
@@ -11,7 +11,7 @@ class SymmetricMixin(SingleChildExpressionTreeMixin):
         return f"symmetric({self.child})"
 
     @override
-    def apply(self, state: State) -> tuple[State, SparseReprMixin]:
+    def apply(self, state: State) -> tuple[State, SparseRepr]:
         state, child = self.child.apply(state)
 
         polymatrix = init_symmetric_sparse_repr(child=child)

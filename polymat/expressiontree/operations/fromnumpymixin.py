@@ -4,14 +4,14 @@ from abc import abstractmethod
 from typing_extensions import override
 from numpy.typing import NDArray
 
-from polymat.expressiontree.expressiontreemixin import ExpressionTreeMixin
+from polymat.expressiontree.expressiontree import ExpressionTree
 from polymat.sparserepr.data.polynomial import constant_polynomial
-from polymat.sparserepr.sparsereprmixin import SparseReprMixin
+from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
 from polymat.sparserepr.init import init_sparse_repr_from_iterable
 
 
-class FromNumpyMixin(ExpressionTreeMixin):
+class FromNumpyMixin(ExpressionTree):
     """
     Make a (constant) expression from a numpy array.
 
@@ -28,7 +28,7 @@ class FromNumpyMixin(ExpressionTreeMixin):
         """The Numpy array."""
 
     @override
-    def apply(self, state: State) -> tuple[State, SparseReprMixin]:
+    def apply(self, state: State) -> tuple[State, SparseRepr]:
         if len(self.data.shape) > 2:
             raise ValueError(
                 "Cannot construct expression from numpy array with "

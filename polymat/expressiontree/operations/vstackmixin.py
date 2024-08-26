@@ -3,10 +3,10 @@ import itertools
 from typing import override
 
 from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_traceback
-from polymat.sparserepr.sparsereprmixin import SparseReprMixin
+from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.sparserepr.init import init_vstack_sparse_repr
 from polymat.state import State
-from polymat.expressiontree.expressiontreemixin import MultiChildrenExpressionTreeMixin
+from polymat.expressiontree.expressiontree import MultiChildrenExpressionTreeMixin
 
 
 class VStackMixin(FrameSummaryMixin, MultiChildrenExpressionTreeMixin):
@@ -15,7 +15,7 @@ class VStackMixin(FrameSummaryMixin, MultiChildrenExpressionTreeMixin):
         return f"v_stack({children})"
 
     @override
-    def apply(self, state: State) -> tuple[State, SparseReprMixin]:
+    def apply(self, state: State) -> tuple[State, SparseRepr]:
         state, children = self.apply_children(state)
 
         n_col = children[0].shape[1]

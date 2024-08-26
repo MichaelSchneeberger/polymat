@@ -3,7 +3,7 @@ import unittest
 import polymat
 from polymat.expression.init import init_expression
 from polymat.expressiontree.init import init_from_sparse_repr
-from polymat.sparserepr.init import init_sparse_repr_from_data
+from polymat.sparserepr.init import init_from_polynomial_matrix
 from polymat.state import init_state
 
 
@@ -33,7 +33,7 @@ class TestToArray(unittest.TestCase):
 
         expr = init_expression(
                 init_from_sparse_repr(
-                init_sparse_repr_from_data(
+                init_from_polynomial_matrix(
                     data=child_terms, 
                     shape=(3, 1)
                 )
@@ -42,7 +42,7 @@ class TestToArray(unittest.TestCase):
 
         variables = init_expression(
             init_from_sparse_repr(
-                init_sparse_repr_from_data(
+                init_from_polynomial_matrix(
                     data=variable_terms,
                     shape=(2, 1),
                 )

@@ -3,10 +3,10 @@ from typing import override
 
 from polymat.sparserepr.data.polynomial import MaybePolynomialType
 from polymat.sparserepr.data.polynomialmatrix import PolynomialMatrixType
-from polymat.sparserepr.sparsereprmixin import SparseReprMixin
+from polymat.sparserepr.sparserepr import SparseRepr
 
 
-class SparseReprFromPolynomialMatrixMixin(SparseReprMixin, ABC):
+class FromPolynomialMatrixMixin(SparseRepr, ABC):
     """Matrix with polynomial entries, stored as a dictionary."""
 
     @property

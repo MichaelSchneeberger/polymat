@@ -3,9 +3,9 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Iterable, override
 
-from polymat.expressiontree.expressiontreemixin import (
+from polymat.expressiontree.expressiontree import (
     SingleChildExpressionTreeMixin,
-    ExpressionTreeMixin,
+    ExpressionTree,
 )
 from polymat.expressiontree.init import (
     init_addition,
@@ -39,14 +39,14 @@ from polymat.expressiontree.init import (
 )
 from polymat.expressiontree.operations.filtermixin import FilterMixin
 from polymat.expressiontree.operations.productmixin import ProductMixin
-from polymat.sparserepr.sparsereprmixin import SparseReprMixin
+from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
 from polymat.utils.getstacklines import FrameSummary, get_frame_summary
 from polymat.symbol import Symbol
 from polymat.utils import typing
 
 
-class Expression(SingleChildExpressionTreeMixin, ABC):
+class SymmetricMatrixExpression(SingleChildExpressionTreeMixin, ABC):
     def __add__(self, other: typing.FROM_TYPES):
         return self._binary(init_addition, self, other)
 
@@ -103,10 +103,10 @@ class Expression(SingleChildExpressionTreeMixin, ABC):
         # overwrite this function when extending Expression
         return False
 
-    def _binary(self, op, left, right) -> Expression:
+    def _binary(self, op, left, right) -> SymmetricMatrixExpression:
         stack = get_frame_summary(index=4)
 
-        if isinstance(left, Expression) and isinstance(right, Expression):
+        if isinstance(left, SymmetricMatrixExpression) and isinstance(right, SymmetricMatrixExpression):
             child = op(left.child, right.child, stack)
 
             if self._is_left_subtype_of_right(left, right):
@@ -114,7 +114,7 @@ class Expression(SingleChildExpressionTreeMixin, ABC):
             else:
                 return left.copy(child=child)
 
-        elif isinstance(left, Expression):
+        elif isinstance(left, SymmetricMatrixExpression):
             right = init_from_or_none(right, stack)
 
             if right is None:
@@ -132,16 +132,16 @@ class Expression(SingleChildExpressionTreeMixin, ABC):
             return right.copy(child=op(left, right.child, stack))
 
     def _get_children(
-        self, others: Iterable[Expression], stack: tuple[FrameSummary, ...]
-    ) -> tuple[ExpressionTreeMixin, ...]:
-        if isinstance(others, Expression):
+        self, others: Iterable[SymmetricMatrixExpression], stack: tuple[FrameSummary, ...]
+    ) -> tuple[ExpressionTree, ...]:
+        if isinstance(others, SymmetricMatrixExpression):
             others = (others,)
 
         def gen_children():
             yield self.child
 
             for e in others:
-                if isinstance(e, Expression):
+                if isinstance(e, SymmetricMatrixExpression):
                     expr = e.child
                 else:
                     expr = init_from_(e, stack=stack)
@@ -152,8 +152,8 @@ class Expression(SingleChildExpressionTreeMixin, ABC):
         return tuple(gen_children())
 
     def _v_stack(
-        self, others: Iterable[Expression], stack: tuple[FrameSummary, ...]
-    ) -> ExpressionTreeMixin:
+        self, others: Iterable[SymmetricMatrixExpression], stack: tuple[FrameSummary, ...]
+    ) -> ExpressionTree:
         # """ Vertically stack expressions """
         return init_v_stack(
             children=self._get_children(others, stack=stack),
@@ -161,7 +161,7 @@ class Expression(SingleChildExpressionTreeMixin, ABC):
         )
 
     @override
-    def apply(self, state: State) -> tuple[State, SparseReprMixin]:
+    def apply(self, state: State) -> tuple[State, SparseRepr]:
         return self.child.apply(state)
 
     def assert_vector(self):
@@ -170,7 +170,7 @@ class Expression(SingleChildExpressionTreeMixin, ABC):
     def assert_polynomial(self, stack=get_frame_summary()):
         return self.copy(child=init_assert_polynomial(stack=stack, child=self))
 
-    def block_diag(self, others: Iterable[Expression]):
+    def block_diag(self, others: Iterable[SymmetricMatrixExpression]):
         stack = get_frame_summary()
 
         return self.copy(
@@ -197,7 +197,7 @@ class Expression(SingleChildExpressionTreeMixin, ABC):
         )
 
     @abstractmethod
-    def copy(self, /, **changes) -> Expression: ...
+    def copy(self, /, **changes) -> SymmetricMatrixExpression: ...
 
     # only applies to symmetric matrix or vector
     def diag(self):
@@ -208,7 +208,7 @@ class Expression(SingleChildExpressionTreeMixin, ABC):
             )
         )
 
-    def diff(self, variables: Expression):
+    def diff(self, variables: SymmetricMatrixExpression):
         return self.copy(
             child=init_differentiate(
                 child=self.child,
@@ -236,17 +236,17 @@ class Expression(SingleChildExpressionTreeMixin, ABC):
             )
         )
 
-    def h_stack(self, others: Iterable[Expression]):
+    def h_stack(self, others: Iterable[SymmetricMatrixExpression]):
         return self.T.v_stack((e.T for e in others)).T
 
-    def kron(self, other: Expression):
+    def kron(self, other: SymmetricMatrixExpression):
         return self.copy(child=init_kron(left=self.child, right=other.child))
 
     # only applies to vector
     def linear_in(
         self,
-        variables: Expression,
-        monomials: Expression | None = None,
+        variables: SymmetricMatrixExpression,
+        monomials: SymmetricMatrixExpression | None = None,
     ):
         return self.copy(
             child=init_linear_in(
@@ -257,7 +257,7 @@ class Expression(SingleChildExpressionTreeMixin, ABC):
             )
         )
 
-    def linear_monomials_in(self, variables: Expression):
+    def linear_monomials_in(self, variables: SymmetricMatrixExpression):
         return self.copy(
             child=init_linear_monomials(
                 child=self.child,
@@ -265,7 +265,7 @@ class Expression(SingleChildExpressionTreeMixin, ABC):
             )
         )
 
-    def product(self, others: Iterable[Expression], degrees: ProductMixin.DEGREE_TYPES):
+    def product(self, others: Iterable[SymmetricMatrixExpression], degrees: ProductMixin.DEGREE_TYPES):
         stack = get_frame_summary()
 
         return self.copy(
@@ -279,8 +279,8 @@ class Expression(SingleChildExpressionTreeMixin, ABC):
     # only applies to polynomial
     def quadratic_in(
         self,
-        variables: Expression,
-        monomials: Expression | None = None,
+        variables: SymmetricMatrixExpression,
+        monomials: SymmetricMatrixExpression | None = None,
     ):
         return self.copy(
             child=init_symmetric(
@@ -293,7 +293,7 @@ class Expression(SingleChildExpressionTreeMixin, ABC):
             )
         )
 
-    def quadratic_monomials_in(self, variables: Expression):
+    def quadratic_monomials_in(self, variables: SymmetricMatrixExpression):
         return self.copy(
             child=init_quadratic_monomials(
                 child=self.child,
@@ -359,6 +359,6 @@ class Expression(SingleChildExpressionTreeMixin, ABC):
     def trace(self):
         return self.diag().T.sum()
 
-    def v_stack(self, others: Iterable[Expression]):
+    def v_stack(self, others: Iterable[SymmetricMatrixExpression]):
         stack = get_frame_summary()
         return self.copy(child=self._v_stack(others=others, stack=stack))

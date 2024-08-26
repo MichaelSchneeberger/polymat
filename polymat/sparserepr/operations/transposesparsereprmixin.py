@@ -3,7 +3,7 @@ from functools import cached_property
 from typing_extensions import override
 
 from polymat.sparserepr.data.polynomial import MaybePolynomialType
-from polymat.sparserepr.sparsereprmixin import SingleChildSparseReprMixin
+from polymat.sparserepr.sparserepr import SingleChildSparseReprMixin
 
 
 class TransposeSparseReprMixin(SingleChildSparseReprMixin):

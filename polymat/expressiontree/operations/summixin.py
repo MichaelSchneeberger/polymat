@@ -2,9 +2,9 @@ from typing import override
 
 from polymat.sparserepr.data.polynomial import add_polynomial_iterable
 from polymat.sparserepr.init import init_transpose_sparse_repr
-from polymat.sparserepr.sparsereprmixin import SparseReprMixin
+from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
-from polymat.expressiontree.expressiontreemixin import SingleChildExpressionTreeMixin
+from polymat.expressiontree.expressiontree import SingleChildExpressionTreeMixin
 from polymat.sparserepr.init import init_sparse_repr_from_iterable
 
 
@@ -20,7 +20,7 @@ class SumMixin(SingleChildExpressionTreeMixin):
         return f"sum({self.child})"
 
     @override
-    def apply(self, state: State) -> tuple[State, SparseReprMixin]:
+    def apply(self, state: State) -> tuple[State, SparseRepr]:
         state, child = self.child.apply(state=state)
 
         if child.shape[1] == 1:

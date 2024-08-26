@@ -1,12 +1,12 @@
 from typing import override
 
-from polymat.sparserepr.init import init_sparse_repr_from_data
-from polymat.sparserepr.operations.sparsereprfrompolynomialmixin import (
-    SparseReprFromPolynomialMatrixMixin,
+from polymat.sparserepr.init import init_from_polynomial_matrix
+from polymat.sparserepr.operations.frompolynomialmixin import (
+    FromPolynomialMatrixMixin,
 )
-from polymat.sparserepr.sparsereprmixin import SparseReprMixin
+from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
-from polymat.expressiontree.expressiontreemixin import SingleChildExpressionTreeMixin
+from polymat.expressiontree.expressiontree import SingleChildExpressionTreeMixin
 from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_traceback
 
 
@@ -17,7 +17,7 @@ class CacheMixin(FrameSummaryMixin, SingleChildExpressionTreeMixin):
         return str(self.child)
 
     @override
-    def apply(self, state: State) -> tuple[State, SparseReprMixin]:
+    def apply(self, state: State) -> tuple[State, SparseRepr]:
         try:
             if self in state.cache:
                 return state, state.cache[self]
@@ -31,12 +31,12 @@ class CacheMixin(FrameSummaryMixin, SingleChildExpressionTreeMixin):
 
         state, child = self.child.apply(state)
 
-        if isinstance(child, SparseReprFromPolynomialMatrixMixin):
+        if isinstance(child, FromPolynomialMatrixMixin):
             cached_data = child.data
         else:
             cached_data = dict(child.entries())
 
-        polymatrix = init_sparse_repr_from_data(
+        polymatrix = init_from_polynomial_matrix(
             data=cached_data,
             shape=child.shape,
         )

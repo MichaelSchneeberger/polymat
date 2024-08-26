@@ -3,7 +3,7 @@ from typing import Iterable
 from polymat.utils.getstacklines import get_frame_summary
 from polymat.symbol import Symbol
 from polymat.utils import typing
-from polymat.expression.abc import Expression, VectorExpression
+from polymat.expression.abc import MatrixExpression, VectorExpression
 from polymat.expressiontree.operations.fromvariablesmixin import FromVariablesMixin
 from polymat.expressiontree.init import (
     init_define_variable,
@@ -17,25 +17,25 @@ from polymat.expression.init import (
 )
 
 
-def _split_first[T: Expression](
+def _split_first[T: MatrixExpression](
     expressions: Iterable[T],
 ) -> tuple[T, tuple[T, ...]]:
     expressions_iter = iter(expressions)
 
     first = next(expressions_iter)
 
-    if not isinstance(first, Expression):
+    if not isinstance(first, MatrixExpression):
         first = init_expression(from_(first))
 
     return first, tuple(expressions_iter)
 
 
-def block_diag(expressions: Iterable[Expression]) -> Expression:
+def block_diag(expressions: Iterable[MatrixExpression]) -> MatrixExpression:
     first, others = _split_first(expressions)
     return first.block_diag(others=others)
 
 
-def concat(expressions: Iterable[Iterable[Expression]]):
+def concat(expressions: Iterable[Iterable[MatrixExpression]]):
     def gen_h_stack():
         for col_expressions in expressions:
             yield h_stack(col_expressions)
@@ -57,14 +57,14 @@ from_polynomial = from_
 
 def define_variable(
     name: str | Symbol,
-    size: int | Expression | None = None,
+    size: int | MatrixExpression | None = None,
 ):
     if not isinstance(name, Symbol):
         symbol = Symbol(name)
     else:
         symbol = name
 
-    if isinstance(size, Expression):
+    if isinstance(size, MatrixExpression):
         n_size = size.child
     else:
         n_size = size
@@ -85,7 +85,7 @@ def from_variable_indices(indices: tuple[int, ...]):
     return init_expression(init_from_variable_indices(indices=indices))
 
 
-def h_stack(expressions: Iterable[Expression]) -> Expression:
+def h_stack(expressions: Iterable[MatrixExpression]) -> MatrixExpression:
     return v_stack((expr.T for expr in expressions)).T
 
 
@@ -94,6 +94,6 @@ def product(expressions: Iterable[VectorExpression]) -> VectorExpression:
     return first.product(others=others)
 
 
-def v_stack(expressions: Iterable[Expression]) -> Expression:
+def v_stack(expressions: Iterable[MatrixExpression]) -> MatrixExpression:
     first, others = _split_first(expressions)
     return first.v_stack(others=others)

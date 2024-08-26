@@ -3,33 +3,33 @@ from itertools import accumulate
 
 from statemonad.abc import StateMonadNode
 
-from polymat.sparserepr.sparsereprmixin import SparseReprMixin
+from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
 
 
-class ExpressionTreeMixin(StateMonadNode[State, SparseReprMixin]): ...
+class ExpressionTree(StateMonadNode[State, SparseRepr]): ...
 
 
-class SingleChildExpressionTreeMixin(ExpressionTreeMixin):
+class SingleChildExpressionTreeMixin(ExpressionTree):
     @property
     @abstractmethod
-    def child(self) -> ExpressionTreeMixin: ...
+    def child(self) -> ExpressionTree: ...
 
 
-class TwoChildrenExpressionTreeMixin(ExpressionTreeMixin):
+class TwoChildrenExpressionTreeMixin(ExpressionTree):
     @property
     @abstractmethod
-    def left(self) -> ExpressionTreeMixin: ...
+    def left(self) -> ExpressionTree: ...
 
     @property
     @abstractmethod
-    def right(self) -> ExpressionTreeMixin: ...
+    def right(self) -> ExpressionTree: ...
 
 
-class MultiChildrenExpressionTreeMixin(ExpressionTreeMixin):
+class MultiChildrenExpressionTreeMixin(ExpressionTree):
     @property
     @abstractmethod
-    def children(self) -> tuple[ExpressionTreeMixin, ...]: ...
+    def children(self) -> tuple[ExpressionTree, ...]: ...
 
     def apply_children(self, state: State):
         def acc_children(acc, next):

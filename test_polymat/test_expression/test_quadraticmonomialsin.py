@@ -1,7 +1,7 @@
 import unittest
 
 from polymat.expressiontree.init import init_from_sparse_repr, init_quadratic_monomials
-from polymat.sparserepr.init import init_sparse_repr_from_data
+from polymat.sparserepr.init import init_from_polynomial_matrix
 from polymat.state import init_state
 
 
@@ -24,14 +24,14 @@ class TestQuadraticMonomialsIn(unittest.TestCase):
         }
 
         child = init_from_sparse_repr(
-            init_sparse_repr_from_data(
+            init_from_polynomial_matrix(
                 data=child_terms,
                 shape=(1, 1),
             )
         )
 
         variables = init_from_sparse_repr(
-            init_sparse_repr_from_data(
+            init_from_polynomial_matrix(
                 data=variable_terms,
                 shape=(2, 1),
             )

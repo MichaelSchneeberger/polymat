@@ -1,7 +1,7 @@
 from typing import override
 
 from polymat.sparserepr.data.polynomial import MaybePolynomialType, multiply_polynomials
-from polymat.sparserepr.sparsereprmixin import TwoChildrenSparseReprMixin
+from polymat.sparserepr.sparserepr import TwoChildrenSparseReprMixin
 
 
 class KronSparseReprMixin(TwoChildrenSparseReprMixin):

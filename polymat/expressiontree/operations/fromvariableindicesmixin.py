@@ -1,13 +1,13 @@
 from abc import abstractmethod
 from typing_extensions import override
 
-from polymat.expressiontree.expressiontreemixin import ExpressionTreeMixin
-from polymat.sparserepr.sparsereprmixin import SparseReprMixin
+from polymat.expressiontree.expressiontree import ExpressionTree
+from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
 from polymat.sparserepr.init import init_sparse_repr_from_iterable
 
 
-class FromVariableIndicesMixin(ExpressionTreeMixin):
+class FromVariableIndicesMixin(ExpressionTree):
     def __str__(self):
         return f"from_indices({self.indices})"
 
@@ -17,7 +17,7 @@ class FromVariableIndicesMixin(ExpressionTreeMixin):
         """The matrix of numbers in row major order."""
 
     @override
-    def apply(self, state: State) -> tuple[State, SparseReprMixin]:
+    def apply(self, state: State) -> tuple[State, SparseRepr]:
         def gen_polynomial_matrix():
             for row, index in enumerate(self.indices):
                 monomial = ((index, 1),)

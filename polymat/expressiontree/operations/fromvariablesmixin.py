@@ -1,14 +1,14 @@
 from abc import abstractmethod
 from typing_extensions import override
 
-from polymat.expressiontree.expressiontreemixin import ExpressionTreeMixin
-from polymat.sparserepr.sparsereprmixin import SparseReprMixin
+from polymat.expressiontree.expressiontree import ExpressionTree
+from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
 from polymat.symbol import Symbol
-from polymat.sparserepr.init import init_sparse_repr_from_data
+from polymat.sparserepr.init import init_from_polynomial_matrix
 
 
-class FromVariablesMixin(ExpressionTreeMixin):
+class FromVariablesMixin(ExpressionTree):
     """Underlying object for VariableExpression"""
 
     VARIABLE_VALUE_TYPE = tuple[Symbol, ...]
@@ -23,7 +23,7 @@ class FromVariablesMixin(ExpressionTreeMixin):
         """The symbol representing the variable."""
 
     @override
-    def apply(self, state: State) -> tuple[State, SparseReprMixin]:
+    def apply(self, state: State) -> tuple[State, SparseRepr]:
         def gen_polynomial_matrix():
             row = 0
             for variable in self.variables:
@@ -38,4 +38,4 @@ class FromVariablesMixin(ExpressionTreeMixin):
         data = dict(gen_polynomial_matrix())
         shape = (len(data), 1)
 
-        return state, init_sparse_repr_from_data(data=data, shape=shape)
+        return state, init_from_polynomial_matrix(data=data, shape=shape)

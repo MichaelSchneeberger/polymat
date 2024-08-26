@@ -2,10 +2,10 @@ from abc import ABC, abstractmethod
 from typing import override
 
 from polymat.sparserepr.data.polynomial import MaybePolynomialType, PolynomialType
-from polymat.sparserepr.sparsereprmixin import SparseReprMixin
+from polymat.sparserepr.sparserepr import SparseRepr
 
 
-class BroadcastSparseReprMixin(SparseReprMixin, ABC):
+class BroadcastSparseReprMixin(SparseRepr, ABC):
     """
     TODO: docstring, similar to numpy broadcasting.
     https://numpy.org/doc/stable/user/basics.broadcasting.html
