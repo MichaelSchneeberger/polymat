@@ -164,8 +164,8 @@ class SymmetricMatrixExpression(SingleChildExpressionTreeMixin, ABC):
     def apply(self, state: State) -> tuple[State, SparseRepr]:
         return self.child.apply(state)
 
-    def assert_vector(self):
-        return self.copy(child=init_assert_vector(stack=get_frame_summary(), child=self))
+    def assert_vector(self, stack=get_frame_summary()):
+        return self.copy(child=init_assert_vector(stack=stack, child=self))
 
     def assert_polynomial(self, stack=get_frame_summary()):
         return self.copy(child=init_assert_polynomial(stack=stack, child=self))
@@ -343,6 +343,9 @@ class SymmetricMatrixExpression(SingleChildExpressionTreeMixin, ABC):
     def T(self):
         return self.copy(child=init_transpose(self.child))
 
+    def to_monomial_vector(self):
+        return self.assert_vector(stack=get_frame_summary())
+
     def to_polynomial(self):
         return self.assert_polynomial(stack=get_frame_summary())[0, 0]
 
@@ -354,7 +357,7 @@ class SymmetricMatrixExpression(SingleChildExpressionTreeMixin, ABC):
         )
 
     def to_vector(self):
-        return self.reshape(-1, 1)
+        return self.assert_vector(stack=get_frame_summary())
 
     def trace(self):
         return self.diag().T.sum()

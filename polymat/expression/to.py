@@ -59,32 +59,6 @@ def to_variables(expr: MatrixExpression) -> StateMonad[State, tuple[Symbol, ...]
 
 
 def to_variable_indices(
-    expr: VariableVectorExpression,
+    expr: MatrixExpression,
 ) -> StateMonad[State, tuple[int, ...]]:
-    """
-    Convert a variable vector expression into a tuple of variable indices.
-
-    This function iterates over the rows of the provided `VariableVectorExpression`
-    and collects the indices corresponding to the variable at each row of the vector.
-    The resulting indices are aggregated into a tuple, which is returned within a
-    `StateMonad`.
-
-    Example:
-    ``` python
-    x1, x2, x3 = (polymat.define_variable(name) for name in range(3))
-    x = polymat.v_stack((x1, x2, x3))
-    state, indices = polymat.to_variable_indcies(x).apply(state)
-
-    print(indices)  # Output will be (0, 1, 2)
-    ```
-
-    Args:
-        expr (VariableVectorExpression): The variable vector expression containing
-        the rows to be iterated over.
-
-    Returns:
-        StateMonad[State, tuple[int, ...]]: A stateful monad containing the tuple
-        of variable indices for the expression's rows.
-    """
-
     return _to_variable_indices(expr.child)

@@ -40,7 +40,7 @@ from_symmetric = _from_symmetric
 from_vector = _from_vector
 from_row_vector = _from_row_vector
 from_polynomial = _from_polynomial
-from_variables = _from_variables
+# from_variables = _from_variables              # remove?
 from_variable_indices = _from_variable_indices
 define_variable = _define_variable
 
@@ -57,5 +57,5 @@ to_shape = _to_shape
 to_sparse_repr = _to_sparse_repr
 to_sympy = _to_sympy
 to_tuple = _to_tuple
-to_variables = _to_variables
+# to_variables = _to_variables              # remove?
 to_variable_indices = _to_variable_indices

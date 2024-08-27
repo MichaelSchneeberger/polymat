@@ -85,6 +85,10 @@ def from_variable_indices(indices: tuple[int, ...]):
     return init_expression(init_from_variable_indices(indices=indices))
 
 
+# def empty_variable_vector():
+#     return init_expression(init_from_variable_indices(indices=tuple()))
+
+
 def h_stack(expressions: Iterable[MatrixExpression]) -> MatrixExpression:
     return v_stack((expr.T for expr in expressions)).T
 
