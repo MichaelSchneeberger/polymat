@@ -124,7 +124,10 @@ def to_array(
 
             return state, array_repr
 
-    return statemonad.from_node(ToArrayStateMonadTree(expr=expr, variables=variables))
+    return statemonad.from_node(ToArrayStateMonadTree(
+        expr=expr, 
+        variables=variables,
+    ))
 
 
 def _to_tuple[U](

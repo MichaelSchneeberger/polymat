@@ -1,6 +1,6 @@
 from abc import abstractmethod
 
-from polymat.expression.expression import SymmetricMatrixExpression as _Expression
+from polymat.expression.expression import Expression as _Expression
 from polymat.symbol import Symbol
 
 

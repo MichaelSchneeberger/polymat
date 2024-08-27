@@ -17,17 +17,20 @@ from polymat.expression.init import (
 )
 
 
-def _split_first[T: MatrixExpression](
+def _split_first[T: typing.FROM_TYPES | MatrixExpression](
     expressions: Iterable[T],
 ) -> tuple[T, tuple[T, ...]]:
     expressions_iter = iter(expressions)
 
+    # raises exception if iterable is empty
     first = next(expressions_iter)
 
     if not isinstance(first, MatrixExpression):
         first = init_expression(from_(first))
 
-    return first, tuple(expressions_iter)
+    others = tuple(expressions_iter)
+
+    return first, others # type: ignore
 
 
 def block_diag(expressions: Iterable[MatrixExpression]) -> MatrixExpression:
@@ -43,12 +46,12 @@ def concat(expressions: Iterable[Iterable[MatrixExpression]]):
     return v_stack(gen_h_stack())
 
 
-def from_(value: typing.FROM_TYPES):
+def from_(value: typing.FROM_TYPES | MatrixExpression):
     stack = get_frame_summary()
     return init_expression(init_from_(value, stack=stack))
 
 
-# use for type hinting
+# used for type hinting
 from_symmetric = from_
 from_vector = from_
 from_row_vector = from_
@@ -83,10 +86,6 @@ def from_variables(variables: FromVariablesMixin.VARIABLE_TYPE):
 
 def from_variable_indices(indices: tuple[int, ...]):
     return init_expression(init_from_variable_indices(indices=indices))
-
-
-# def empty_variable_vector():
-#     return init_expression(init_from_variable_indices(indices=tuple()))
 
 
 def h_stack(expressions: Iterable[MatrixExpression]) -> MatrixExpression:
