@@ -39,7 +39,7 @@ from polymat.expressiontree.operations.symmetricmixin import SymmetricMixin
 from polymat.expressiontree.operations.tovariablevectormixin import (
     ToVariableVectorMixin,
 )
-from polymat.expressiontree.expressiontree import ExpressionTree
+from polymat.expressiontree.nodes import ExpressionNode
 from polymat.expressiontree.operations.additionmixin import AdditionMixin
 from polymat.expressiontree.operations.combinationsmixin import (
     CombinationsMixin,
@@ -65,14 +65,14 @@ from polymat.utils import typing
 
 @dataclassabc(frozen=True, repr=False)
 class AdditionExprImpl(AdditionMixin):
-    left: ExpressionTree
-    right: ExpressionTree
+    left: ExpressionNode
+    right: ExpressionNode
     stack: tuple[FrameSummary, ...]
 
 
 def init_addition(
-    left: ExpressionTree,
-    right: ExpressionTree,
+    left: ExpressionNode,
+    right: ExpressionNode,
     stack: tuple[FrameSummary, ...],
 ):
     return AdditionExprImpl(left=left, right=right, stack=stack)
@@ -80,7 +80,7 @@ def init_addition(
 
 @dataclassabc(frozen=True, repr=False)
 class AssertShapeImpl(AssertShapeMixin):
-    child: ExpressionTree
+    child: ExpressionNode
     fn: Callable[[int, int], bool]
     msg: Callable[[int, int], str]
     stack: tuple[FrameSummary, ...]
@@ -92,7 +92,7 @@ class AssertShapeImpl(AssertShapeMixin):
 init_assert_shape = AssertShapeImpl
 
 
-def init_assert_vector(child: ExpressionTree, stack: tuple[FrameSummary, ...]):
+def init_assert_vector(child: ExpressionNode, stack: tuple[FrameSummary, ...]):
     return init_assert_shape(
         child=child,
         stack=stack,
@@ -101,7 +101,7 @@ def init_assert_vector(child: ExpressionTree, stack: tuple[FrameSummary, ...]):
     )
 
 
-def init_assert_polynomial(child: ExpressionTree, stack: tuple[FrameSummary, ...]):
+def init_assert_polynomial(child: ExpressionNode, stack: tuple[FrameSummary, ...]):
     return init_assert_shape(
         child=child,
         stack=stack,
@@ -112,7 +112,7 @@ def init_assert_polynomial(child: ExpressionTree, stack: tuple[FrameSummary, ...
 
 @dataclassabc(frozen=True)
 class BlockDiagonalImpl(BlockDiagonalMixin):
-    children: tuple[ExpressionTree, ...]
+    children: tuple[ExpressionNode, ...]
 
 
 init_block_diagonal = BlockDiagonalImpl
@@ -120,7 +120,7 @@ init_block_diagonal = BlockDiagonalImpl
 
 @dataclassabc(frozen=True, repr=False)
 class CacheImpl(CacheMixin):
-    child: ExpressionTree
+    child: ExpressionNode
     stack: tuple[FrameSummary, ...]
 
 
@@ -129,13 +129,13 @@ init_cache = CacheImpl
 
 @dataclassabc(frozen=True, repr=False)
 class CombinationsImpl(CombinationsMixin):
-    child: ExpressionTree
+    child: ExpressionNode
     degrees: tuple[int, ...]
     stack: tuple[FrameSummary, ...]
 
 
 def init_combinations(
-    child: ExpressionTree,
+    child: ExpressionNode,
     degrees: tuple[int, ...],
     stack: tuple[FrameSummary, ...],
 ):
@@ -150,8 +150,8 @@ def init_combinations(
 
 @dataclassabc(frozen=True, repr=False)
 class DifferentiateImpl(DifferentiateMixin):
-    child: ExpressionTree
-    variables: ExpressionTree
+    child: ExpressionNode
+    variables: ExpressionNode
     stack: tuple[FrameSummary, ...]
 
 
@@ -160,7 +160,7 @@ init_differentiate = DifferentiateImpl
 
 @dataclassabc(frozen=True, repr=False)
 class DiagImpl(DiagMixin):
-    child: ExpressionTree
+    child: ExpressionNode
     stack: tuple[FrameSummary, ...]
 
 
@@ -169,8 +169,8 @@ init_diag = DiagImpl
 
 @dataclassabc(frozen=True, repr=False)
 class ElementwiseMultImpl(ElementwiseMultMixin):
-    left: ExpressionTree
-    right: ExpressionTree
+    left: ExpressionNode
+    right: ExpressionNode
     stack: tuple[FrameSummary, ...]
 
 
@@ -179,13 +179,13 @@ init_elementwise_mult = ElementwiseMultImpl
 
 @dataclassabc(frozen=True, repr=False)
 class EvalImpl(EvalMixin):
-    child: ExpressionTree
+    child: ExpressionNode
     substitutions: EvalMixin.SUBSTITUTION_TYPE
     stack: tuple[FrameSummary, ...]
 
 
 def init_eval(
-    child: ExpressionTree,
+    child: ExpressionNode,
     substitutions: dict[Symbol, tuple[float, ...]],
     stack: tuple[FrameSummary, ...],
 ):
@@ -198,7 +198,7 @@ def init_eval(
 
 @dataclassabc(frozen=True, repr=False)
 class FilterImpl(FilterMixin):
-    child: ExpressionTree
+    child: ExpressionNode
     predicator: FilterMixin.PREDICATOR_TYPE
     stack: tuple[FrameSummary, ...]
 
@@ -243,14 +243,14 @@ def init_from_sparse_repr(sparse_repr: SparseRepr):
 @dataclassabc(frozen=True, repr=False)
 class DefineVariableImpl(DefineVariableMixin):
     symbol: Symbol
-    size: int | ExpressionTree
+    size: int | ExpressionNode
     stack: tuple[FrameSummary, ...]
 
 
 def init_define_variable(
     symbol: Symbol,
     stack: tuple[FrameSummary, ...],
-    size: int | ExpressionTree | None = None,
+    size: int | ExpressionNode | None = None,
 ):
     if size is None:
         size = 1
@@ -276,7 +276,7 @@ init_from_variable_indices = FromVariableIndicesImpl
 
 def init_from_or_none(
     value: typing.FROM_TYPES, stack: tuple[FrameSummary, ...]
-) -> ExpressionTree | None:
+) -> ExpressionNode | None:
     """
     Create an expression object from a value, or give value_if_not_supported if
     the expression cannot be constructed from the given value.
@@ -323,7 +323,7 @@ def init_from_or_none(
 
         return init_from_any(data, stack)
 
-    elif isinstance(value, ExpressionTree):
+    elif isinstance(value, ExpressionNode):
         return value
 
 
@@ -343,8 +343,8 @@ def init_from_(value: typing.FROM_TYPES, stack: tuple[FrameSummary, ...]):
 
 @dataclassabc(frozen=True)
 class KronImpl(KronMixin):
-    left: ExpressionTree
-    right: ExpressionTree
+    left: ExpressionNode
+    right: ExpressionNode
 
 
 init_kron = KronImpl
@@ -352,18 +352,18 @@ init_kron = KronImpl
 
 @dataclassabc(frozen=True, repr=False)
 class LinearInExprImpl(LinearInExprMixin):
-    child: ExpressionTree
-    monomials: ExpressionTree
-    variables: ExpressionTree
+    child: ExpressionNode
+    monomials: ExpressionNode
+    variables: ExpressionNode
     ignore_unmatched: bool
     stack: tuple[FrameSummary, ...]
 
 
 def init_linear_in(
-    child: ExpressionTree,
-    variables: ExpressionTree,
+    child: ExpressionNode,
+    variables: ExpressionNode,
     stack: tuple[FrameSummary, ...],
-    monomials: ExpressionTree | None = None,
+    monomials: ExpressionNode | None = None,
     ignore_unmatched: bool = False,
 ):
     if monomials is None:
@@ -383,8 +383,8 @@ def init_linear_in(
 
 @dataclassabc(frozen=True)
 class LinearMonomialsImpl(LinearMonomialsMixin):
-    child: ExpressionTree
-    variables: ExpressionTree
+    child: ExpressionNode
+    variables: ExpressionNode
 
 
 init_linear_monomials = LinearMonomialsImpl
@@ -392,8 +392,8 @@ init_linear_monomials = LinearMonomialsImpl
 
 @dataclassabc(frozen=True, repr=False)
 class MatrixMultImpl(MatrixMultMixin):
-    left: ExpressionTree
-    right: ExpressionTree
+    left: ExpressionNode
+    right: ExpressionNode
     stack: tuple[FrameSummary, ...]
 
 
@@ -402,13 +402,13 @@ init_matrix_mult = MatrixMultImpl
 
 @dataclassabc(frozen=True, repr=False)
 class ProductImpl(ProductMixin):
-    children: tuple[ExpressionTree, ...]
+    children: tuple[ExpressionNode, ...]
     degrees: ProductMixin.DEGREE_TYPES
     stack: tuple[FrameSummary, ...]
 
 
 def init_product(
-    children: tuple[ExpressionTree, ...],
+    children: tuple[ExpressionNode, ...],
     stack: tuple[FrameSummary, ...],
     degrees: ProductMixin.DEGREE_TYPES,
 ):
@@ -421,18 +421,18 @@ def init_product(
 
 @dataclassabc(frozen=True, repr=False)
 class QuadraticInExprImpl(QuadraticInExprMixin):
-    child: ExpressionTree
-    monomials: ExpressionTree
-    variables: ExpressionTree
+    child: ExpressionNode
+    monomials: ExpressionNode
+    variables: ExpressionNode
     ignore_unmatched: bool
     stack: tuple[FrameSummary, ...]
 
 
 def init_quadratic_in(
-    child: ExpressionTree,
-    variables: ExpressionTree,
+    child: ExpressionNode,
+    variables: ExpressionNode,
     stack: tuple[FrameSummary, ...],
-    monomials: ExpressionTree | None = None,
+    monomials: ExpressionNode | None = None,
     ignore_unmatched: bool = False,
 ):
     if monomials is None:
@@ -449,8 +449,8 @@ def init_quadratic_in(
 
 @dataclassabc(frozen=True)
 class QuadraticMonomialsImpl(QuadraticMonomialsMixin):
-    child: ExpressionTree
-    variables: ExpressionTree
+    child: ExpressionNode
+    variables: ExpressionNode
 
 
 init_quadratic_monomials = QuadraticMonomialsImpl
@@ -458,7 +458,7 @@ init_quadratic_monomials = QuadraticMonomialsImpl
 
 @dataclassabc(frozen=True)
 class GetItemImpl(GetItemMixin):
-    child: ExpressionTree
+    child: ExpressionNode
     key: GetItemMixin.KEY_TYPE
 
 
@@ -467,16 +467,16 @@ init_get_item = GetItemImpl
 
 @dataclassabc(frozen=True)
 class SumImpl(SumMixin):
-    child: ExpressionTree
+    child: ExpressionNode
 
 
-def init_sum(child: ExpressionTree):
+def init_sum(child: ExpressionNode):
     return SumImpl(child=child)
 
 
 @dataclassabc(frozen=True)
 class SymmetricImpl(SymmetricMixin):
-    child: ExpressionTree
+    child: ExpressionNode
 
 
 init_symmetric = SymmetricImpl
@@ -484,7 +484,7 @@ init_symmetric = SymmetricImpl
 
 @dataclassabc(frozen=True)
 class RepMatImpl(RepMatMixin):
-    child: ExpressionTree
+    child: ExpressionNode
     repetition: tuple[int, int]
 
 
@@ -493,7 +493,7 @@ init_rep_mat = RepMatImpl
 
 @dataclassabc(frozen=True)
 class ReshapeImpl(ReshapeMixin):
-    child: ExpressionTree
+    child: ExpressionNode
     new_shape: tuple[int, int]
 
 
@@ -502,7 +502,7 @@ init_reshape = ReshapeImpl
 
 @dataclassabc(frozen=True)
 class ToVariableVectorImpl(ToVariableVectorMixin):
-    child: ExpressionTree
+    child: ExpressionNode
 
 
 init_variable_vector = ToVariableVectorImpl
@@ -510,7 +510,7 @@ init_variable_vector = ToVariableVectorImpl
 
 @dataclassabc(frozen=True)
 class TransposeImpl(TransposeMixin):
-    child: ExpressionTree
+    child: ExpressionNode
 
 
 init_transpose = TransposeImpl
@@ -518,7 +518,7 @@ init_transpose = TransposeImpl
 
 @dataclassabc(frozen=True, repr=False)
 class VStackImpl(VStackMixin):
-    children: tuple[ExpressionTree, ...]
+    children: tuple[ExpressionNode, ...]
     stack: tuple[FrameSummary, ...]
 
 

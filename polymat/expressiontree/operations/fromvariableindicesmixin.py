@@ -1,13 +1,13 @@
 from abc import abstractmethod
 from typing_extensions import override
 
-from polymat.expressiontree.expressiontree import ExpressionTree
+from polymat.expressiontree.nodes import ExpressionNode
 from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
 from polymat.sparserepr.init import init_sparse_repr_from_iterable
 
 
-class FromVariableIndicesMixin(ExpressionTree):
+class FromVariableIndicesMixin(ExpressionNode):
     def __str__(self):
         return f"from_indices({self.indices})"
 

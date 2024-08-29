@@ -2,11 +2,11 @@ from abc import abstractmethod
 from typing_extensions import override
 
 from polymat.state import State
-from polymat.expressiontree.expressiontree import ExpressionTree
+from polymat.expressiontree.nodes import ExpressionNode
 from polymat.sparserepr.sparserepr import SparseRepr
 
 
-class FromSparseReprMixin(ExpressionTree):
+class FromSparseReprMixin(ExpressionNode):
     """
     Make an expression from a tuple of tuples of numbers (constant). The tuple
     of tuples is interpreted as a matrix stored with row major ordering.

@@ -6,11 +6,11 @@ from polymat.sparserepr.operations.frompolynomialmixin import (
 )
 from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
-from polymat.expressiontree.expressiontree import SingleChildExpressionTreeMixin
+from polymat.expressiontree.nodes import SingleChildExpressionNode
 from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_traceback
 
 
-class CacheMixin(FrameSummaryMixin, SingleChildExpressionTreeMixin):
+class CacheMixin(FrameSummaryMixin, SingleChildExpressionNode):
     """Caches the polynomial matrix using the state"""
 
     def __str__(self):

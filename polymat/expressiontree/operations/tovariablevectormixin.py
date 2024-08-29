@@ -2,11 +2,11 @@ from typing import override
 
 from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
-from polymat.expressiontree.expressiontree import SingleChildExpressionTreeMixin
+from polymat.expressiontree.nodes import SingleChildExpressionNode
 from polymat.sparserepr.init import init_sparse_repr_from_iterable
 
 
-class ToVariableVectorMixin(SingleChildExpressionTreeMixin):
+class ToVariableVectorMixin(SingleChildExpressionNode):
     def __str__(self):
         return f"to_variable_vector({self.child})"
 

@@ -3,10 +3,10 @@ from typing import Callable, override
 
 from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
-from polymat.expressiontree.expressiontree import SingleChildExpressionTreeMixin
+from polymat.expressiontree.nodes import SingleChildExpressionNode
 from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_traceback
 
-class AssertShapeMixin(FrameSummaryMixin, SingleChildExpressionTreeMixin):
+class AssertShapeMixin(FrameSummaryMixin, SingleChildExpressionNode):
 
     @property
     @abstractmethod

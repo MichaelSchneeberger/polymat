@@ -3,8 +3,8 @@ from polymat.symbol import Symbol as _Symbol
 from polymat.state import (
     State as _State,
 )
-from polymat.expressiontree.expressiontree import (
-    ExpressionTree as _ExpressionTreeMixin,
+from polymat.expressiontree.nodes import (
+    ExpressionNode as _ExpressionTreeMixin,
 )
 from polymat.expression.abc import (
     MatrixExpression as _MatrixExpression,

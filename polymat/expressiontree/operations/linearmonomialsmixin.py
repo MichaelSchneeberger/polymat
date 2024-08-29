@@ -1,9 +1,9 @@
 import abc
 from typing import override
 
-from polymat.expressiontree.expressiontree import (
-    ExpressionTree,
-    SingleChildExpressionTreeMixin,
+from polymat.expressiontree.nodes import (
+    ExpressionNode,
+    SingleChildExpressionNode,
 )
 from polymat.sparserepr.data.monomial import sort_monomials
 from polymat.sparserepr.init import init_sparse_repr_from_iterable
@@ -11,7 +11,7 @@ from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
 
 
-class LinearMonomialsMixin(SingleChildExpressionTreeMixin):
+class LinearMonomialsMixin(SingleChildExpressionNode):
     """
     Maps a polynomial matrix
 
@@ -31,7 +31,7 @@ class LinearMonomialsMixin(SingleChildExpressionTreeMixin):
 
     @property
     @abc.abstractmethod
-    def variables(self) -> ExpressionTree: ...
+    def variables(self) -> ExpressionNode: ...
 
     def __str__(self):
         return f"linear_monomials_in({self.child}, {self.variables})"

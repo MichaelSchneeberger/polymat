@@ -1,9 +1,9 @@
 import abc
 from typing import override
 
-from polymat.expressiontree.expressiontree import (
-    ExpressionTree,
-    SingleChildExpressionTreeMixin,
+from polymat.expressiontree.nodes import (
+    ExpressionNode,
+    SingleChildExpressionNode,
 )
 from polymat.sparserepr.init import init_sparse_repr_from_iterable
 from polymat.sparserepr.sparserepr import SparseRepr
@@ -14,7 +14,7 @@ from polymat.utils.getstacklines import (
 )
 
 
-class LinearInExprMixin(FrameSummaryMixin, SingleChildExpressionTreeMixin):
+class LinearInExprMixin(FrameSummaryMixin, SingleChildExpressionNode):
     """
     Maps a polynomial column vector
 
@@ -37,11 +37,11 @@ class LinearInExprMixin(FrameSummaryMixin, SingleChildExpressionTreeMixin):
 
     @property
     @abc.abstractmethod
-    def monomials(self) -> ExpressionTree: ...
+    def monomials(self) -> ExpressionNode: ...
 
     @property
     @abc.abstractmethod
-    def variables(self) -> ExpressionTree: ...
+    def variables(self) -> ExpressionNode: ...
 
     @property
     @abc.abstractmethod

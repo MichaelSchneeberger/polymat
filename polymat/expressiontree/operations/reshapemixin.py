@@ -5,11 +5,11 @@ from typing import override
 
 from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
-from polymat.expressiontree.expressiontree import SingleChildExpressionTreeMixin
+from polymat.expressiontree.nodes import SingleChildExpressionNode
 from polymat.sparserepr.init import init_reshape_sparse_repr
 
 
-class ReshapeMixin(SingleChildExpressionTreeMixin):
+class ReshapeMixin(SingleChildExpressionNode):
     @property
     @abstractmethod
     def new_shape(self) -> tuple[int, int]: ...

@@ -4,18 +4,18 @@ from typing import override
 from polymat.sparserepr.data.polynomial import differentiate_polynomial
 from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
-from polymat.expressiontree.expressiontree import (
-    ExpressionTree,
-    SingleChildExpressionTreeMixin,
+from polymat.expressiontree.nodes import (
+    ExpressionNode,
+    SingleChildExpressionNode,
 )
 from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_traceback
 from polymat.sparserepr.init import init_from_polynomial_matrix
 
 
-class DifferentiateMixin(FrameSummaryMixin, SingleChildExpressionTreeMixin):
+class DifferentiateMixin(FrameSummaryMixin, SingleChildExpressionNode):
     @property
     @abstractmethod
-    def variables(self) -> ExpressionTree: ...
+    def variables(self) -> ExpressionNode: ...
 
     def __str__(self):
         return f"diff({self.child}, {self.variables})"

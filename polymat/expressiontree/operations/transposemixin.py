@@ -2,11 +2,11 @@ from typing import override
 
 from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
-from polymat.expressiontree.expressiontree import SingleChildExpressionTreeMixin
+from polymat.expressiontree.nodes import SingleChildExpressionNode
 from polymat.sparserepr.init import init_transpose_sparse_repr
 
 
-class TransposeMixin(SingleChildExpressionTreeMixin):
+class TransposeMixin(SingleChildExpressionNode):
     def __str__(self):
         return f"{self.child}.T"
 

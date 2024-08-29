@@ -3,11 +3,11 @@ from typing import override
 
 from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
-from polymat.expressiontree.expressiontree import MultiChildrenExpressionTreeMixin
+from polymat.expressiontree.nodes import MultiChildrenExpressionNode
 from polymat.sparserepr.init import init_block_diagonal_sparse_repr
 
 
-class BlockDiagonalMixin(MultiChildrenExpressionTreeMixin):
+class BlockDiagonalMixin(MultiChildrenExpressionNode):
     def __str__(self):
         children = ",".join(str(c) for c in self.children)
         return f"block_diag({children})"

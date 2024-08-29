@@ -8,7 +8,7 @@ import numpy as np
 import sympy
 from sympy.polys.polyerrors import GeneratorsNeeded
 
-from polymat.expressiontree.expressiontree import ExpressionTree
+from polymat.expressiontree.nodes import ExpressionNode
 from polymat.sparserepr.data.monomial import sort_monomial
 from polymat.sparserepr.data.polynomialmatrix import MatrixIndexType
 from polymat.sparserepr.data.polynomial import PolynomialType, constant_polynomial
@@ -22,9 +22,9 @@ from polymat.utils.getstacklines import (
 from polymat.symbol import Symbol
 
 
-class FromAnyMixin(FrameSummaryMixin, ExpressionTree):
+class FromAnyMixin(FrameSummaryMixin, ExpressionNode):
     VALUE_TYPES = float | int | np.number | sympy.Expr
-    ELEM_TYPES = VALUE_TYPES | ExpressionTree
+    ELEM_TYPES = VALUE_TYPES | ExpressionNode
 
     def __str__(self):
         if len(self.data) == 1:
@@ -54,7 +54,7 @@ class FromAnyMixin(FrameSummaryMixin, ExpressionTree):
 
             matrix_index = (row, col)
 
-            if isinstance(entry, ExpressionTree):
+            if isinstance(entry, ExpressionNode):
                 state, instance = entry.apply(state)
 
                 if not (instance.shape == (1, 1)):

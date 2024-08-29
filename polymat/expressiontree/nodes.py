@@ -7,29 +7,33 @@ from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
 
 
-class ExpressionTree(StateMonadNode[State, SparseRepr]): ...
+class ExpressionNode(StateMonadNode[State, SparseRepr]): ...
 
 
-class SingleChildExpressionTreeMixin(ExpressionTree):
+class SingleChildExpressionNode(
+    ExpressionNode,
+):
     @property
     @abstractmethod
-    def child(self) -> ExpressionTree: ...
+    def child(self) -> ExpressionNode: ...
 
 
-class TwoChildrenExpressionTreeMixin(ExpressionTree):
+class TwoChildrenExpressionNode(
+    ExpressionNode,
+):
     @property
     @abstractmethod
-    def left(self) -> ExpressionTree: ...
+    def left(self) -> ExpressionNode: ...
 
     @property
     @abstractmethod
-    def right(self) -> ExpressionTree: ...
+    def right(self) -> ExpressionNode: ...
 
 
-class MultiChildrenExpressionTreeMixin(ExpressionTree):
+class MultiChildrenExpressionNode(ExpressionNode):
     @property
     @abstractmethod
-    def children(self) -> tuple[ExpressionTree, ...]: ...
+    def children(self) -> tuple[ExpressionNode, ...]: ...
 
     def apply_children(self, state: State):
         def acc_children(acc, next):

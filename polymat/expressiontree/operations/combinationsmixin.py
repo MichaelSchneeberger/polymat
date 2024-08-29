@@ -7,13 +7,13 @@ from polymat.sparserepr.data.polynomial import (
     multiply_polynomial_iterable,
 )
 from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_traceback
-from polymat.expressiontree.expressiontree import SingleChildExpressionTreeMixin
+from polymat.expressiontree.nodes import SingleChildExpressionNode
 from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
 from polymat.sparserepr.init import init_sparse_repr_from_iterable
 
 
-class CombinationsMixin(FrameSummaryMixin, SingleChildExpressionTreeMixin):
+class CombinationsMixin(FrameSummaryMixin, SingleChildExpressionNode):
     # FIXME: improve docstring
     """
     combination using degrees=(0, 1, 2):

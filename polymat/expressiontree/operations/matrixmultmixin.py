@@ -1,6 +1,6 @@
 from typing import override
 
-from polymat.expressiontree.expressiontree import TwoChildrenExpressionTreeMixin
+from polymat.expressiontree.nodes import TwoChildrenExpressionNode
 from polymat.sparserepr.data.polynomial import (
     add_polynomial_iterable,
     multiply_polynomials,
@@ -11,7 +11,7 @@ from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_traceback
 from polymat.sparserepr.init import init_sparse_repr_from_iterable
 
 
-class MatrixMultMixin(FrameSummaryMixin, TwoChildrenExpressionTreeMixin):
+class MatrixMultMixin(FrameSummaryMixin, TwoChildrenExpressionNode):
     def __str__(self):
         return f"matmul({self.left}, {self.right})"
 

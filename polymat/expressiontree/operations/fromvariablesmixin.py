@@ -1,14 +1,14 @@
 from abc import abstractmethod
 from typing_extensions import override
 
-from polymat.expressiontree.expressiontree import ExpressionTree
+from polymat.expressiontree.nodes import ExpressionNode
 from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
 from polymat.symbol import Symbol
 from polymat.sparserepr.init import init_from_polynomial_matrix
 
 
-class FromVariablesMixin(ExpressionTree):
+class FromVariablesMixin(ExpressionNode):
     """Underlying object for VariableExpression"""
 
     VARIABLE_VALUE_TYPE = tuple[Symbol, ...]

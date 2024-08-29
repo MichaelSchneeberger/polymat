@@ -3,10 +3,10 @@ from typing_extensions import override
 from polymat.sparserepr.init import init_symmetric_sparse_repr
 from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
-from polymat.expressiontree.expressiontree import SingleChildExpressionTreeMixin
+from polymat.expressiontree.nodes import SingleChildExpressionNode
 
 
-class SymmetricMixin(SingleChildExpressionTreeMixin):
+class SymmetricMixin(SingleChildExpressionNode):
     def __str__(self):
         return f"symmetric({self.child})"
 

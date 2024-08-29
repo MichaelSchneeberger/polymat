@@ -4,14 +4,14 @@ from abc import abstractmethod
 from typing_extensions import override
 from numpy.typing import NDArray
 
-from polymat.expressiontree.expressiontree import ExpressionTree
+from polymat.expressiontree.nodes import ExpressionNode
 from polymat.sparserepr.data.polynomial import constant_polynomial
 from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
 from polymat.sparserepr.init import init_sparse_repr_from_iterable
 
 
-class FromNumpyMixin(ExpressionTree):
+class FromNumpyMixin(ExpressionNode):
     """
     Make a (constant) expression from a numpy array.
 

@@ -3,13 +3,13 @@ from typing import override
 
 from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
-from polymat.expressiontree.expressiontree import (
-    SingleChildExpressionTreeMixin,
+from polymat.expressiontree.nodes import (
+    SingleChildExpressionNode,
 )
 from polymat.sparserepr.init import init_repmat_sparse_repr
 
 
-class RepMatMixin(SingleChildExpressionTreeMixin):
+class RepMatMixin(SingleChildExpressionNode):
     @property
     @abstractmethod
     def repetition(self) -> tuple[int, int]: ...

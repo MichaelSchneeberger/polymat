@@ -25,13 +25,13 @@ from polymat.sparserepr.data.monomial import (
 )
 from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
-from polymat.expressiontree.expressiontree import ExpressionTree
+from polymat.expressiontree.nodes import ExpressionNode
 from polymat.expressiontree.init import init_assert_vector
 
 
 def to_array(
-    expr: ExpressionTree,
-    variables: ExpressionTree | tuple[int, ...],
+    expr: ExpressionNode,
+    variables: ExpressionNode | tuple[int, ...],
 ) -> StateMonad[State, ArrayRepr]:
     """
     Given a monomial of degree d, this function returns the indices of a monomial
@@ -52,8 +52,8 @@ def to_array(
 
     @dataclassabc(frozen=True)
     class ToArrayStateMonadTree(StateMonadNode):
-        expr: ExpressionTree
-        variables: ExpressionTree
+        expr: ExpressionNode
+        variables: ExpressionNode
 
         def __str__(self):
             return f"to_array({self.expr}, {self.variables})"
@@ -132,13 +132,13 @@ def to_array(
 
 def _to_tuple[U](
     name: str,
-    expr: ExpressionTree,
+    expr: ExpressionNode,
     func: Callable[[MaybePolynomialType], U],
 ) -> StateMonad[State, U]:
     @dataclassabc(frozen=True)
     class ToTupleStateMonadTree(StateMonadNode):
         name: str
-        expr: ExpressionTree
+        expr: ExpressionNode
 
         def __str__(self):
             return self.name
@@ -168,13 +168,13 @@ def _to_tuple[U](
 
 
 def to_degree(
-    expr: ExpressionTree,
-    variables: ExpressionTree | None = None,
+    expr: ExpressionNode,
+    variables: ExpressionNode | None = None,
 ) -> StateMonad[State, NDArray]:
     @dataclassabc(frozen=True)
     class ToDegreeStateMonadTree(StateMonadNode):
-        expr: ExpressionTree
-        variables: ExpressionTree | None = None
+        expr: ExpressionNode
+        variables: ExpressionNode | None = None
 
         def __str__(self):
             return f"to_degree({self.expr}, {self.variables})"
@@ -209,11 +209,11 @@ def to_degree(
 
 
 def to_numpy(
-    expr: ExpressionTree, assert_constant: bool = True
+    expr: ExpressionNode, assert_constant: bool = True
 ) -> StateMonad[State, NDArray]:
     @dataclassabc(frozen=True)
     class ToNumpyStateMonadTree(StateMonadNode):
-        expr: ExpressionTree
+        expr: ExpressionNode
         assert_constant: bool
 
         def __str__(self):
@@ -239,10 +239,10 @@ def to_numpy(
     )
 
 
-def to_shape(expr: ExpressionTree) -> StateMonad[State, tuple[int, int]]:
+def to_shape(expr: ExpressionNode) -> StateMonad[State, tuple[int, int]]:
     @dataclassabc(frozen=True)
     class ToShapeStateMonadTree(StateMonadNode):
-        expr: ExpressionTree
+        expr: ExpressionNode
 
         def __str__(self):
             return f"to_shape({self.expr})"
@@ -255,14 +255,14 @@ def to_shape(expr: ExpressionTree) -> StateMonad[State, tuple[int, int]]:
     return statemonad.from_node(ToShapeStateMonadTree(expr=expr))
 
 
-def to_sparse_repr(expr: ExpressionTree) -> StateMonad[State, SparseRepr]:
+def to_sparse_repr(expr: ExpressionNode) -> StateMonad[State, SparseRepr]:
     return statemonad.from_node(expr)
 
 
-def to_sympy(expr: ExpressionTree) -> StateMonad[State, sympy.Expr]:
+def to_sympy(expr: ExpressionNode) -> StateMonad[State, sympy.Expr]:
     @dataclassabc(frozen=True)
     class ToSympyStateMonadTree(StateMonadNode):
-        expr: ExpressionTree
+        expr: ExpressionNode
 
         def __str__(self):
             return f"to_sympy({self.expr})"
@@ -300,11 +300,11 @@ def to_sympy(expr: ExpressionTree) -> StateMonad[State, sympy.Expr]:
 
 
 def to_tuple(
-    expr: ExpressionTree, assert_constant: bool = True
+    expr: ExpressionNode, assert_constant: bool = True
 ) -> StateMonad[State, tuple[tuple[float, ...], ...]]:
     @dataclassabc(frozen=True)
     class ToTupleStateMonadTree(StateMonadNode):
-        expr: ExpressionTree
+        expr: ExpressionNode
         assert_constant: bool
 
         def __str__(self):
@@ -346,7 +346,7 @@ def to_tuple(
 
 
 def to_variable_indices(
-    expr: ExpressionTree,
+    expr: ExpressionNode,
 ) -> StateMonad[State, tuple[int, ...]]:
     """
     Convert a variable vector expression into a tuple of variable indices.
@@ -376,7 +376,7 @@ def to_variable_indices(
 
     @dataclassabc(frozen=True)
     class ToVariableIndicesStateMonadTree(StateMonadNode):
-        expr: ExpressionTree
+        expr: ExpressionNode
 
         def __str__(self):
             return f"to_variable_indices({self.expr})"
@@ -393,11 +393,11 @@ def to_variable_indices(
 
 
 def to_variables(
-    expr: ExpressionTree,
+    expr: ExpressionNode,
 ) -> StateMonad[State, tuple[Symbol, ...]]:
     @dataclassabc(frozen=True)
     class ToVariablesStateMonadTree(StateMonadNode[State, tuple[Symbol, ...]]):
-        expr: ExpressionTree
+        expr: ExpressionNode
 
         def __str__(self):
             return f"to_variables({self.expr})"

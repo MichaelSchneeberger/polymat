@@ -6,10 +6,10 @@ from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_traceback
 from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.sparserepr.init import init_vstack_sparse_repr
 from polymat.state import State
-from polymat.expressiontree.expressiontree import MultiChildrenExpressionTreeMixin
+from polymat.expressiontree.nodes import MultiChildrenExpressionNode
 
 
-class VStackMixin(FrameSummaryMixin, MultiChildrenExpressionTreeMixin):
+class VStackMixin(FrameSummaryMixin, MultiChildrenExpressionNode):
     def __str__(self):
         children = ",".join(str(c) for c in self.children)
         return f"v_stack({children})"

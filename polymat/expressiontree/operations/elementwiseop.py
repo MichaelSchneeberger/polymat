@@ -2,7 +2,7 @@ from abc import abstractmethod
 
 from typing_extensions import override
 
-from polymat.expressiontree.expressiontree import TwoChildrenExpressionTreeMixin
+from polymat.expressiontree.nodes import TwoChildrenExpressionNode
 from polymat.sparserepr.data.polynomial import MaybePolynomialType
 from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
@@ -13,7 +13,7 @@ from polymat.sparserepr.init import (
 )
 
 
-class ElementwiseOpMixin(FrameSummaryMixin, TwoChildrenExpressionTreeMixin):
+class ElementwiseOpMixin(FrameSummaryMixin, TwoChildrenExpressionNode):
     """
     Adds two polymatrices
 

@@ -1,9 +1,9 @@
 import abc
 from typing import override
 
-from polymat.expressiontree.expressiontree import (
-    ExpressionTree,
-    SingleChildExpressionTreeMixin,
+from polymat.expressiontree.nodes import (
+    ExpressionNode,
+    SingleChildExpressionNode,
 )
 from polymat.sparserepr.data.monomial import split_monomial_indices
 from polymat.sparserepr.init import init_sparse_repr_from_iterable
@@ -12,14 +12,14 @@ from polymat.state import State
 from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_traceback
 
 
-class QuadraticInExprMixin(FrameSummaryMixin, SingleChildExpressionTreeMixin):
+class QuadraticInExprMixin(FrameSummaryMixin, SingleChildExpressionNode):
     @property
     @abc.abstractmethod
-    def monomials(self) -> ExpressionTree: ...
+    def monomials(self) -> ExpressionNode: ...
 
     @property
     @abc.abstractmethod
-    def variables(self) -> ExpressionTree: ...
+    def variables(self) -> ExpressionNode: ...
 
     @property
     @abc.abstractmethod

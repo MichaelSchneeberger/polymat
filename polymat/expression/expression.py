@@ -3,9 +3,9 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Iterable, override
 
-from polymat.expressiontree.expressiontree import (
-    SingleChildExpressionTreeMixin,
-    ExpressionTree,
+from polymat.expressiontree.nodes import (
+    SingleChildExpressionNode,
+    ExpressionNode,
 )
 from polymat.expressiontree.init import (
     init_addition,
@@ -46,7 +46,7 @@ from polymat.symbol import Symbol
 from polymat.utils import typing
 
 
-class Expression(SingleChildExpressionTreeMixin, ABC):
+class Expression(SingleChildExpressionNode, ABC):
     def __add__(self, other: typing.FROM_TYPES):
         return self._binary(init_addition, self, other)
 
@@ -133,7 +133,7 @@ class Expression(SingleChildExpressionTreeMixin, ABC):
 
     def _get_children(
         self, others: Iterable[Expression], stack: tuple[FrameSummary, ...]
-    ) -> tuple[ExpressionTree, ...]:
+    ) -> tuple[ExpressionNode, ...]:
         if isinstance(others, Expression):
             others = (others,)
 
@@ -153,7 +153,7 @@ class Expression(SingleChildExpressionTreeMixin, ABC):
 
     def _v_stack(
         self, others: Iterable[Expression], stack: tuple[FrameSummary, ...]
-    ) -> ExpressionTree:
+    ) -> ExpressionNode:
         # """ Vertically stack expressions """
         return init_v_stack(
             children=self._get_children(others, stack=stack),

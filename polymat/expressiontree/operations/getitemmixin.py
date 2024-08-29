@@ -3,13 +3,13 @@ from typing import override
 
 from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
-from polymat.expressiontree.expressiontree import (
-    SingleChildExpressionTreeMixin,
+from polymat.expressiontree.nodes import (
+    SingleChildExpressionNode,
 )
 from polymat.sparserepr.init import init_get_item_sparse_repr
 
 
-class GetItemMixin(SingleChildExpressionTreeMixin):
+class GetItemMixin(SingleChildExpressionNode):
     KEY_VALUE_TYPE = int | slice | tuple[int, ...]
     KEY_TYPE = tuple[KEY_VALUE_TYPE, KEY_VALUE_TYPE]
 

@@ -4,13 +4,13 @@ from itertools import product
 
 from polymat.sparserepr.data.polynomial import multiply_polynomial_iterable
 from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_traceback
-from polymat.expressiontree.expressiontree import MultiChildrenExpressionTreeMixin
+from polymat.expressiontree.nodes import MultiChildrenExpressionNode
 from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
 from polymat.sparserepr.init import init_from_polynomial_matrix
 
 
-class ProductMixin(FrameSummaryMixin, MultiChildrenExpressionTreeMixin):
+class ProductMixin(FrameSummaryMixin, MultiChildrenExpressionNode):
     # FIXME: improve docstring
     """
     combination using degrees=(0, 1, 2):
