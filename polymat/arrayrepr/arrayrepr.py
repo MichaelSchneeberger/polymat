@@ -54,11 +54,7 @@ class ArrayRepr:
         self[degree][row, col] = value
 
     def __call__(self, x: NDArray) -> NDArray:
-        if isinstance(x, tuple) or isinstance(x, list):
-            x = np.array(x).reshape(-1, 1)
-
-        elif x.shape[0] == 1:
-            x = x.reshape(-1, 1)
+        assert x.shape[1] == 1, f'{x} must be a numpy vector'
 
         def acc_x_powers(acc, _):
             next = (acc @ x.T).reshape(-1, 1)
