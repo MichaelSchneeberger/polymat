@@ -3,7 +3,7 @@ from typing import Iterable
 from polymat.utils.getstacklines import get_frame_summary
 from polymat.symbol import Symbol
 from polymat.utils import typing
-from polymat.expression.abc import MatrixExpression, VectorExpression
+from polymat.expression.typedexpressions import MatrixExpression, VectorExpression
 from polymat.expressiontree.operations.fromvariablesmixin import FromVariablesMixin
 from polymat.expressiontree.init import (
     init_define_variable,

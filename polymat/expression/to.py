@@ -3,7 +3,7 @@ import sympy
 
 from statemonad.typing import StateMonad
 
-from polymat.arrayrepr.abc import ArrayRepr
+from polymat.arrayrepr.arrayrepr import ArrayRepr
 from polymat.symbol import Symbol
 from polymat.state import State
 from polymat.expressiontree.to import (
@@ -17,7 +17,7 @@ from polymat.expressiontree.to import (
     to_variables as _to_variables,
     to_variable_indices as _to_variable_indices,
 )
-from polymat.expression.abc import MatrixExpression, VariableVectorExpression
+from polymat.expression.typedexpressions import MatrixExpression, VariableVectorExpression
 
 
 def to_array(

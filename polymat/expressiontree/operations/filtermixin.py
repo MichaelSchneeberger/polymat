@@ -1,6 +1,7 @@
 from abc import abstractmethod
 from typing import override
 
+from polymat.sparserepr.data.polynomial import PolynomialType
 from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
 from polymat.expressiontree.nodes import SingleChildExpressionNode
@@ -9,39 +10,32 @@ from polymat.sparserepr.init import init_from_polynomial_matrix
 
 
 class FilterMixin(FrameSummaryMixin, SingleChildExpressionNode):
-    PREDICATOR_TYPE = tuple[bool | int, ...]
-
-    @property
     @abstractmethod
-    def predicator(self) -> PREDICATOR_TYPE: ...
+    def _assert_nrows(self, n_rows: int) -> None: ...
 
-    def __str__(self):
-        return f"filter({self.child})"
+    @abstractmethod
+    def _filter(self, row: int, polynomial: PolynomialType) -> bool: ...
 
     @override
     def apply(self, state: State) -> tuple[State, SparseRepr]:
         state, child = self.child.apply(state=state)
 
+        n_rows, n_cols = child.shape
+
         if not (child.shape[1] == 1):
             raise AssertionError(
                 to_operator_traceback(
-                    message=f"{child.shape[1]=} is not 1",
+                    message=f"{n_cols=} is not 1",
                     stack=self.stack,
                 )
             )
 
-        if not (child.shape[0] == len(self.predicator)):
-            raise AssertionError(
-                to_operator_traceback(
-                    message=f"{child.shape[0]=} is not {len(self.predicator)=}",
-                    stack=self.stack,
-                )
-            )
+        self._assert_nrows(n_rows)
 
         def gen_polynomial_matrix():
             row = 0
             for (index_row, _), polynomial in child.entries():
-                if self.predicator[index_row]:
+                if self._filter(index_row, polynomial):
                     yield (row, 0), polynomial
                     row += 1
 

@@ -18,7 +18,8 @@ from polymat.expressiontree.init import (
     init_differentiate,
     init_elementwise_mult,
     init_eval,
-    init_filter,
+    init_filter_predicate,
+    init_filter_non_zero,
     init_from_or_none,
     init_from_,
     init_kron,
@@ -36,8 +37,9 @@ from polymat.expressiontree.init import (
     init_transpose,
     init_v_stack,
     init_variable_vector,
+    to_symmetric_matrix,
 )
-from polymat.expressiontree.operations.filtermixin import FilterMixin
+from polymat.expressiontree.operations.filterpredicatormixin import FilterPredicateMixin
 from polymat.expressiontree.operations.productmixin import ProductMixin
 from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
@@ -223,11 +225,19 @@ class Expression(SingleChildExpressionNode, ABC):
         )
 
     # only applies to vector
-    def filter(self, predicator: FilterMixin.PREDICATOR_TYPE):
+    def filter_predicate(self, predicate: FilterPredicateMixin.PREDICATE_TYPE):
         return self.copy(
-            child=init_filter(
+            child=init_filter_predicate(
                 child=self.child,
-                predicator=predicator,
+                predicate=predicate,
+                stack=get_frame_summary(),
+            )
+        )
+    
+    def filter_non_zero(self):
+        return self.copy(
+            child=init_filter_non_zero(
+                child=self.child,
                 stack=get_frame_summary(),
             )
         )
@@ -331,6 +341,14 @@ class Expression(SingleChildExpressionNode, ABC):
     def T(self):
         return self.copy(child=init_transpose(self.child))
 
+    def to_symmetric_matrix(self):
+        return self.copy(
+            child=to_symmetric_matrix(
+                child=self.child,
+                stack=get_frame_summary(),
+            )
+        )
+
     def to_monomial_vector(self):
         return self.assert_vector(stack=get_frame_summary())
 
@@ -353,3 +371,12 @@ class Expression(SingleChildExpressionNode, ABC):
     def v_stack(self, others: Iterable[Expression]):
         stack = get_frame_summary()
         return self.copy(child=self._v_stack(others=others, stack=stack))
+
+
+class VariableExpression(Expression):
+    @property
+    @abstractmethod
+    def symbol(self) -> Symbol: ...
+
+    def to_symbols(self):
+        yield self.symbol

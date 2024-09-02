@@ -1,6 +1,5 @@
-import itertools
 import math
-from typing import Any, Callable
+from typing import Callable
 import sympy
 
 import numpy as np
@@ -14,9 +13,8 @@ from statemonad.typing import StateMonad
 
 from polymat.sparserepr.data.polynomial import MaybePolynomialType
 from polymat.sparserepr.init import init_reshape_sparse_repr
-from polymat.utils.getstacklines import get_frame_summary
 from polymat.symbol import Symbol
-from polymat.arrayrepr.abc import ArrayRepr
+from polymat.arrayrepr.arrayrepr import ArrayRepr
 from polymat.arrayrepr.init import init_array_repr
 from polymat.sparserepr.data.monomial import (
     MonomialType,
@@ -26,7 +24,6 @@ from polymat.sparserepr.data.monomial import (
 from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
 from polymat.expressiontree.nodes import ExpressionNode
-from polymat.expressiontree.init import init_assert_vector
 
 
 def to_array(

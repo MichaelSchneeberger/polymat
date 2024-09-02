@@ -1,7 +1,8 @@
 from numpy.typing import NDArray
 
 from dataclassabc import dataclassabc
-from polymat.arrayrepr.abc import ArrayRepr
+
+from polymat.arrayrepr.arrayrepr import ArrayRepr
 
 
 @dataclassabc(frozen=True)

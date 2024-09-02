@@ -12,7 +12,10 @@ from polymat.expressiontree.operations.blockdiagonalmixin import (
 from polymat.expressiontree.operations.cachemixin import CacheMixin
 from polymat.expressiontree.operations.diagmixin import DiagMixin
 from polymat.expressiontree.operations.evalmixin import EvalMixin
-from polymat.expressiontree.operations.filtermixin import FilterMixin
+from polymat.expressiontree.operations.filternonzeromixin import FilterNonZeroMixin
+from polymat.expressiontree.operations.filterpredicatormixin import (
+    FilterPredicateMixin,
+)
 from polymat.expressiontree.operations.fromanymixin import FromAnyMixin
 from polymat.expressiontree.operations.fromsparsereprmixin import FromSparseReprMixin
 from polymat.expressiontree.operations.fromvariableindicesmixin import (
@@ -36,6 +39,7 @@ from polymat.expressiontree.operations.reshapemixin import ReshapeMixin
 from polymat.expressiontree.operations.getitemmixin import GetItemMixin
 from polymat.expressiontree.operations.summixin import SumMixin
 from polymat.expressiontree.operations.symmetricmixin import SymmetricMixin
+from polymat.expressiontree.operations.tosymmetricmatrix import ToSymmetricMatrix
 from polymat.expressiontree.operations.tovariablevectormixin import (
     ToVariableVectorMixin,
 )
@@ -197,14 +201,40 @@ def init_eval(
 
 
 @dataclassabc(frozen=True, repr=False)
-class FilterImpl(FilterMixin):
+class FilterPredicateImpl(FilterPredicateMixin):
     child: ExpressionNode
-    predicator: FilterMixin.PREDICATOR_TYPE
+    predicate: FilterPredicateMixin.PREDICATE_TYPE
     stack: tuple[FrameSummary, ...]
 
 
 # default constructor
-init_filter = FilterImpl
+def init_filter_predicate(
+    child: ExpressionNode,
+    predicate: FilterPredicateMixin.PREDICATE_TYPE,
+    stack: tuple[FrameSummary, ...],
+):
+    return FilterPredicateImpl(
+        child=child,
+        predicate=predicate,
+        stack=stack,
+    )
+
+
+@dataclassabc(frozen=True, repr=False)
+class FilterNonZeroImpl(FilterNonZeroMixin):
+    child: ExpressionNode
+    stack: tuple[FrameSummary, ...]
+
+
+# default constructor
+def init_filter_non_zero(
+    child: ExpressionNode,
+    stack: tuple[FrameSummary, ...],
+):
+    return FilterNonZeroImpl(
+        child=child,
+        stack=stack,
+    )
 
 
 @dataclassabc(frozen=True)
@@ -454,6 +484,22 @@ class QuadraticMonomialsImpl(QuadraticMonomialsMixin):
 
 
 init_quadratic_monomials = QuadraticMonomialsImpl
+
+
+@dataclassabc(frozen=True)
+class ToSymmetricMatrixImpl(ToSymmetricMatrix):
+    child: ExpressionNode
+    stack: tuple[FrameSummary, ...]
+
+
+def to_symmetric_matrix(
+    child: ExpressionNode,
+    stack: tuple[FrameSummary, ...],
+):
+    return ToSymmetricMatrixImpl(
+        child=child,
+        stack=stack,
+    )
 
 
 @dataclassabc(frozen=True)

@@ -1,8 +1,8 @@
 from typing import override
 from dataclassabc import dataclassabc
 
-from polymat.expression.abc import (
-    MatrixExpression,
+from polymat.expression.expression import Expression
+from polymat.expression.typedexpressions import (
     VariableExpression,
 )
 from polymat.expressiontree.nodes import ExpressionNode
@@ -10,23 +10,23 @@ from polymat.symbol import Symbol
 
 
 @dataclassabc(frozen=True)
-class ExpressionImpl(MatrixExpression):
+class ExpressionImpl(Expression):
     child: ExpressionNode
 
     @override
     def copy(self, child: ExpressionNode):
         return init_expression(child=child)
 
-    def parametrize(self, variable: Symbol | str) -> VariableExpression:
-        if not isinstance(variable, Symbol):
-            variable = Symbol(variable)
+    # def parametrize(self, variable: Symbol | str) -> VariableExpression:
+    #     if not isinstance(variable, Symbol):
+    #         variable = Symbol(variable)
 
-        expr = super().parametrize(variable)  # type: ignore
+    #     expr = super().parametrize(variable)  # type: ignore
 
-        return init_variable_expression(
-            child=expr.child,
-            symbol=variable,
-        )
+    #     return init_variable_expression(
+    #         child=expr.child,
+    #         symbol=variable,
+    #     )
 
 
 def init_expression(child: ExpressionNode):

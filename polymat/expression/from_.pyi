@@ -1,12 +1,12 @@
 from typing import Iterable, overload
 
-from polymat.expression.abc import (
+from polymat.expression.typedexpressions import (
     MatrixExpression,
     RowVectorExpression,
     SymmetricMatrixExpression,
     VectorExpression,
     PolynomialExpression,
-    SingleDimVariableExpression,
+    SingleValueVariableExpression,
     VariableVectorExpression,
     VariableExpression,
 )
@@ -32,7 +32,7 @@ def define_variable(
 @overload
 def define_variable(
     name: str,
-) -> SingleDimVariableExpression: ...
+) -> SingleValueVariableExpression: ...
 def from_variables(
     variables: FromVariablesMixin.VARIABLE_TYPE,
 ) -> VariableVectorExpression: ...

@@ -119,7 +119,8 @@ class SymmetricSparseReprImpl(SymmetricSparseReprMixin):
     child: SparseRepr
 
 
-init_symmetric_sparse_repr = SymmetricSparseReprImpl
+def init_symmetric_sparse_repr(child: SparseRepr):
+    return SymmetricSparseReprImpl(child=child)
 
 
 @dataclassabc(frozen=True)

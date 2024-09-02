@@ -1,16 +1,7 @@
-from abc import abstractmethod
-
-from polymat.expression.expression import Expression as _Expression
-from polymat.symbol import Symbol
-
-
-class VariableExpression(_Expression):
-    @property
-    @abstractmethod
-    def symbol(self) -> Symbol: ...
-
-    def to_symbols(self):
-        yield self.symbol
+from polymat.expression.expression import (
+    Expression as _Expression,
+    VariableExpression as _VariableExpression,
+)
 
 
 # These global variables serve as placeholders for classes that are defined only in the stub file for type checking. 
@@ -23,4 +14,6 @@ PolynomialExpression = _Expression
 MonomialVectorExpression = _Expression
 MonomialExpression = _Expression
 VariableVectorExpression = _Expression
-SingleDimVariableExpression = VariableExpression
+VariableMatrixExpression = _Expression
+VariableExpression = _VariableExpression
+SingleValueVariableExpression = _VariableExpression
