@@ -77,7 +77,7 @@ print(f'{array_repr.data[2].toarray()=}')  # Sparse scipy array converted to num
 
 ### Polynomial Expression Manipulation
 
-- **Arithmetic operations**: Perform addition (`+`), subtraction (`-`), scalar multiplication and division (`*`, (`/`)), matrix multiplication (`@`), and exponentiation (`**`).
+- **Arithmetic operations**: Perform addition (`+`), subtraction (`-`), scalar multiplication and division (`*`, `/`), matrix multiplication (`@`), and exponentiation (`**`).
 - **Caching**: Cache the `cache` method to store intermediate results and speed up computation.
 - **Combinations**: Stack combinations of elements from polynomial vectors using `combination`.
 - **Diagonalization**: Extract or construct diagonal polynomial matrices with `diag`.
@@ -94,8 +94,14 @@ print(f'{array_repr.data[2].toarray()=}')  # Sparse scipy array converted to num
 
 ### Output
 
-- **Array Representation**: Convert polynomial expressions to an array representation (implemented through numpy and sympy array) using the `polymat.to_array` function.
+- **Array Representation**: Convert polynomial expressions to an array representation (implemented through numpy and scipy array) using the `polymat.to_array` function.
 - **Tuple Representation**: Outputs constant parts as nested tuple using `polymat.to_tuple`.
 - **Sympy Representation**: Convert experssion to `sympy` representation using `polymat.to_sympy`.
 - **Polynomial Degrees**: Obtain degrees of each polynomial matrix element using `polymat.to_degree`.
 - **Shape of the Matrix**: Retrieve the shape of the polynomial matrix using `polymat.to_shape`.
+
+<!-- 
+## References
+
+Here are some references related to this probject:
+*  -->
