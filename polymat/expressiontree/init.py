@@ -247,12 +247,12 @@ init_from_numpy = FromNumpyImpl
 
 @dataclassabc(frozen=True, repr=False)
 class FromAnyImpl(FromAnyMixin):
-    data: tuple[tuple[FromAnyMixin.ELEM_TYPES]]
+    data: tuple[tuple[FromAnyMixin.VALUE_TYPES]]
     stack: tuple[FrameSummary, ...]
 
 
 def init_from_any(
-    data: tuple[tuple[FromAnyMixin.ELEM_TYPES]],
+    data: tuple[tuple[FromAnyMixin.VALUE_TYPES]],
     stack: tuple[FrameSummary, ...],
 ):
     return FromAnyImpl(
@@ -551,7 +551,8 @@ class ToVariableVectorImpl(ToVariableVectorMixin):
     child: ExpressionNode
 
 
-init_variable_vector = ToVariableVectorImpl
+def init_variable_vector(child: ExpressionNode):
+    return ToVariableVectorImpl(child=child)
 
 
 @dataclassabc(frozen=True)

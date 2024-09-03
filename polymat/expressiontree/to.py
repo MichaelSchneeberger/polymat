@@ -29,6 +29,7 @@ from polymat.expressiontree.nodes import ExpressionNode
 def to_array(
     expr: ExpressionNode,
     variables: ExpressionNode | tuple[int, ...],
+    name: str | None = None  # for debugging purposes
 ) -> StateMonad[State, ArrayRepr]:
     """
     Given a monomial of degree d, this function returns the indices of a monomial
@@ -68,7 +69,7 @@ def to_array(
                 n_row_array = n_row
             else:
                 n_row_array = None
-                
+
             if isinstance(self.variables, tuple):
                 indices = self.variables
             else:
@@ -84,7 +85,7 @@ def to_array(
                 n_row=n_row_array,
                 n_param=n_param,
             )
-            
+
             for row in range(n_eq):
                 polynomial = polymatrix.at(row, 0)
 
@@ -96,13 +97,15 @@ def to_array(
                     def gen_linear_columns():
                         for index, power in monomial:
                             if index not in index_to_linear_column:
-                                name = state.get_name(index)
-                                names = set(
+                                variable_name = state.get_name(index)
+                                variable_names = set(
                                     state.get_name(index)
                                     for index in index_to_linear_column.keys()
                                 )
                                 raise Exception(
-                                    f'Variable "{name}" not contained in {names}'
+                                    f"While converting a polynomial expression {name} to an array representation, "
+                                    f"the index {index} (associated with the variable {variable_name}) found in the expression "
+                                    f"is not an element of th eprovided list of indices {indices} (associated with variables {variable_names})."
                                 )
 
                             linear_col = index_to_linear_column[index]
@@ -121,10 +124,12 @@ def to_array(
 
             return state, array_repr
 
-    return statemonad.from_node(ToArrayStateMonadTree(
-        expr=expr, 
-        variables=variables,
-    ))
+    return statemonad.from_node(
+        ToArrayStateMonadTree(
+            expr=expr,
+            variables=variables,
+        )
+    )
 
 
 def _to_tuple[U](
@@ -158,10 +163,12 @@ def _to_tuple[U](
 
             return state, tuple(gen_tuple())
 
-    return statemonad.from_node(ToTupleStateMonadTree(
-        expr=expr, 
-        name=name,
-    ))
+    return statemonad.from_node(
+        ToTupleStateMonadTree(
+            expr=expr,
+            name=name,
+        )
+    )
 
 
 def to_degree(

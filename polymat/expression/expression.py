@@ -378,5 +378,5 @@ class VariableExpression(Expression):
     @abstractmethod
     def symbol(self) -> Symbol: ...
 
-    def to_symbols(self):
+    def iterate_symbols(self):
         yield self.symbol

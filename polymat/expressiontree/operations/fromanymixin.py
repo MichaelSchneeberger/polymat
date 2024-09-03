@@ -23,8 +23,7 @@ from polymat.symbol import Symbol
 
 
 class FromAnyMixin(FrameSummaryMixin, ExpressionNode):
-    VALUE_TYPES = float | int | np.number | sympy.Expr
-    ELEM_TYPES = VALUE_TYPES | ExpressionNode
+    VALUE_TYPES = float | int | np.number | sympy.Expr | ExpressionNode
 
     def __str__(self):
         if len(self.data) == 1:
@@ -40,104 +39,107 @@ class FromAnyMixin(FrameSummaryMixin, ExpressionNode):
 
     @property
     @abstractmethod
-    def data(self) -> tuple[tuple[ELEM_TYPES, ...], ...]:
+    def data(self) -> tuple[tuple[VALUE_TYPES, ...], ...]:
         """The matrix of numbers in row major order."""
 
     @override
     def apply(self, state: State) -> tuple[State, SparseRepr]:
         def acc_polynomial_matrix_data(
             acc: tuple[State, tuple[tuple[MatrixIndexType, PolynomialType], ...]],
-            next: tuple[int, int, FromAnyMixin.ELEM_TYPES],
+            next: tuple[int, int, FromAnyMixin.VALUE_TYPES],
         ):
             state, data = acc
             row, col, entry = next
 
             matrix_index = (row, col)
 
-            if isinstance(entry, ExpressionNode):
-                state, instance = entry.apply(state)
+            match entry:
+                case ExpressionNode():
+                    state, instance = entry.apply(state)
 
-                if not (instance.shape == (1, 1)):
-                    raise AssertionError(
-                        to_operator_traceback(
-                            message=f"{instance.shape=} is not (1, 1)",
-                            stack=self.stack,
+                    if not (instance.shape == (1, 1)):
+                        raise AssertionError(
+                            to_operator_traceback(
+                                message=f"{instance.shape=} is not (1, 1)",
+                                stack=self.stack,
+                            )
                         )
-                    )
 
-                entry = instance.at(0, 0)
+                    entry = instance.at(0, 0)
 
-                if entry:
-                    data = data + ((matrix_index, entry),)
+                    if entry:
+                        data = data + ((matrix_index, entry),)
 
-                return state, data
-
-            else:
-                value = entry
-
-            if isinstance(value, (bool, np.bool_)):
-                value = int(value)
-            elif isinstance(value, np.number):
-                value = float(value)
-
-            if isinstance(value, (int, float)):
-                if math.isclose(value, 0):
                     return state, data
 
-                polynomial = constant_polynomial(value)
+                case bool() | np.bool_():
+                    value = int(entry)
 
-            elif isinstance(value, sympy.Expr):
-                try:
-                    sympy_poly = sympy.poly(value)
+                case np.number():
+                    value = float(entry)
 
-                except GeneratorsNeeded:
+                case _:
+                    value = entry
+
+            match value:
+                case int() | float():
                     if math.isclose(value, 0):
                         return state, data
 
-                    polynomial = constant_polynomial(float(value))
+                    polynomial = constant_polynomial(value)
 
-                except ValueError:
-                    raise ValueError(f"{value=}")
+                case sympy.Expr():
+                    try:
+                        sympy_poly = sympy.poly(value)
 
-                else:
-                    for symbol in sympy_poly.gens:
-                        state, _ = state.register(
-                            symbol=Symbol(str(symbol)),
-                            size=1,
+                    except GeneratorsNeeded:
+                        if math.isclose(value, 0):
+                            return state, data
+
+                        polynomial = constant_polynomial(float(value))
+
+                    except ValueError:
+                        raise ValueError(f"{value=}")
+
+                    else:
+                        for symbol in sympy_poly.gens:
+                            state, _ = state.register(
+                                symbol=Symbol(str(symbol)),
+                                size=1,
+                                stack=self.stack,
+                            )
+
+                        def gen_polynomial():
+                            # a5 x1 x3**2 -> c=a5, m_cnt=(1, 0, 2)
+                            for value, variable_powers in zip(
+                                sympy_poly.coeffs(), sympy_poly.monoms()
+                            ):
+                                if math.isclose(value, 0):
+                                    continue
+
+                                # m_cnt=(1, 0, 2) -> m=((0, 1) (1, 2))
+                                def gen_monomial():
+                                    for sympy_index, power in enumerate(variable_powers):
+                                        if 0 < power:
+                                            variable = Symbol(
+                                                str(sympy_poly.gens[sympy_index])
+                                            )
+                                            index = state.indices[variable]
+                                            yield (index.start, power)
+
+                                monomial = sort_monomial(tuple(gen_monomial()))
+
+                                yield monomial, value
+
+                        polynomial = dict(gen_polynomial())
+
+                case _:
+                    raise AssertionError(
+                        to_operator_traceback(
+                            message=f"unknown data type {type(value)=}",
                             stack=self.stack,
                         )
-
-                    def gen_polynomial():
-                        # a5 x1 x3**2 -> c=a5, m_cnt=(1, 0, 2)
-                        for value, variable_powers in zip(
-                            sympy_poly.coeffs(), sympy_poly.monoms()
-                        ):
-                            if math.isclose(value, 0):
-                                continue
-
-                            # m_cnt=(1, 0, 2) -> m=((0, 1) (1, 2))
-                            def gen_monomial():
-                                for sympy_index, power in enumerate(variable_powers):
-                                    if 0 < power:
-                                        variable = Symbol(
-                                            str(sympy_poly.gens[sympy_index])
-                                        )
-                                        index = state.indices[variable]
-                                        yield (index.start, power)
-
-                            monomial = sort_monomial(tuple(gen_monomial()))
-
-                            yield monomial, value
-
-                    polynomial = dict(gen_polynomial())
-
-            else:
-                raise AssertionError(
-                    to_operator_traceback(
-                        message=f"unknown data type {type(value)=}",
-                        stack=self.stack,
                     )
-                )
 
             return state, data + ((matrix_index, polynomial),)
 

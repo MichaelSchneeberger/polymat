@@ -17,17 +17,6 @@ class ExpressionImpl(Expression):
     def copy(self, child: ExpressionNode):
         return init_expression(child=child)
 
-    # def parametrize(self, variable: Symbol | str) -> VariableExpression:
-    #     if not isinstance(variable, Symbol):
-    #         variable = Symbol(variable)
-
-    #     expr = super().parametrize(variable)  # type: ignore
-
-    #     return init_variable_expression(
-    #         child=expr.child,
-    #         symbol=variable,
-    #     )
-
 
 def init_expression(child: ExpressionNode):
     return ExpressionImpl(

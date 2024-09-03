@@ -4,7 +4,7 @@ from polymat.state import (
     State as _State,
 )
 from polymat.expressiontree.nodes import (
-    ExpressionNode as _ExpressionTreeMixin,
+    ExpressionNode as _ExpressionNode,
 )
 from polymat.expression.typedexpressions import (
     MatrixExpression as _MatrixExpression,
@@ -24,7 +24,7 @@ Symbol = _Symbol
 
 ArrayRepr = _ArrayRepr
 
-ExpressionTreeMixin = _ExpressionTreeMixin
+ExpressionNode = _ExpressionNode
 
 MatrixExpression = _MatrixExpression
 SymmetricMatrixExpression = _SymmetricMatrixExpression
