@@ -14,12 +14,37 @@ from polymat.sparserepr.init import init_sparse_repr_from_iterable
 
 
 class Combinations(FrameSummaryMixin, SingleChildExpressionNode):
-    # FIXME: improve docstring
     """
-    combination using degrees=(0, 1, 2):
+    Represents a combination polynomial operator that generates a polynomial vector 
+    from a given input polynomial vector.
 
-    [[x], [y]]  ->  [[1], [x], [y], [x**2], [x*y], [y**2]]
+    The resulting polynomial vector contains all possible combinations of products of 
+    the elements from the input polynomial vector, determined by the specified tuple of degrees. 
+
+    Example:
+        ```python
+        x1 = polymat.define_variable('x1')
+        x2 = polymat.define_variable('x2')
+        x = polymat.v_stack((x1, x2))
+
+        # Create combinations of the polynomial vector with degrees 0, 1, and 2
+        expr = x.combinations(degrees=(0, 1, 2))
+
+        # Convert to a sympy expression for symbolic computation
+        state, expr_sympy = polymat.to_sympy(expr.T).apply(state)
+
+        # The output will be expr_sympy=Matrix([[1, x1, x2, x1**2, x1*x2, x2**2]])
+        print(f'{expr_sympy=}')
+        ```
+
+    Args:
+        degrees (tuple[int]): A tuple representing the degrees of the elements in the 
+                              output polynomial vector.
+
+    Returns:
+        Combinations: A polynomial vector containing all the combinations of the input vector elements.
     """
+
 
     def __str__(self):
         match self.degrees:
@@ -32,7 +57,7 @@ class Combinations(FrameSummaryMixin, SingleChildExpressionNode):
     @abc.abstractmethod
     def degrees(self) -> tuple[int, ...]:
         """
-        Vector or scalar expression, or a list of integers.
+        Degrees of the elements in the output polynomial vector
         """
 
     def apply(
