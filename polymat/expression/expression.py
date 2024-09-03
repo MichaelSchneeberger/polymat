@@ -14,15 +14,15 @@ from polymat.expressiontree.init import (
     init_block_diagonal,
     init_cache,
     init_combinations,
-    init_diag,
+    init_diagonal,
     init_differentiate,
     init_elementwise_mult,
-    init_eval,
+    init_evaluate,
     init_filter_predicate,
     init_filter_non_zero,
     init_from_or_none,
     init_from_,
-    init_kron,
+    init_kronecker,
     init_linear_monomials,
     init_linear_in,
     init_matrix_mult,
@@ -32,15 +32,15 @@ from polymat.expressiontree.init import (
     init_rep_mat,
     init_reshape,
     init_get_item,
-    init_sum,
-    init_symmetric,
+    init_row_summation,
+    init_to_symmetric_matrix,
     init_transpose,
     init_v_stack,
     init_variable_vector,
-    to_symmetric_matrix,
+    from_vector_to_symmetric_matrix,
 )
-from polymat.expressiontree.operations.filterpredicatormixin import FilterPredicateMixin
-from polymat.expressiontree.operations.productmixin import ProductMixin
+from polymat.expressiontree.operations.filterpredicator import FilterPredicate
+from polymat.expressiontree.operations.product import Product
 from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
 from polymat.utils.getstacklines import FrameSummary, get_frame_summary
@@ -200,7 +200,7 @@ class Expression(SingleChildExpressionNode, ABC):
     # only applies to symmetric matrix or vector
     def diag(self):
         return self.copy(
-            child=init_diag(
+            child=init_diagonal(
                 child=self.child,
                 stack=get_frame_summary(),
             )
@@ -217,7 +217,7 @@ class Expression(SingleChildExpressionNode, ABC):
 
     def eval(self, substitutions: dict[Symbol, tuple[float, ...]]):
         return self.copy(
-            child=init_eval(
+            child=init_evaluate(
                 child=self.child,
                 substitutions=substitutions,
                 stack=get_frame_summary(),
@@ -225,7 +225,7 @@ class Expression(SingleChildExpressionNode, ABC):
         )
 
     # only applies to vector
-    def filter_predicate(self, predicate: FilterPredicateMixin.PREDICATE_TYPE):
+    def filter_predicate(self, predicate: FilterPredicate.PREDICATE_TYPE):
         return self.copy(
             child=init_filter_predicate(
                 child=self.child,
@@ -246,7 +246,7 @@ class Expression(SingleChildExpressionNode, ABC):
         return self.T.v_stack((e.T for e in others)).T
 
     def kron(self, other: Expression):
-        return self.copy(child=init_kron(left=self.child, right=other.child))
+        return self.copy(child=init_kronecker(left=self.child, right=other.child))
 
     # only applies to vector
     def linear_in(
@@ -271,7 +271,7 @@ class Expression(SingleChildExpressionNode, ABC):
             )
         )
 
-    def product(self, others: Iterable[Expression], degrees: ProductMixin.DEGREE_TYPES):
+    def product(self, others: Iterable[Expression], degrees: Product.DEGREE_TYPES):
         stack = get_frame_summary()
 
         return self.copy(
@@ -289,7 +289,7 @@ class Expression(SingleChildExpressionNode, ABC):
         monomials: Expression | None = None,
     ):
         return self.copy(
-            child=init_symmetric(
+            child=init_to_symmetric_matrix(
                 child=init_quadratic_in(
                     child=self.child,
                     monomials=monomials,
@@ -329,13 +329,13 @@ class Expression(SingleChildExpressionNode, ABC):
         """
 
         return self.copy(
-            child=init_sum(
+            child=init_row_summation(
                 child=self.child,
             )
         )
 
     def symmetric(self):
-        return self.copy(child=init_symmetric(child=self.child))
+        return self.copy(child=init_to_symmetric_matrix(child=self.child))
 
     @property
     def T(self):
@@ -343,7 +343,7 @@ class Expression(SingleChildExpressionNode, ABC):
 
     def to_symmetric_matrix(self):
         return self.copy(
-            child=to_symmetric_matrix(
+            child=from_vector_to_symmetric_matrix(
                 child=self.child,
                 stack=get_frame_summary(),
             )

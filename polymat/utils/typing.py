@@ -1,13 +1,13 @@
 import sympy
 from numpy.typing import NDArray
-from polymat.expressiontree.operations.fromanymixin import FromAnyMixin
+from polymat.expressiontree.operations.fromany import FromAny
 
 
 # Types that can be converted to an Expression
 FROM_TYPES = (
-    FromAnyMixin.VALUE_TYPES
+    FromAny.VALUE_TYPES
     | NDArray
     | sympy.Matrix
-    | tuple[FromAnyMixin.VALUE_TYPES, ...]
-    | tuple[tuple[FromAnyMixin.VALUE_TYPES, ...], ...]
+    | tuple[FromAny.VALUE_TYPES, ...]
+    | tuple[tuple[FromAny.VALUE_TYPES, ...], ...]
 )

@@ -4,7 +4,7 @@ from polymat.utils.getstacklines import get_frame_summary
 from polymat.symbol import Symbol
 from polymat.utils import typing
 from polymat.expression.typedexpressions import MatrixExpression, VectorExpression
-from polymat.expressiontree.operations.fromvariablesmixin import FromVariablesMixin
+from polymat.expressiontree.operations.fromvariables import FromVariables
 from polymat.expressiontree.init import (
     init_define_variable,
     init_from_,
@@ -80,7 +80,7 @@ def define_variable(
     )
 
 
-def from_variables(variables: FromVariablesMixin.VARIABLE_TYPE):
+def from_variables(variables: FromVariables.VARIABLE_TYPE):
     return init_expression(init_from_variables(variables=variables))
 
 
