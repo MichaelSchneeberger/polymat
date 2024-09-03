@@ -79,7 +79,7 @@ print(f'{array_repr.data[2].toarray()=}')  # Sparse scipy array converted to num
 
 - **Arithmetic operations**: Perform addition (`+`), subtraction (`-`), scalar multiplication and division (`*`, `/`), matrix multiplication (`@`), and exponentiation (`**`).
 - **Caching**: Cache the `cache` method to store intermediate results and speed up computation.
-- **Combinations**: Stack combinations of elements from polynomial vectors using `combination`.
+- [**Combinations**](https://github.com/MichaelSchneeberger/polymat/blob/main/polymat/expressiontree/operations/combinations.py): Stack combinations of elements from polynomial vectors using `combination`.
 - **Diagonalization**: Extract or construct diagonal polynomial matrices with `diag`.
 - **Differentiation**: Compute derivatives using `diff`.
 - **Evaluation**: Replace variables within floats using `eval`.
