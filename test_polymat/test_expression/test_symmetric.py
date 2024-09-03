@@ -1,6 +1,6 @@
 import unittest
 
-from polymat.expressiontree.init import init_from_sparse_repr, init_symmetric
+from polymat.expressiontree.init import init_from_sparse_repr, init_to_symmetric_matrix
 from polymat.sparserepr.init import init_from_polynomial_matrix
 from polymat.state import init_state
 
@@ -30,7 +30,7 @@ class TestSymmetric(unittest.TestCase):
             )
         )
 
-        expr = init_symmetric(expr)
+        expr = init_to_symmetric_matrix(expr)
 
         state = init_state()
         state, sparse_repr = expr.apply(state)

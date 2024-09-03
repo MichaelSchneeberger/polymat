@@ -1,6 +1,6 @@
 import unittest
 
-from polymat.expressiontree.init import init_from_sparse_repr, init_eval
+from polymat.expressiontree.init import init_from_sparse_repr, init_evaluate
 from polymat.sparserepr.init import init_from_polynomial_matrix
 from polymat.state import init_state
 from polymat.symbol import Symbol
@@ -35,7 +35,7 @@ class TestEval(unittest.TestCase):
         state, _ = state.register(x1, 1, stack=tuple())
         state, _ = state.register(x2, 1, stack=tuple())
 
-        expr = init_eval(expr, substitutions={x1: (2.0,), x2: (3.0,)}, stack=tuple())
+        expr = init_evaluate(expr, substitutions={x1: (2.0,), x2: (3.0,)}, stack=tuple())
 
         state, sparse_repr = expr.apply(state)
 

@@ -1,6 +1,6 @@
 import unittest
 
-from polymat.expressiontree.init import init_from_sparse_repr, init_sum
+from polymat.expressiontree.init import init_from_sparse_repr, init_row_summation
 from polymat.sparserepr.init import init_from_polynomial_matrix
 from polymat.state import init_state
 
@@ -25,7 +25,7 @@ class TestSum(unittest.TestCase):
             )
         )
 
-        expr = init_sum(expr)
+        expr = init_row_summation(expr)
 
         state = init_state()
         state, sparse_repr = expr.apply(state)
