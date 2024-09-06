@@ -140,10 +140,28 @@ print(f'{array_repr.data[2].toarray()=}')  # Sparse scipy array converted to num
     ```
 
 Specialized methods:
-- **Linear Coefficient Vector**: Compute a coefficient matrix $Q$ associated with a vector of monomials $Z(x)$ and a polynomial vector $p(x) = Q Z(x)$ using `to_linear_coefficients`.
-- **Monomials Terms**: Construct a monomial vector $Z(x)$ appearing in a polynomial expression using `to_linear_monomials`.
-- [**Quadratic Coefficient Matrix**](https://github.com/MichaelSchneeberger/polymat/blob/main/polymat/expressiontree/operations/quadraticcoefficients.py): Compute the symmetric coefficient matrix $Q$ appearing in the quadratic form of the polynomial $p(x) = Z(x)^\top Q Z(x)$ using `to_gram_matrix`.
-- [**Quadratic Monomial Terms**](https://github.com/MichaelSchneeberger/polymat/blob/main/polymat/expressiontree/operations/quadraticmonomials.py): Construct a monomial vector $Z(x)$ for the quadratic form of the polynomial $p(x) = Z(x)^\top Q Z(x)$ with `to_quadratic_monomials`.
+- **Monomials Terms**: Construct a monomial vector $Z(x)$ appearing in a polynomial expression.
+    ``` python
+    p_monom = p.to_linear_monomials(x)
+    # Matrix([[1], [x], [x**3]])
+    ```
+- **Linear Coefficient Vector**: Compute a coefficient matrix $Q$ associated with a vector of monomials $Z(x)$ and a polynomial vector $p(x) = Q Z(x)$.
+    ``` python
+    p_coeff = p.to_linear_coefficients(x, monomials=p_monom)
+    # Matrix([[3, -2.0, 1]])
+    ```
+- [**Quadratic Monomial Terms**](https://github.com/MichaelSchneeberger/polymat/blob/main/polymat/expressiontree/operations/quadraticmonomials.py): Construct a monomial vector $Z(x)$ for the quadratic form of the polynomial $p(x) = Z(x)^\top Q Z(x)$.
+    ``` python
+    p_monom = p.to_quadratic_monomials(x)
+    # Matrix([[1], [x], [x**2]])
+    ```
+- [**Quadratic Coefficient Matrix**](https://github.com/MichaelSchneeberger/polymat/blob/main/polymat/expressiontree/operations/quadraticcoefficients.py): Compute the symmetric coefficient matrix $Q$ appearing in the quadratic form of the polynomial $p(x) = Z(x)^\top Q Z(x)$.
+    ``` python
+    p_coeff = p.to_gram_matrix(x, monomials=p_monom)
+    # Matrix([[3.0, -1.0, 0], [-1.0, 0, 0.5], [0, 0.5, 0]])
+    ```
+
+
 
 
 ### Output
