@@ -84,10 +84,10 @@ print(f'{array_repr.data[2].toarray()=}')  # Sparse scipy array converted to num
 - **Differentiation**: Compute derivatives using `diff`.
 - **Evaluation**: Replace variables within floats using `eval`.
 - **Kronecker Product**: Compute the Kronecker products using `kron`.
-- **Linear Expansion**: Expand a polynomial vector into monomial components using `linear_in`.
-- **Monomials Terms**: Collect monomials terms using `linear_monomials_in`.
-- **Quadratic Expansion**: Compute the Gram matrix using `quadratic_in`.
-- **Quadratic Monomial Terms**: Construct a monomial vector for a quadratic form with `quadratic_monomials_in`.
+- **Linear Coefficient Vector**: Expand a polynomial vector into monomial components using `to_linear_coefficients`.
+- **Monomials Terms**: Collect monomials terms using `to_linear_monomials`.
+- [**Quadratic Coefficient Matrix**](https://github.com/MichaelSchneeberger/polymat/blob/main/polymat/expressiontree/operations/quadraticcoefficients.py): Compute the Coefficient matrix $Q$ appearing in the quadratic form of the polynomial $p(x) = Z(x)^\top Q Z(x)$ using `to_gram_matrix`.
+- [**Quadratic Monomial Terms**](https://github.com/MichaelSchneeberger/polymat/blob/main/polymat/expressiontree/operations/quadraticmonomials.py): Construct a monomial vector $Z(x)$ for the quadratic form of the polynomial $p(x) = Z(x)^\top Q Z(x)$ with `to_quadratic_monomials`.
 - **Repmat**: Repeat matrices with `rep_mat`.
 - **Reshape**: Modify the shape of polynomial matrices using `reshape`.
 - **Summation**: Sum the rows of the polynomial expression using `sum`.
