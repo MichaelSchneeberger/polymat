@@ -63,40 +63,100 @@ print(f'{array_repr.data[2].toarray()=}')  # Sparse scipy array converted to num
 
 ### Creating Polynomial Expressions
 
-- **Polynomial Variable**: Define a polynomial variable with the `polymat.define_variable` function.
-- **From Data**: Create a polynomial expression using the `polymat.from_` function from:
+- **Polynomial Variable**: Define a polynomial variable.
+    ``` python
+    x = polymat.define_variable('x')
+    ```
+- **From Data**: Create a polynomial expression from:
     - Tuple of numbers and polynomial variables
-    - `numpy` arrays
+        ``` python
+        # rotation matrix
+        j = polymat.from_(((0, -1), (1, 0)))
+        ```
+    - `numpy` arrays (possibly containing polynomial variables)
+        ``` python
+        # idendity matrix
+        i = polymat.from_(np.eye(2))
+        ```
     - `sympy` expressions (symbols are automatically converted to polynomial variables).
 
 ### Combining Polynomial Expressions
 
 - **Block Diagonal**: Combine expression into block diagonal matrices with the `polymat.block_diag` function.
+- **Horizontal Stacking**: Stack multiple polynomial expressions horizontally using the `polymat.h_stack` function.
 - **Product**: Form vectors containing the Cartesian product of polynomial expressions using the `polymat.product` function.
 - **Vertical Stacking**: Stack multiple polynomial expressions vertically using the `polymat.v_stack` function.
 
 ### Polynomial Expression Manipulation
 
 - **Arithmetic operations**: Perform addition (`+`), subtraction (`-`), scalar multiplication and division (`*`, `/`), matrix multiplication (`@`), and exponentiation (`**`).
-- **Caching**: Cache the polynomial expression to store intermediate results and speed up computation using the `cache` method.
-- [**Combinations**](https://github.com/MichaelSchneeberger/polymat/blob/main/polymat/expressiontree/operations/combinations.py): Stack combinations of elements from polynomial vectors using `combination`.
-- **Diagonalization**: Extract or construct diagonal polynomial matrices with `diag`.
-- **Differentiation**: Compute derivatives using `diff`.
-- **Evaluation**: Replace variables within floats using `eval`.
-- **Kronecker Product**: Compute the Kronecker products using `kron`.
-- **Linear Coefficient Vector**: Expand a polynomial vector into monomial components using `to_linear_coefficients`.
-- **Monomials Terms**: Collect monomials terms using `to_linear_monomials`.
-- [**Quadratic Coefficient Matrix**](https://github.com/MichaelSchneeberger/polymat/blob/main/polymat/expressiontree/operations/quadraticcoefficients.py): Compute the Coefficient matrix $Q$ appearing in the quadratic form of the polynomial $p(x) = Z(x)^\top Q Z(x)$ using `to_gram_matrix`.
+    ``` python
+    f = j * x**2 - i
+    # Matrix([[-1.0, -1.0*x**2], [x**2, -1.0]])
+    ```
+- **Caching**: Cache the polynomial expression to store intermediate results and speed up computation.
+    ``` python
+    x = x.cache()
+    ```
+- [**Combinations**](https://github.com/MichaelSchneeberger/polymat/blob/main/polymat/expressiontree/operations/combinations.py): Stack multiplied combinations of elements from polynomial vectors.
+    ``` python
+    m = x.combinations((0, 1, 2))
+    # Matrix([[1], [x], [x**2]])
+    ```
+- **Diagonalization**: Extract a diagonal or construct diagonal matrix.
+    ``` python
+    mdiag = m.diag()
+    # Matrix([[1, 0, 0], [0, x, 0], [0, 0, x**2]])
+    ```
+- **Differentiation**: Compute the Jacobian matrix of a polynomial vector.
+    ``` python
+    mdiff = m.diff(x)
+    # Matrix([[0], [1], [2.0*x]])
+    ```
+- **Evaluation**: Replace variable symbols within tuple of floats.
+    ``` python
+    meval = m.eval({x.symbol: (2,)})
+    # Matrix([[1], [2.0], [4.0]])
+    ```
+- **Kronecker Product**: Compute the Kronecker products.
+    ``` python
+    fkron = f.kron(i)
+    # Matrix([[-1.0, 0, -1.0*x**2, 0], [0, -1.0, 0, -1.0*x**2], [x**2, 0, -1.0, 0], [0, x**2, 0, -1.0]])
+    ```
+- **Repmat**: Repeat polynomial expressions.
+    ``` python
+    xrepmat = x.repmat(3, 1)
+    Matrix([[x], [x], [x]])
+    ```
+- **Reshape**: Modify the shape of polynomial matrices.
+    ``` python
+    freshape = f.reshape(-1, 1)
+    # Matrix([[-1.0], [x**2], [-1.0*x**2], [-1.0]])
+    ```
+- **Summation**: Sum the rows of the polynomial expression.
+    ``` python
+    fsum = f.sum()
+    # Matrix([[-1.0*x**2 - 1.0], [x**2 - 1.0]])
+    ```
+
+Specialized methods:
+- **Linear Coefficient Vector**: Compute a coefficient matrix $Q$ associated with a vector of monomials $Z(x)$ and a polynomial vector $p(x) = Q Z(x)$ using `to_linear_coefficients`.
+- **Monomials Terms**: Construct a monomial vector $Z(x)$ appearing in a polynomial expression using `to_linear_monomials`.
+- [**Quadratic Coefficient Matrix**](https://github.com/MichaelSchneeberger/polymat/blob/main/polymat/expressiontree/operations/quadraticcoefficients.py): Compute the symmetric coefficient matrix $Q$ appearing in the quadratic form of the polynomial $p(x) = Z(x)^\top Q Z(x)$ using `to_gram_matrix`.
 - [**Quadratic Monomial Terms**](https://github.com/MichaelSchneeberger/polymat/blob/main/polymat/expressiontree/operations/quadraticmonomials.py): Construct a monomial vector $Z(x)$ for the quadratic form of the polynomial $p(x) = Z(x)^\top Q Z(x)$ with `to_quadratic_monomials`.
-- **Repmat**: Repeat matrices with `rep_mat`.
-- **Reshape**: Modify the shape of polynomial matrices using `reshape`.
-- **Summation**: Sum the rows of the polynomial expression using `sum`.
+
 
 ### Output
 
+- **Sympy Representation**: Convert experssion to `sympy` representation using `polymat.to_sympy`.
+    ``` python
+    state, sympy_repr = polymat.to_sympy(f).apply(state)
+
+    # The output will be Matrix([[-1.0, -1.0*x**2], [x**2, -1.0]])
+    print(sympy_repr)
+    ```
 - **Array Representation**: Convert polynomial expressions to an array representation (implemented through numpy and scipy array) using the `polymat.to_array` function.
 - **Tuple Representation**: Outputs constant parts as nested tuple using `polymat.to_tuple`.
-- **Sympy Representation**: Convert experssion to `sympy` representation using `polymat.to_sympy`.
 - **Polynomial Degrees**: Obtain degrees of each polynomial matrix element using `polymat.to_degree`.
 - **Shape of the Matrix**: Retrieve the shape of the polynomial matrix using `polymat.to_shape`.
 
