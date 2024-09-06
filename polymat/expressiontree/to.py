@@ -186,8 +186,6 @@ def to_degree(
         def apply(self, state: State):
             state, polymatrix = self.expr.apply(state)
 
-            A = np.zeros(polymatrix.shape, dtype=np.double)
-
             if self.variables:
                 state, variables_ = to_variable_indices(self.variables).apply(state)
 
@@ -199,15 +197,37 @@ def to_degree(
                 def get_degree(monomial: MonomialType):
                     return monomial_degree(monomial)
 
-            for (row, col), polynomial in polymatrix.entries():
+            n_rows, n_cols = polymatrix.shape
 
-                def gen_degrees():
-                    for monomial in polynomial.keys():
-                        yield get_degree(monomial)
+            def gen_tuple():
+                for row in range(n_rows):
 
-                A[row, col] = max(gen_degrees())
+                    def gen_column():
+                        for col in range(n_cols):
+                            polynomial = polymatrix.at(row, col)
 
-            return state, A
+                            if polynomial:
+                                def gen_degrees():
+                                    for monomial in polynomial.keys():
+                                        yield get_degree(monomial)
+
+                                yield max(gen_degrees())
+
+                    yield tuple(gen_column())
+
+            return state, tuple(gen_tuple())
+
+            # A = np.zeros(polymatrix.shape, dtype=np.double)
+
+            # for (row, col), polynomial in polymatrix.entries():
+
+            #     def gen_degrees():
+            #         for monomial in polynomial.keys():
+            #             yield get_degree(monomial)
+
+            #     A[row, col] = max(gen_degrees())
+
+            # return state, A
 
     return statemonad.from_node(ToDegreeStateMonadTree(expr=expr, variables=variables))
 

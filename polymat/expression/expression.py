@@ -197,7 +197,6 @@ class Expression(SingleChildExpressionNode, ABC):
     @abstractmethod
     def copy(self, /, **changes) -> Expression: ...
 
-    # only applies to symmetric matrix or vector
     def diag(self):
         return self.copy(
             child=init_diagonal(

@@ -17,7 +17,10 @@ from polymat.expressiontree.to import (
     to_variables as _to_variables,
     to_variable_indices as _to_variable_indices,
 )
-from polymat.expression.typedexpressions import MatrixExpression, VariableVectorExpression
+from polymat.expression.typedexpressions import (
+    MatrixExpression,
+    VariableVectorExpression,
+)
 
 
 def to_array(
@@ -51,8 +54,10 @@ def to_sympy(expr: MatrixExpression) -> StateMonad[State, sympy.Expr]:
     return _to_sympy(expr.child)
 
 
-def to_tuple(expr: MatrixExpression) -> StateMonad[State, tuple[tuple[float, ...], ...]]:
-    return _to_tuple(expr.child)
+def to_tuple(
+    expr: MatrixExpression, assert_constant: bool = True
+) -> StateMonad[State, tuple[tuple[float, ...], ...]]:
+    return _to_tuple(expr.child, assert_constant=assert_constant)
 
 
 def to_variables(expr: MatrixExpression) -> StateMonad[State, tuple[Symbol, ...]]:
