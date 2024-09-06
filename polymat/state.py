@@ -6,7 +6,7 @@ from polymat.utils.getstacklines import FrameSummary, to_operator_traceback
 from polymat.symbol import Symbol
 
 
-@dataclassabc(frozen=True)
+@dataclassabc(frozen=True, slots=True)
 class State:
     class IndexRange(NamedTuple):
         start: int

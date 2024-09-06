@@ -37,10 +37,10 @@ class MatrixExpression(SingleChildExpressionNode):
     def eval(self, substitutions: dict[Symbol, tuple[float, ...]]) -> MatrixExpression: ...
     def h_stack(self, others: Iterable[MatrixExpression]) -> MatrixExpression: ...
     def kron(self, other: MatrixExpression) -> MatrixExpression: ...
-    def linear_monomials_in(
+    def to_linear_monomials(
         self, variables: VariableVectorExpression
     ) -> MonomialVectorExpression: ...
-    def quadratic_monomials_in(
+    def to_quadratic_monomials(
         self, variables: VariableVectorExpression
     ) -> MonomialVectorExpression: ...
     def rep_mat(self, n: int, m: int) -> MatrixExpression: ...
@@ -129,7 +129,7 @@ class VectorExpression(MatrixExpression):
     def kron(self, other: VectorExpression) -> VectorExpression: ...
     @overload
     def kron(self, other: MatrixExpression) -> MatrixExpression: ...
-    def linear_in(
+    def to_linear_coefficients(
         self,
         variables: VariableVectorExpression,
         monomials: MonomialVectorExpression | None = None,
@@ -189,12 +189,12 @@ class PolynomialExpression(VectorExpression):
         self, substitutions: dict[Symbol, tuple[float, ...]]
     ) -> PolynomialExpression: ...
     def h_stack(self, others: Iterable[MatrixExpression]) -> RowVectorExpression: ...
-    def linear_in(
+    def to_linear_coefficients(
         self,
         variables: VariableVectorExpression,
         monomials: MonomialVectorExpression | None = None,
     ) -> RowVectorExpression: ...
-    def quadratic_in(
+    def to_gram_matrix(
         self,
         variables: VariableVectorExpression,
         monomials: MonomialVectorExpression | None = None,

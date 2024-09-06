@@ -30,7 +30,7 @@ class Combinations(FrameSummaryMixin, SingleChildExpressionNode):
         # Create combinations of the polynomial vector with degrees 0, 1, and 2
         expr = x.combinations(degrees=(0, 1, 2))
 
-        # Convert to a sympy expression for symbolic computation
+        # Convert the result to a sympy expression
         state, expr_sympy = polymat.to_sympy(expr.T).apply(state)
 
         # The output will be expr_sympy=Matrix([[1, x1, x2, x1**2, x1*x2, x2**2]])
@@ -38,11 +38,10 @@ class Combinations(FrameSummaryMixin, SingleChildExpressionNode):
         ```
 
     Args:
-        degrees (tuple[int]): A tuple representing the degrees of the elements in the 
-                              output polynomial vector.
+        degrees: A tuple representing the degrees of the elements in the output polynomial vector.
 
     Returns:
-        Combinations: A polynomial vector containing all the combinations of the input vector elements.
+        A polynomial vector containing all the combinations of the input vector elements.
     """
 
 

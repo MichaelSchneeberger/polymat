@@ -5,7 +5,7 @@ from dataclassabc import dataclassabc
 from polymat.arrayrepr.arrayrepr import ArrayRepr
 
 
-@dataclassabc(frozen=True)
+@dataclassabc(frozen=True, slots=True)
 class ArrayReprImpl(ArrayRepr):
     data: dict[int, NDArray]
     n_eq: int

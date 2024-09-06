@@ -23,13 +23,13 @@ from polymat.expressiontree.operations.fromvariableindices import (
 )
 from polymat.expressiontree.operations.fromvariables import FromVariables
 from polymat.expressiontree.operations.kronecker import Kronecker
-from polymat.expressiontree.operations.linearin import LinearIn
+from polymat.expressiontree.operations.linearcoefficients import LinearCoefficients
 from polymat.expressiontree.operations.linearmonomials import (
     LinearMonomials,
 )
 from polymat.expressiontree.operations.product import Product
-from polymat.expressiontree.operations.quadraticin import (
-    QuadraticInExpr,
+from polymat.expressiontree.operations.quadraticcoefficients import (
+    QuadraticCoefficients,
 )
 from polymat.expressiontree.operations.quadraticmonomials import (
     QuadraticMonomials,
@@ -122,7 +122,7 @@ def init_assert_polynomial(child: ExpressionNode, stack: tuple[FrameSummary, ...
     )
 
 
-@dataclassabc(frozen=True)
+@dataclassabc(frozen=True, slots=True)
 class BlockDiagonalImpl(BlockDiagonal):
     children: tuple[ExpressionNode, ...]
 
@@ -264,7 +264,7 @@ def init_filter_non_zero(
     )
 
 
-@dataclassabc(frozen=True)
+@dataclassabc(frozen=True, slots=True)
 class FromNumpyImpl(FromNumpy):
     data: NDArray
 
@@ -289,7 +289,7 @@ def init_from_any(
     )
 
 
-@dataclassabc(frozen=True)
+@dataclassabc(frozen=True, slots=True)
 class FromSparseReprImpl(FromSparseRepr):
     sparse_repr: SparseRepr
 
@@ -316,7 +316,7 @@ def init_define_variable(
     return DefineVariableImpl(symbol=symbol, size=size, stack=stack)
 
 
-@dataclassabc(frozen=True)
+@dataclassabc(frozen=True, slots=True)
 class FromVariablesImpl(FromVariables):
     variables: FromVariables.VARIABLE_TYPE
 
@@ -325,7 +325,7 @@ def init_from_variables(variables: FromVariables.VARIABLE_TYPE):
     return FromVariablesImpl(variables=variables)
 
 
-@dataclassabc(frozen=True)
+@dataclassabc(frozen=True, slots=True)
 class FromVariableIndicesImpl(FromVariableIndices):
     indices: tuple[int, ...]
 
@@ -401,7 +401,7 @@ def init_from_(value: typing.FROM_TYPES, stack: tuple[FrameSummary, ...]):
     )
 
 
-@dataclassabc(frozen=True)
+@dataclassabc(frozen=True, slots=True)
 class KroneckerImpl(Kronecker):
     left: ExpressionNode
     right: ExpressionNode
@@ -415,7 +415,7 @@ def init_kronecker(
 
 
 @dataclassabc(frozen=True, repr=False)
-class LinearInImpl(LinearIn):
+class LinearCoefficientsImpl(LinearCoefficients):
     child: ExpressionNode
     monomials: ExpressionNode
     variables: ExpressionNode
@@ -423,7 +423,7 @@ class LinearInImpl(LinearIn):
     stack: tuple[FrameSummary, ...]
 
 
-def init_linear_in(
+def init_linear_coefficients(
     child: ExpressionNode,
     variables: ExpressionNode,
     stack: tuple[FrameSummary, ...],
@@ -436,7 +436,7 @@ def init_linear_in(
             variables=variables,
         )
 
-    return LinearInImpl(
+    return LinearCoefficientsImpl(
         child=child,
         variables=variables,
         monomials=monomials,
@@ -445,7 +445,7 @@ def init_linear_in(
     )
 
 
-@dataclassabc(frozen=True)
+@dataclassabc(frozen=True, slots=True)
 class LinearMonomialsImpl(LinearMonomials):
     child: ExpressionNode
     variables: ExpressionNode
@@ -493,7 +493,7 @@ def init_product(
 
 
 @dataclassabc(frozen=True, repr=False)
-class QuadraticInImpl(QuadraticInExpr):
+class QuadraticCoefficientsImpl(QuadraticCoefficients):
     child: ExpressionNode
     monomials: ExpressionNode
     variables: ExpressionNode
@@ -501,7 +501,7 @@ class QuadraticInImpl(QuadraticInExpr):
     stack: tuple[FrameSummary, ...]
 
 
-def init_quadratic_in(
+def init_quadratic_coefficients(
     child: ExpressionNode,
     variables: ExpressionNode,
     stack: tuple[FrameSummary, ...],
@@ -511,7 +511,7 @@ def init_quadratic_in(
     if monomials is None:
         monomials = init_quadratic_monomials(child=child, variables=variables)
 
-    return QuadraticInImpl(
+    return QuadraticCoefficientsImpl(
         child=child,
         variables=variables,
         monomials=monomials,
@@ -520,7 +520,7 @@ def init_quadratic_in(
     )
 
 
-@dataclassabc(frozen=True)
+@dataclassabc(frozen=True, slots=True)
 class QuadraticMonomialsImpl(QuadraticMonomials):
     child: ExpressionNode
     variables: ExpressionNode
@@ -533,7 +533,7 @@ def init_quadratic_monomials(
     return QuadraticMonomialsImpl(child=child, variables=variables)
 
 
-@dataclassabc(frozen=True)
+@dataclassabc(frozen=True, slots=True)
 class FromVectorToSymmetricMatrixImpl(FromVectorToSymmetricMatrix):
     child: ExpressionNode
     stack: tuple[FrameSummary, ...]
@@ -549,7 +549,7 @@ def from_vector_to_symmetric_matrix(
     )
 
 
-@dataclassabc(frozen=True)
+@dataclassabc(frozen=True, slots=True)
 class GetItemImpl(GetItem):
     child: ExpressionNode
     key: GetItem.KEY_TYPE
@@ -562,7 +562,7 @@ def init_get_item(
     return GetItemImpl(child=child, key=key)
 
 
-@dataclassabc(frozen=True)
+@dataclassabc(frozen=True, slots=True)
 class RowSummationImpl(RowSummation):
     child: ExpressionNode
 
@@ -571,7 +571,7 @@ def init_row_summation(child: ExpressionNode):
     return RowSummationImpl(child=child)
 
 
-@dataclassabc(frozen=True)
+@dataclassabc(frozen=True, slots=True)
 class ToSymmetricMatrixImpl(ToSymmetricMatrix):
     child: ExpressionNode
 
@@ -580,7 +580,7 @@ def init_to_symmetric_matrix(child: ExpressionNode):
     return ToSymmetricMatrixImpl(child=child)
 
 
-@dataclassabc(frozen=True)
+@dataclassabc(frozen=True, slots=True)
 class RepeatMatrixImpl(RepeatMatrix):
     child: ExpressionNode
     repetition: tuple[int, int]
@@ -593,7 +593,7 @@ def init_rep_mat(
     return RepeatMatrixImpl(child=child, repetition=repetition)
 
 
-@dataclassabc(frozen=True)
+@dataclassabc(frozen=True, slots=True)
 class ReshapeImpl(Reshape):
     child: ExpressionNode
     new_shape: tuple[int, int]
@@ -606,7 +606,7 @@ def init_reshape(
     return ReshapeImpl(child=child, new_shape=new_shape)
 
 
-@dataclassabc(frozen=True)
+@dataclassabc(frozen=True, slots=True)
 class ToVariableVectorImpl(ToVariableVector):
     child: ExpressionNode
 
@@ -615,7 +615,7 @@ def init_variable_vector(child: ExpressionNode):
     return ToVariableVectorImpl(child=child)
 
 
-@dataclassabc(frozen=True)
+@dataclassabc(frozen=True, slots=True)
 class TransposeImpl(Transpose):
     child: ExpressionNode
 

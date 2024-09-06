@@ -9,7 +9,7 @@ from polymat.expressiontree.nodes import ExpressionNode
 from polymat.symbol import Symbol
 
 
-@dataclassabc(frozen=True)
+@dataclassabc(frozen=True, slots=True)
 class ExpressionImpl(Expression):
     child: ExpressionNode
 
@@ -24,7 +24,7 @@ def init_expression(child: ExpressionNode):
     )
 
 
-@dataclassabc(frozen=True)
+@dataclassabc(frozen=True, slots=True)
 class VariableExpressionImpl(VariableExpression):
     child: ExpressionNode
     symbol: Symbol

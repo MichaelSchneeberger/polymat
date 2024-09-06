@@ -88,7 +88,10 @@ class ArrayRepr:
 
     @cached_property
     def degree(self) -> int:
-        return max(self.data.keys())
+        if self.data:
+            return max(self.data.keys())
+        else:
+            return 0
     
     @staticmethod
     def to_column_indices(

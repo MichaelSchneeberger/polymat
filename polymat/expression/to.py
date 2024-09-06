@@ -23,8 +23,9 @@ from polymat.expression.typedexpressions import MatrixExpression, VariableVector
 def to_array(
     expr: MatrixExpression,
     variables: VariableVectorExpression | tuple[int, ...],
+    name: str | None = None,
 ) -> StateMonad[State, ArrayRepr]:
-    return _to_array(expr.child, variables)
+    return _to_array(expr.child, variables, name=name)
 
 
 def to_degree(

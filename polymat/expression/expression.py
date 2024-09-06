@@ -24,10 +24,10 @@ from polymat.expressiontree.init import (
     init_from_,
     init_kronecker,
     init_linear_monomials,
-    init_linear_in,
+    init_linear_coefficients,
     init_matrix_mult,
     init_product,
-    init_quadratic_in,
+    init_quadratic_coefficients,
     init_quadratic_monomials,
     init_rep_mat,
     init_reshape,
@@ -248,28 +248,40 @@ class Expression(SingleChildExpressionNode, ABC):
     def kron(self, other: Expression):
         return self.copy(child=init_kronecker(left=self.child, right=other.child))
 
-    # only applies to vector
-    def linear_in(
+    # this method only applies to vectors
+    def to_linear_coefficients(
         self,
         variables: Expression,
         monomials: Expression | None = None,
     ):
         return self.copy(
-            child=init_linear_in(
+            child=init_linear_coefficients(
                 child=self.child,
                 monomials=monomials,
                 variables=variables,
                 stack=get_frame_summary(),
             )
         )
+    
+    # deprecated method name, use to_linear_coefficient_vector instead
+    def linear_in(
+        self,
+        variables: Expression,
+        monomials: Expression | None = None,
+    ):
+        return self.to_linear_coefficients(variables=variables, monomials=monomials)
 
-    def linear_monomials_in(self, variables: Expression):
+    def to_linear_monomials(self, variables: Expression):
         return self.copy(
             child=init_linear_monomials(
                 child=self.child,
                 variables=variables,
             )
         )
+    
+    # deprecated method name, use to_linear_monomials instead
+    def linear_monomials_in(self, variables: Expression):
+        return self.to_linear_monomials(variables=variables)
 
     def product(self, others: Iterable[Expression], degrees: Product.DEGREE_TYPES):
         stack = get_frame_summary()
@@ -282,15 +294,15 @@ class Expression(SingleChildExpressionNode, ABC):
             )
         )
 
-    # only applies to polynomial
-    def quadratic_in(
+    # this method only applies to polynomials
+    def to_gram_matrix(
         self,
         variables: Expression,
         monomials: Expression | None = None,
     ):
         return self.copy(
             child=init_to_symmetric_matrix(
-                child=init_quadratic_in(
+                child=init_quadratic_coefficients(
                     child=self.child,
                     monomials=monomials,
                     variables=variables,
@@ -298,14 +310,22 @@ class Expression(SingleChildExpressionNode, ABC):
                 )
             )
         )
+    
+    # deprecated method name, use to_quadratic_coefficient_matrix instead
+    def quadratic_in(self, variables: Expression, monomials: Expression | None = None,):
+        return self.to_gram_matrix(variables=variables, monomials=monomials)
 
-    def quadratic_monomials_in(self, variables: Expression):
+    def to_quadratic_monomials(self, variables: Expression):
         return self.copy(
             child=init_quadratic_monomials(
                 child=self.child,
                 variables=variables,
             )
         )
+
+    # deprecated method name, use to_quadratic_monomials instead
+    def quadratic_monomials_in(self, variables: Expression):
+        return self.to_quadratic_monomials(variables=variables)
 
     def rep_mat(self, n: int, m: int):
         return self.copy(

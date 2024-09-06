@@ -48,7 +48,7 @@ def to_array(
     results in indices = (3, 5, 6)
     """
 
-    @dataclassabc(frozen=True)
+    @dataclassabc(frozen=True, slots=True)
     class ToArrayStateMonadTree(StateMonadNode):
         expr: ExpressionNode
         variables: ExpressionNode
@@ -137,7 +137,7 @@ def _to_tuple[U](
     expr: ExpressionNode,
     func: Callable[[MaybePolynomialType], U],
 ) -> StateMonad[State, U]:
-    @dataclassabc(frozen=True)
+    @dataclassabc(frozen=True, slots=True)
     class ToTupleStateMonadTree(StateMonadNode):
         name: str
         expr: ExpressionNode
@@ -175,7 +175,7 @@ def to_degree(
     expr: ExpressionNode,
     variables: ExpressionNode | None = None,
 ) -> StateMonad[State, NDArray]:
-    @dataclassabc(frozen=True)
+    @dataclassabc(frozen=True, slots=True)
     class ToDegreeStateMonadTree(StateMonadNode):
         expr: ExpressionNode
         variables: ExpressionNode | None = None
@@ -215,7 +215,7 @@ def to_degree(
 def to_numpy(
     expr: ExpressionNode, assert_constant: bool = True
 ) -> StateMonad[State, NDArray]:
-    @dataclassabc(frozen=True)
+    @dataclassabc(frozen=True, slots=True)
     class ToNumpyStateMonadTree(StateMonadNode):
         expr: ExpressionNode
         assert_constant: bool
@@ -244,7 +244,7 @@ def to_numpy(
 
 
 def to_shape(expr: ExpressionNode) -> StateMonad[State, tuple[int, int]]:
-    @dataclassabc(frozen=True)
+    @dataclassabc(frozen=True, slots=True)
     class ToShapeStateMonadTree(StateMonadNode):
         expr: ExpressionNode
 
@@ -264,7 +264,7 @@ def to_sparse_repr(expr: ExpressionNode) -> StateMonad[State, SparseRepr]:
 
 
 def to_sympy(expr: ExpressionNode) -> StateMonad[State, sympy.Expr]:
-    @dataclassabc(frozen=True)
+    @dataclassabc(frozen=True, slots=True)
     class ToSympyStateMonadTree(StateMonadNode):
         expr: ExpressionNode
 
@@ -306,7 +306,7 @@ def to_sympy(expr: ExpressionNode) -> StateMonad[State, sympy.Expr]:
 def to_tuple(
     expr: ExpressionNode, assert_constant: bool = True
 ) -> StateMonad[State, tuple[tuple[float, ...], ...]]:
-    @dataclassabc(frozen=True)
+    @dataclassabc(frozen=True, slots=True)
     class ToTupleStateMonadTree(StateMonadNode):
         expr: ExpressionNode
         assert_constant: bool
@@ -378,7 +378,7 @@ def to_variable_indices(
         of variable indices for the expression's rows.
     """
 
-    @dataclassabc(frozen=True)
+    @dataclassabc(frozen=True, slots=True)
     class ToVariableIndicesStateMonadTree(StateMonadNode):
         expr: ExpressionNode
 
@@ -399,7 +399,7 @@ def to_variable_indices(
 def to_variables(
     expr: ExpressionNode,
 ) -> StateMonad[State, tuple[Symbol, ...]]:
-    @dataclassabc(frozen=True)
+    @dataclassabc(frozen=True, slots=True)
     class ToVariablesStateMonadTree(StateMonadNode[State, tuple[Symbol, ...]]):
         expr: ExpressionNode
 

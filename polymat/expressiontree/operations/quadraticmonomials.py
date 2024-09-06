@@ -12,22 +12,38 @@ from polymat.state import State
 
 
 class QuadraticMonomials(SingleChildExpressionNode):
-    # FIXME: docstring, what does this thing even do
     """
-    Maps a polynomial matrix
+    Constructs the monomial vector Z(x) corresponding to the quadratic form of the polynomial.
+    Given a vector of variables, this class generates the set of monomials involved in the
+    quadratic form p(x) = Z(x)^\top Q Z(x), where Q is the coefficient matrix and Z(x) is the 
+    vector of monomials.
 
-        underlying = [
-            [x y    ],
-            [x + x^2],
-        ]
+    Example:
+        ```python
+        x1 = polymat.define_variable('x1')
+        x2 = polymat.define_variable('x2')
+        x = polymat.v_stack((x1, x2))
 
-    into a vector of monomials
+        # Example polynomial
+        p = 1 + x1*x2 + x1**2
 
-        output = [1, x, y]
+        # Generate the monomial vector associated with the quadratic form of p
+        expr = p.quadratic_monomials_in(x)
 
-    in variable
+        # Convert the result to a sympy expression
+        state, expr_sympy = polymat.to_sympy(expr.T).apply(state)
 
-        variables = [x, y].
+        # The output will be expr_sympy=Matrix([[1, x1, x2]])
+        print(f'{expr_sympy=}')
+
+        Args:
+            x (VariableVectorExpression): The vector of variables used to construct the 
+                                        monomials for the quadratic form.
+
+        Returns:
+            QuadraticMonomials: An instance representing the vector of monomials involved 
+                                in the quadratic form of the polynomial.
+        ```
     """
 
     @property
@@ -35,7 +51,7 @@ class QuadraticMonomials(SingleChildExpressionNode):
     def variables(self) -> ExpressionNode: ...
 
     def __str__(self):
-        return f"quadratic_monomials_in({self.child}, {self.variables})"
+        return f"quadratic_monomials({self.child}, {self.variables})"
 
     # overwrites the abstract method of `ExpressionBaseMixin`
     @override

@@ -14,7 +14,7 @@ from polymat.utils.getstacklines import (
 )
 
 
-class LinearIn(FrameSummaryMixin, SingleChildExpressionNode):
+class LinearCoefficients(FrameSummaryMixin, SingleChildExpressionNode):
     """
     Maps a polynomial column vector
 
