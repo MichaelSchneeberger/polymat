@@ -83,9 +83,25 @@ print(f'{array_repr.data[2].toarray()=}')  # Sparse scipy array converted to num
 ### Combining Polynomial Expressions
 
 - **Block Diagonal**: Combine expression into block diagonal matrices with the `polymat.block_diag` function.
+    ``` python
+    xblk = polymat.block_diag((x, x))
+    # Matrix([[x, 0], [0, x]])
+    ```
 - **Horizontal Stacking**: Stack multiple polynomial expressions horizontally using the `polymat.h_stack` function.
-- **Product**: Form vectors containing the Cartesian product of polynomial expressions using the `polymat.product` function.
+    ``` python
+    xhstack = polymat.h_stack((x, x))
+    # Matrix([[x, x]])
+    ```
+<!-- - **Product**: Form vectors containing the Cartesian product of polynomial expressions using the `polymat.product` function.
+    ``` python
+    xhstack = polymat.h_stack((x, x))
+    # Matrix([[x, x]])
+    ``` -->
 - **Vertical Stacking**: Stack multiple polynomial expressions vertically using the `polymat.v_stack` function.
+    ``` python
+    xvstack = polymat.v_stack((x, x))
+    # Matrix([[x], [x]])
+    ```
 
 ### Polynomial Expression Manipulation
 
@@ -166,6 +182,8 @@ Specialized methods:
 
 ### Output
 
+The output functions listed below perform stateful computations. As a result, they return a StateMonad object, which must be applied with a state object to generate the desired output value.
+
 - **Sympy Representation**: Convert an experssion to a `sympy` representation.
     ``` python
     state, sympy_repr = polymat.to_sympy(f).apply(state)
@@ -203,8 +221,9 @@ Specialized methods:
     print(fshape)
     ```
 
-<!-- 
+
 ## References
 
 Here are some references related to this probject:
-*  -->
+
+* [State-Monad](https://github.com/MichaelSchneeberger/state-monad) is a Python library that encapsulates stateful computations into a monadic structure.
