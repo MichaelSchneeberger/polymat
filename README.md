@@ -148,17 +148,42 @@ Specialized methods:
 
 ### Output
 
-- **Sympy Representation**: Convert experssion to `sympy` representation using `polymat.to_sympy`.
+- **Sympy Representation**: Convert an experssion to a `sympy` representation.
     ``` python
     state, sympy_repr = polymat.to_sympy(f).apply(state)
 
     # The output will be Matrix([[-1.0, -1.0*x**2], [x**2, -1.0]])
     print(sympy_repr)
     ```
-- **Array Representation**: Convert polynomial expressions to an array representation (implemented through numpy and scipy array) using the `polymat.to_array` function.
-- **Tuple Representation**: Outputs constant parts as nested tuple using `polymat.to_tuple`.
-- **Polynomial Degrees**: Obtain degrees of each polynomial matrix element using `polymat.to_degree`.
-- **Shape of the Matrix**: Retrieve the shape of the polynomial matrix using `polymat.to_shape`.
+- **Array Representation**: Convert polynomial expressions to an array representation (implemented through numpy and scipy array)..
+    ``` python
+    state, farray = polymat.to_array(f, x).apply(state)
+
+    # The output will be {0: array([[-1.], [ 0.], [ 0.], [-1.]]), 2: array([[ 0.], [ 1.], [-1.], [ 0.]])}
+    print(farray)
+    ```
+- **Tuple Representation**: Outputs constant parts as nested tuple.
+    ``` python
+    # Setting assert_constant=False will prevent an exception form being raised, even if f is not a constant polynomial expression
+    state, ftuple = polymat.to_tuple(f, assert_constant=False).apply(state)
+
+    # The output will be ((-1.0,), (-1.0,))
+    print(ftuple)
+    ```
+- **Polynomial Degrees**: Obtain degrees of each polynomial matrix element.
+    ``` python
+    state, fdegree = polymat.to_degree(f).apply(state)
+
+    # The output will be (2, 2)
+    print(fdegree)
+    ```
+- **Shape of the Matrix**: Retrieve the shape of the polynomial matrix.
+    ``` python
+    state, fshape = polymat.to_shape(f).apply(state)
+
+    # The output will be ((0, 2), (2, 0))
+    print(fshape)
+    ```
 
 <!-- 
 ## References
