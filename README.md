@@ -8,7 +8,7 @@ PolyMat is a Python library designed for the representation and manipulation of 
 * Expression Building: Create polynomial expressions using various operators provided by the library.
 * Efficient Internal Representation: Uses a sparse internal structure to optimize intermediate computations.
 * Deferred Computation: Polynomial matrices are evaluated lazily using the [statemonad](https://github.com/MichaelSchneeberger/state-monad) library, meaning expressions are computed only when needed.
-* Finalization: To obtain a concrete representation of the polynomial matrix, use one of the `to_` methods.
+* Performance Optimized: Designed for speed, the library outperforms other symbolic computation tools like `sympy`, making it ideal for large matrix expressions.
 
 
 ## Installation
@@ -70,24 +70,24 @@ print(f'{array_repr.data[2].toarray()=}')  # Sparse scipy array converted to num
 - **From Data**: Create a polynomial expression from:
     - Tuple of numbers and polynomial variables
         ``` python
-        # rotation matrix
         j = polymat.from_(((0, -1), (1, 0)))
+        # Matrix([[0, -1], [1, 0]])
         ```
     - `numpy` arrays (possibly containing polynomial variables)
         ``` python
-        # idendity matrix
         i = polymat.from_(np.eye(2))
+        # Matrix([[1, 0], [0, 1]])
         ```
     - `sympy` expressions (symbols are automatically converted to polynomial variables).
 
 ### Combining Polynomial Expressions
 
-- **Block Diagonal**: Combine expression into block diagonal matrices with the `polymat.block_diag` function.
+- **Block Diagonal**: Combine expression into block diagonal matrices.
     ``` python
     xblk = polymat.block_diag((x, x))
     # Matrix([[x, 0], [0, x]])
     ```
-- **Horizontal Stacking**: Stack multiple polynomial expressions horizontally using the `polymat.h_stack` function.
+- **Horizontal Stacking**: Stack multiple polynomial expressions horizontally.
     ``` python
     xhstack = polymat.h_stack((x, x))
     # Matrix([[x, x]])
@@ -97,7 +97,7 @@ print(f'{array_repr.data[2].toarray()=}')  # Sparse scipy array converted to num
     xhstack = polymat.h_stack((x, x))
     # Matrix([[x, x]])
     ``` -->
-- **Vertical Stacking**: Stack multiple polynomial expressions vertically using the `polymat.v_stack` function.
+- **Vertical Stacking**: Stack multiple polynomial expressions vertically.
     ``` python
     xvstack = polymat.v_stack((x, x))
     # Matrix([[x], [x]])
@@ -158,6 +158,8 @@ print(f'{array_repr.data[2].toarray()=}')  # Sparse scipy array converted to num
 Specialized methods:
 - **Monomials Terms**: Construct a monomial vector $Z(x)$ appearing in a polynomial expression.
     ``` python
+    p = x**3 - 2*x + 3
+
     p_monom = p.to_linear_monomials(x)
     # Matrix([[1], [x], [x**3]])
     ```
@@ -187,38 +189,28 @@ The output functions listed below perform stateful computations. As a result, th
 - **Sympy Representation**: Convert an experssion to a `sympy` representation.
     ``` python
     state, sympy_repr = polymat.to_sympy(f).apply(state)
-
-    # The output will be Matrix([[-1.0, -1.0*x**2], [x**2, -1.0]])
-    print(sympy_repr)
+    # Matrix([[-1.0, -1.0*x**2], [x**2, -1.0]])
     ```
 - **Array Representation**: Convert polynomial expressions to an array representation (implemented through numpy and scipy array)..
     ``` python
     state, farray = polymat.to_array(f, x).apply(state)
-
-    # The output will be {0: array([[-1.], [ 0.], [ 0.], [-1.]]), 2: array([[ 0.], [ 1.], [-1.], [ 0.]])}
-    print(farray)
+    # {0: array([[-1.], [ 0.], [ 0.], [-1.]]), 2: array([[ 0.], [ 1.], [-1.], [ 0.]])}
     ```
 - **Tuple Representation**: Outputs constant parts as nested tuple.
     ``` python
     # Setting assert_constant=False will prevent an exception form being raised, even if f is not a constant polynomial expression
     state, ftuple = polymat.to_tuple(f, assert_constant=False).apply(state)
-
-    # The output will be ((-1.0,), (-1.0,))
-    print(ftuple)
+    # ((-1.0,), (-1.0,))
     ```
 - **Polynomial Degrees**: Obtain degrees of each polynomial matrix element.
     ``` python
     state, fdegree = polymat.to_degree(f).apply(state)
-
-    # The output will be (2, 2)
-    print(fdegree)
+    # (2, 2)
     ```
 - **Shape of the Matrix**: Retrieve the shape of the polynomial matrix.
     ``` python
     state, fshape = polymat.to_shape(f).apply(state)
-
-    # The output will be ((0, 2), (2, 0))
-    print(fshape)
+    # ((0, 2), (2, 0))
     ```
 
 
