@@ -1,8 +1,8 @@
 import abc
 from typing import override
 
+from polymat.expressiontree.data.variables import VariableType, to_indices
 from polymat.expressiontree.nodes import (
-    ExpressionNode,
     SingleChildExpressionNode,
 )
 from polymat.sparserepr.data.monomial import sort_monomials
@@ -31,7 +31,7 @@ class LinearMonomials(SingleChildExpressionNode):
 
     @property
     @abc.abstractmethod
-    def variables(self) -> ExpressionNode: ...
+    def variables(self) -> VariableType: ...
 
     def __str__(self):
         return f"linear_monomials_in({self.child}, {self.variables})"
@@ -40,9 +40,7 @@ class LinearMonomials(SingleChildExpressionNode):
     @override
     def apply(self, state: State) -> tuple[State, SparseRepr]:
         state, child = self.child.apply(state=state)
-        state, variable_vector = self.variables.apply(state=state)
-
-        indices = set(variable_vector.to_indices())
+        state, indices = to_indices(state, self.variables)
 
         def gen_linear_monomials():
             for _, polynomial in child.entries():

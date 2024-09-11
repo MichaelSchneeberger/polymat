@@ -1,10 +1,7 @@
-from typing import Callable
-import numpy as np
-import sympy
-
 from dataclassabc import dataclassabc
 from numpy.typing import NDArray
 
+from polymat.expressiontree.data.variables import VariableType
 from polymat.expressiontree.operations.assertshape import AssertShape
 from polymat.expressiontree.operations.blockdiagonal import (
     BlockDiagonal,
@@ -62,11 +59,11 @@ from polymat.expressiontree.operations.definevariable import (
 )
 from polymat.expressiontree.operations.matrixmultiplication import MatrixMultiplication
 from polymat.expressiontree.operations.transpose import Transpose
+from polymat.expressiontree.operations.truncatemonomials import TruncateMonomials
 from polymat.expressiontree.operations.verticalstack import VerticalStack
 from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.symbol import Symbol
 from polymat.utils.getstacklines import FrameSummary
-from polymat.utils import typing
 
 
 @dataclassabc(frozen=True, repr=False)
@@ -87,8 +84,8 @@ def init_addition(
 @dataclassabc(frozen=True, repr=False)
 class AssertShapeImpl(AssertShape):
     child: ExpressionNode
-    fn: Callable[[int, int], bool]
-    msg: Callable[[int, int], str]
+    func: AssertShape.AssertionType
+    message: AssertShape.MessageType
     stack: tuple[FrameSummary, ...]
 
     def __repr__(self):
@@ -97,19 +94,19 @@ class AssertShapeImpl(AssertShape):
 
 def init_assert_shape(
     child: ExpressionNode,
-    fn: Callable[[int, int], bool],
-    msg: Callable[[int, int], str],
+    func: AssertShape.AssertionType,
+    message: AssertShape.MessageType,
     stack: tuple[FrameSummary, ...],
 ):
-    return AssertShapeImpl(child=child, fn=fn, msg=msg, stack=stack)
+    return AssertShapeImpl(child=child, func=func, message=message, stack=stack)
 
 
 def init_assert_vector(child: ExpressionNode, stack: tuple[FrameSummary, ...]):
     return init_assert_shape(
         child=child,
         stack=stack,
-        fn=lambda row, col: col == 1,
-        msg=lambda row, col: f"number of column {col} must be 1",
+        func=lambda row, col: col == 1,
+        message=lambda row, col: f"number of column {col} must be 1",
     )
 
 
@@ -117,8 +114,8 @@ def init_assert_polynomial(child: ExpressionNode, stack: tuple[FrameSummary, ...
     return init_assert_shape(
         child=child,
         stack=stack,
-        fn=lambda row, col: row == 1 and col == 1,
-        msg=lambda row, col: f"number of row {row} and column {col} must be both 1",
+        func=lambda row, col: row == 1 and col == 1,
+        message=lambda row, col: f"number of row {row} and column {col} must be both 1",
     )
 
 
@@ -147,13 +144,13 @@ def init_cache(
 @dataclassabc(frozen=True, repr=False)
 class CombinationsImpl(Combinations):
     child: ExpressionNode
-    degrees: tuple[int, ...]
+    degrees: Combinations.DegreeType
     stack: tuple[FrameSummary, ...]
 
 
 def init_combinations(
     child: ExpressionNode,
-    degrees: tuple[int, ...],
+    degrees: Combinations.DegreeType,
     stack: tuple[FrameSummary, ...],
 ):
     assert len(degrees)
@@ -166,15 +163,33 @@ def init_combinations(
 
 
 @dataclassabc(frozen=True, repr=False)
+class DefineVariableImpl(DefineVariable):
+    symbol: Symbol
+    size: DefineVariable.SizeType
+    stack: tuple[FrameSummary, ...]
+
+
+def init_define_variable(
+    symbol: Symbol,
+    stack: tuple[FrameSummary, ...],
+    size: DefineVariable.SizeType | None = None,
+):
+    if size is None:
+        size = 1
+
+    return DefineVariableImpl(symbol=symbol, size=size, stack=stack)
+
+
+@dataclassabc(frozen=True, repr=False)
 class DifferentiateImpl(Differentiate):
     child: ExpressionNode
-    variables: ExpressionNode
+    variables: VariableType
     stack: tuple[FrameSummary, ...]
 
 
 def init_differentiate(
     child: ExpressionNode,
-    variables: ExpressionNode,
+    variables: VariableType,
     stack: tuple[FrameSummary, ...],
 ):
     return DifferentiateImpl(child=child, variables=variables, stack=stack)
@@ -211,18 +226,18 @@ def init_elementwise_mult(
 @dataclassabc(frozen=True, repr=False)
 class EvaluateImpl(Evaluate):
     child: ExpressionNode
-    substitutions: Evaluate.SUBSTITUTION_TYPE
+    substitutions: Evaluate.SubstitutionType
     stack: tuple[FrameSummary, ...]
 
 
 def init_evaluate(
     child: ExpressionNode,
-    substitutions: dict[Symbol, tuple[float, ...]],
+    substitutions: Evaluate.SubstitutionType,
     stack: tuple[FrameSummary, ...],
 ):
     return EvaluateImpl(
         child=child,
-        substitutions=tuple(substitutions.items()),
+        substitutions=substitutions, #tuple(substitutions.items()),
         stack=stack,
     )
 
@@ -230,14 +245,14 @@ def init_evaluate(
 @dataclassabc(frozen=True, repr=False)
 class FilterPredicateImpl(FilterPredicate):
     child: ExpressionNode
-    predicate: FilterPredicate.PREDICATE_TYPE
+    predicate: FilterPredicate.PredicatorType
     stack: tuple[FrameSummary, ...]
 
 
 # default constructor
 def init_filter_predicate(
     child: ExpressionNode,
-    predicate: FilterPredicate.PREDICATE_TYPE,
+    predicate: FilterPredicate.PredicatorType,
     stack: tuple[FrameSummary, ...],
 ):
     return FilterPredicateImpl(
@@ -275,12 +290,12 @@ def init_from_numpy(data: NDArray):
 
 @dataclassabc(frozen=True, repr=False)
 class FromAnyImpl(FromAny):
-    data: tuple[tuple[FromAny.VALUE_TYPES]]
+    data: tuple[tuple[FromAny.ValueType]]
     stack: tuple[FrameSummary, ...]
 
 
 def init_from_any(
-    data: tuple[tuple[FromAny.VALUE_TYPES]],
+    data: tuple[tuple[FromAny.ValueType]],
     stack: tuple[FrameSummary, ...],
 ):
     return FromAnyImpl(
@@ -296,24 +311,6 @@ class FromSparseReprImpl(FromSparseRepr):
 
 def init_from_sparse_repr(sparse_repr: SparseRepr):
     return FromSparseReprImpl(sparse_repr=sparse_repr)
-
-
-@dataclassabc(frozen=True, repr=False)
-class DefineVariableImpl(DefineVariable):
-    symbol: Symbol
-    size: int | ExpressionNode
-    stack: tuple[FrameSummary, ...]
-
-
-def init_define_variable(
-    symbol: Symbol,
-    stack: tuple[FrameSummary, ...],
-    size: int | ExpressionNode | None = None,
-):
-    if size is None:
-        size = 1
-
-    return DefineVariableImpl(symbol=symbol, size=size, stack=stack)
 
 
 @dataclassabc(frozen=True, slots=True)
@@ -334,73 +331,6 @@ def init_from_variable_indices(indices: tuple[int, ...]):
     return FromVariableIndicesImpl(indices=indices)
 
 
-def init_from_or_none(
-    value: typing.FROM_TYPES, stack: tuple[FrameSummary, ...]
-) -> ExpressionNode | None:
-    """
-    Create an expression object from a value, or give value_if_not_supported if
-    the expression cannot be constructed from the given value.
-    """
-    if isinstance(value, int | float | np.number):
-        wrapped = ((value,),)
-        return init_from_any(wrapped, stack=stack)
-
-    elif isinstance(value, np.ndarray):
-        # Case when it is a (n,) array
-        if len(value.shape) != 2:
-            value = value.reshape(-1, 1)
-
-        # if value.dtype == np.object_ or True:
-
-        def gen_elements():
-            for row in value:
-                if isinstance(row, np.ndarray):
-                    yield tuple(row)
-                else:
-                    yield (row,)
-
-        return init_from_any(tuple(gen_elements()), stack=stack)
-        # else:
-        #     return init_from_numpy(value)
-
-    elif isinstance(value, sympy.Matrix):
-        data = tuple(tuple(v for v in value.row(row)) for row in range(value.rows))
-        return init_from_any(data, stack)
-
-    elif isinstance(value, sympy.Expr):
-        data = ((sympy.expand(value),),)
-        return init_from_any(data, stack)
-
-    elif isinstance(value, tuple):
-        if isinstance(value[0], tuple):
-            n_col = len(value[0])
-            assert all(len(col) == n_col for col in value)
-
-            data = value
-
-        else:
-            data = tuple((e,) for e in value)
-
-        return init_from_any(data, stack)
-
-    elif isinstance(value, ExpressionNode):
-        return value
-
-
-def init_from_(value: typing.FROM_TYPES, stack: tuple[FrameSummary, ...]):
-    """
-    Attempt create an expression object from a value. Raises an exception if
-    the expression cannot be constructed from given value.
-    """
-    if v := init_from_or_none(value, stack):
-        return v
-
-    raise ValueError(
-        "Unsupported type. Cannot construct expression "
-        f"from value {value} with type {type(value)}"
-    )
-
-
 @dataclassabc(frozen=True, slots=True)
 class KroneckerImpl(Kronecker):
     left: ExpressionNode
@@ -418,14 +348,14 @@ def init_kronecker(
 class LinearCoefficientsImpl(LinearCoefficients):
     child: ExpressionNode
     monomials: ExpressionNode
-    variables: ExpressionNode
+    variables: VariableType
     ignore_unmatched: bool
     stack: tuple[FrameSummary, ...]
 
 
 def init_linear_coefficients(
     child: ExpressionNode,
-    variables: ExpressionNode,
+    variables: VariableType,
     stack: tuple[FrameSummary, ...],
     monomials: ExpressionNode | None = None,
     ignore_unmatched: bool = False,
@@ -448,12 +378,12 @@ def init_linear_coefficients(
 @dataclassabc(frozen=True, slots=True)
 class LinearMonomialsImpl(LinearMonomials):
     child: ExpressionNode
-    variables: ExpressionNode
+    variables: VariableType
 
 
 def init_linear_monomials(
     child: ExpressionNode,
-    variables: ExpressionNode,
+    variables: VariableType,
 ):
     return LinearMonomialsImpl(child=child, variables=variables)
 
@@ -476,14 +406,14 @@ def init_matrix_mult(
 @dataclassabc(frozen=True, repr=False)
 class ProductImpl(Product):
     children: tuple[ExpressionNode, ...]
-    degrees: Product.DEGREE_TYPES
+    degrees: Product.DegreeType
     stack: tuple[FrameSummary, ...]
 
 
 def init_product(
     children: tuple[ExpressionNode, ...],
     stack: tuple[FrameSummary, ...],
-    degrees: Product.DEGREE_TYPES,
+    degrees: Product.DegreeType,
 ):
     return ProductImpl(
         children=children,
@@ -496,14 +426,14 @@ def init_product(
 class QuadraticCoefficientsImpl(QuadraticCoefficients):
     child: ExpressionNode
     monomials: ExpressionNode
-    variables: ExpressionNode
+    variables: VariableType
     ignore_unmatched: bool
     stack: tuple[FrameSummary, ...]
 
 
 def init_quadratic_coefficients(
     child: ExpressionNode,
-    variables: ExpressionNode,
+    variables: VariableType,
     stack: tuple[FrameSummary, ...],
     monomials: ExpressionNode | None = None,
     ignore_unmatched: bool = False,
@@ -523,12 +453,12 @@ def init_quadratic_coefficients(
 @dataclassabc(frozen=True, slots=True)
 class QuadraticMonomialsImpl(QuadraticMonomials):
     child: ExpressionNode
-    variables: ExpressionNode
+    variables: VariableType
 
 
 def init_quadratic_monomials(
     child: ExpressionNode,
-    variables: ExpressionNode,
+    variables: VariableType,
 ):
     return QuadraticMonomialsImpl(child=child, variables=variables)
 
@@ -552,12 +482,12 @@ def from_vector_to_symmetric_matrix(
 @dataclassabc(frozen=True, slots=True)
 class GetItemImpl(GetItem):
     child: ExpressionNode
-    key: GetItem.KEY_TYPE
+    key: GetItem.KeyType
 
 
 def init_get_item(
     child: ExpressionNode,
-    key: GetItem.KEY_TYPE,
+    key: GetItem.KeyType,
 ):
     return GetItemImpl(child=child, key=key)
 
@@ -622,6 +552,21 @@ class TransposeImpl(Transpose):
 
 def init_transpose(child: ExpressionNode):
     return TransposeImpl(child=child)
+
+
+@dataclassabc(frozen=True, slots=True)
+class TruncateMonomialsImpl(TruncateMonomials):
+    child: ExpressionNode
+    variables: VariableType
+    degrees: TruncateMonomials.DegreeType
+
+
+def init_truncate_monomials(
+    child: ExpressionNode,
+    variables: VariableType,
+    degrees: TruncateMonomials.DegreeType,
+):
+    return TruncateMonomialsImpl(child=child, variables=variables, degrees=degrees)
 
 
 @dataclassabc(frozen=True, repr=False)

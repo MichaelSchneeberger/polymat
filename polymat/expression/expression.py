@@ -3,6 +3,12 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Iterable, override
 
+from polymat.expressiontree.data.variables import VariableType
+from polymat.expressiontree.from_ import (
+    FromAnyTypes,
+    from_any_or_raise_exception,
+    from_any_or_none,
+)
 from polymat.expressiontree.nodes import (
     SingleChildExpressionNode,
     ExpressionNode,
@@ -20,8 +26,6 @@ from polymat.expressiontree.init import (
     init_evaluate,
     init_filter_predicate,
     init_filter_non_zero,
-    init_from_or_none,
-    init_from_,
     init_kronecker,
     init_linear_monomials,
     init_linear_coefficients,
@@ -35,21 +39,23 @@ from polymat.expressiontree.init import (
     init_row_summation,
     init_to_symmetric_matrix,
     init_transpose,
+    init_truncate_monomials,
     init_v_stack,
     init_variable_vector,
     from_vector_to_symmetric_matrix,
 )
+from polymat.expressiontree.operations.combinations import Combinations
 from polymat.expressiontree.operations.filterpredicator import FilterPredicate
 from polymat.expressiontree.operations.product import Product
+from polymat.expressiontree.operations.truncatemonomials import TruncateMonomials
 from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
 from polymat.utils.getstacklines import FrameSummary, get_frame_summary
 from polymat.symbol import Symbol
-from polymat.utils import typing
 
 
 class Expression(SingleChildExpressionNode, ABC):
-    def __add__(self, other: typing.FROM_TYPES):
+    def __add__(self, other: FromAnyTypes):
         return self._binary(init_addition, self, other)
 
     def __getitem__(self, key):
@@ -62,10 +68,10 @@ class Expression(SingleChildExpressionNode, ABC):
             )
         )
 
-    def __matmul__(self, other: typing.FROM_TYPES):
+    def __matmul__(self, other: FromAnyTypes):
         return self._binary(init_matrix_mult, self, other)
 
-    def __mul__(self, other: typing.FROM_TYPES):
+    def __mul__(self, other: FromAnyTypes):
         return self._binary(init_elementwise_mult, self, other)
 
     def __neg__(self):
@@ -77,22 +83,22 @@ class Expression(SingleChildExpressionNode, ABC):
             result = result * self
         return result
 
-    def __radd__(self, other: typing.FROM_TYPES):
+    def __radd__(self, other: FromAnyTypes):
         return self._binary(init_addition, other, self)
 
-    def __rmul__(self, other: typing.FROM_TYPES):
+    def __rmul__(self, other: FromAnyTypes):
         return self._binary(init_elementwise_mult, other, self)
 
-    def __rmatmul__(self, other: typing.FROM_TYPES):
+    def __rmatmul__(self, other: FromAnyTypes):
         return self._binary(init_matrix_mult, other, self)
 
-    def __rsub__(self, other: typing.FROM_TYPES):
+    def __rsub__(self, other: FromAnyTypes):
         return other + (-self)
 
     def __str__(self):
         return str(self.child)
 
-    def __sub__(self, other: typing.FROM_TYPES):
+    def __sub__(self, other: FromAnyTypes):
         return self + (-other)
 
     def __truediv__(self, other: float | int):
@@ -117,7 +123,7 @@ class Expression(SingleChildExpressionNode, ABC):
                 return left.copy(child=child)
 
         elif isinstance(left, Expression):
-            right = init_from_or_none(right, stack)
+            right = from_any_or_none(right, stack)
 
             if right is None:
                 return NotImplemented
@@ -126,7 +132,7 @@ class Expression(SingleChildExpressionNode, ABC):
 
         # else right is an Expression
         else:
-            left = init_from_or_none(left, stack)
+            left = from_any_or_none(left, stack)
 
             if left is None:
                 return NotImplemented
@@ -146,7 +152,7 @@ class Expression(SingleChildExpressionNode, ABC):
                 if isinstance(e, Expression):
                     expr = e.child
                 else:
-                    expr = init_from_(e, stack=stack)
+                    expr = from_any_or_raise_exception(e, stack=stack)
 
                 yield expr
 
@@ -185,7 +191,7 @@ class Expression(SingleChildExpressionNode, ABC):
         return self.copy(child=init_cache(self, stack=get_frame_summary()))
 
     # only applies to vector
-    def combinations(self, degrees: tuple[int, ...]):
+    def combinations(self, degrees: Combinations.DegreeType):
         return self.copy(
             child=init_combinations(
                 child=self.child,
@@ -205,7 +211,7 @@ class Expression(SingleChildExpressionNode, ABC):
             )
         )
 
-    def diff(self, variables: Expression):
+    def diff(self, variables: VariableType):
         return self.copy(
             child=init_differentiate(
                 child=self.child,
@@ -213,18 +219,20 @@ class Expression(SingleChildExpressionNode, ABC):
                 stack=get_frame_summary(),
             )
         )
+    
+    SubstitutionType = dict[Symbol, tuple[float, ...]]
 
-    def eval(self, substitutions: dict[Symbol, tuple[float, ...]]):
+    def eval(self, substitutions: SubstitutionType):
         return self.copy(
             child=init_evaluate(
                 child=self.child,
-                substitutions=substitutions,
+                substitutions=tuple(substitutions.items()),
                 stack=get_frame_summary(),
             )
         )
 
     # only applies to vector
-    def filter_predicate(self, predicate: FilterPredicate.PREDICATE_TYPE):
+    def filter_predicate(self, predicate: FilterPredicate.PredicatorType):
         return self.copy(
             child=init_filter_predicate(
                 child=self.child,
@@ -232,7 +240,7 @@ class Expression(SingleChildExpressionNode, ABC):
                 stack=get_frame_summary(),
             )
         )
-    
+
     def filter_non_zero(self):
         return self.copy(
             child=init_filter_non_zero(
@@ -250,7 +258,7 @@ class Expression(SingleChildExpressionNode, ABC):
     # this method only applies to vectors
     def to_linear_coefficients(
         self,
-        variables: Expression,
+        variables: VariableType,
         monomials: Expression | None = None,
     ):
         return self.copy(
@@ -261,11 +269,11 @@ class Expression(SingleChildExpressionNode, ABC):
                 stack=get_frame_summary(),
             )
         )
-    
+
     # deprecated method name, use to_linear_coefficient_vector instead
     def linear_in(
         self,
-        variables: Expression,
+        variables: VariableType,
         monomials: Expression | None = None,
     ):
         return self.to_linear_coefficients(variables=variables, monomials=monomials)
@@ -277,12 +285,16 @@ class Expression(SingleChildExpressionNode, ABC):
                 variables=variables,
             )
         )
-    
+
     # deprecated method name, use to_linear_monomials instead
     def linear_monomials_in(self, variables: Expression):
         return self.to_linear_monomials(variables=variables)
 
-    def product(self, others: Iterable[Expression], degrees: Product.DEGREE_TYPES):
+    def product(
+        self,
+        others: Iterable[Expression],
+        degrees: Product.DegreeType = None,
+    ):
         stack = get_frame_summary()
 
         return self.copy(
@@ -309,12 +321,23 @@ class Expression(SingleChildExpressionNode, ABC):
                 )
             )
         )
-    
-    # deprecated method name, use to_quadratic_coefficient_matrix instead
-    def quadratic_in(self, variables: Expression, monomials: Expression | None = None,):
+
+    def to_quadratic_coefficients(
+        self,
+        variables: Expression,
+        monomials: Expression | None = None,
+    ):
         return self.to_gram_matrix(variables=variables, monomials=monomials)
 
-    def to_quadratic_monomials(self, variables: Expression):
+    # deprecated method name, use to_quadratic_coefficient_matrix instead
+    def quadratic_in(
+        self,
+        variables: Expression,
+        monomials: Expression | None = None,
+    ):
+        return self.to_gram_matrix(variables=variables, monomials=monomials)
+
+    def to_quadratic_monomials(self, variables: VariableType):
         return self.copy(
             child=init_quadratic_monomials(
                 child=self.child,
@@ -323,7 +346,7 @@ class Expression(SingleChildExpressionNode, ABC):
         )
 
     # deprecated method name, use to_quadratic_monomials instead
-    def quadratic_monomials_in(self, variables: Expression):
+    def quadratic_monomials_in(self, variables: VariableType):
         return self.to_quadratic_monomials(variables=variables)
 
     def rep_mat(self, n: int, m: int):
@@ -386,6 +409,15 @@ class Expression(SingleChildExpressionNode, ABC):
 
     def trace(self):
         return self.diag().T.sum()
+
+    def truncate_monomials(
+        self, variables: VariableType, degeees: TruncateMonomials.DegreeType
+    ):
+        return self.copy(
+            child=init_truncate_monomials(
+                child=self.child, variables=variables, degrees=degeees
+            ),
+        )
 
     def v_stack(self, others: Iterable[Expression]):
         stack = get_frame_summary()

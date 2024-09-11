@@ -1,6 +1,7 @@
 import abc
 from typing import override
 
+from polymat.expressiontree.data.variables import VariableType, to_indices
 from polymat.expressiontree.nodes import (
     ExpressionNode,
     SingleChildExpressionNode,
@@ -57,7 +58,7 @@ class QuadraticCoefficients(FrameSummaryMixin, SingleChildExpressionNode):
 
     @property
     @abc.abstractmethod
-    def variables(self) -> ExpressionNode: ...
+    def variables(self) -> VariableType: ...
 
     @property
     @abc.abstractmethod
@@ -70,12 +71,12 @@ class QuadraticCoefficients(FrameSummaryMixin, SingleChildExpressionNode):
     def apply(self, state: State) -> tuple[State, SparseRepr]:
         state, child = self.child.apply(state=state)
         state, monomial_vector = self.monomials.apply(state=state)
-        state, variable_vector = self.variables.apply(state=state)
+        state, indices = to_indices(state, self.variables)
 
-        if not (child.shape[1] == 1):
+        if not (child.shape == (1, 1)):
             raise AssertionError(
                 to_operator_traceback(
-                    message=f"{child.shape[1]=} is not 1",
+                    message=f"{child.shape=} is not (1, 1)",
                     stack=self.stack,
                 )
             )
@@ -83,15 +84,10 @@ class QuadraticCoefficients(FrameSummaryMixin, SingleChildExpressionNode):
         # keep order of monomials
         monomials = tuple(monomial_vector.to_monomials())
 
-        indices = set(variable_vector.to_indices())
+        def gen_polymatrix():
+            polynomial = child.at(0, 0)
 
-        for row in range(child.shape[0]):
-            polynomial = child.at(row, 0)
-
-            if polynomial is None:
-                continue
-
-            def gen_polymatrix():
+            if polynomial:
                 for monomial, value in polynomial.items():  # type: ignore
                     x_monomial = tuple(
                         (index, count) for index, count in monomial if index in indices
@@ -126,9 +122,10 @@ class QuadraticCoefficients(FrameSummaryMixin, SingleChildExpressionNode):
 
                     yield (row, col), {p_monomial: value}
 
+        size = monomial_vector.shape[0]
         polymatrix = init_sparse_repr_from_iterable(
             data=gen_polymatrix(),
-            shape=(monomial_vector.shape[0], monomial_vector.shape[0]),
+            shape=(size, size),
         )
 
         return state, polymatrix

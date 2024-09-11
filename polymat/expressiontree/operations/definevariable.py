@@ -18,12 +18,14 @@ from polymat.sparserepr.init import init_sparse_repr_from_iterable
 class DefineVariable(FrameSummaryMixin, ExpressionNode):
     """Underlying object for VariableExpression"""
 
+    SizeType = int | ExpressionNode
+
     def __str__(self):
         return self.symbol
 
     @property
     @abstractmethod
-    def size(self) -> int | ExpressionNode:
+    def size(self) -> SizeType:
         """Shape of the variable expression."""
 
     @property

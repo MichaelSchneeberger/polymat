@@ -44,6 +44,7 @@ class Combinations(FrameSummaryMixin, SingleChildExpressionNode):
         A polynomial vector containing all the combinations of the input vector elements.
     """
 
+    DegreeType = tuple[int, ...]
 
     def __str__(self):
         match self.degrees:
@@ -54,7 +55,7 @@ class Combinations(FrameSummaryMixin, SingleChildExpressionNode):
 
     @property
     @abc.abstractmethod
-    def degrees(self) -> tuple[int, ...]:
+    def degrees(self) -> DegreeType:
         """
         Degrees of the elements in the output polynomial vector
         """

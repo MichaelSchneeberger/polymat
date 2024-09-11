@@ -1,11 +1,11 @@
 from abc import abstractmethod
 from typing import override
 
+from polymat.expressiontree.data.variables import VariableType, to_indices
 from polymat.sparserepr.data.polynomial import differentiate_polynomial
 from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
 from polymat.expressiontree.nodes import (
-    ExpressionNode,
     SingleChildExpressionNode,
 )
 from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_traceback
@@ -15,7 +15,7 @@ from polymat.sparserepr.init import init_from_polynomial_matrix
 class Differentiate(FrameSummaryMixin, SingleChildExpressionNode):
     @property
     @abstractmethod
-    def variables(self) -> ExpressionNode: ...
+    def variables(self) -> VariableType: ...
 
     def __str__(self):
         return f"diff({self.child}, {self.variables})"
@@ -23,7 +23,7 @@ class Differentiate(FrameSummaryMixin, SingleChildExpressionNode):
     @override
     def apply(self, state: State) -> tuple[State, SparseRepr]:
         state, child = self.child.apply(state=state)
-        state, variable_vector = self.variables.apply(state=state)
+        state, indices = to_indices(state, self.variables)
 
         if not (child.shape[1] == 1):
             raise AssertionError(
@@ -32,9 +32,6 @@ class Differentiate(FrameSummaryMixin, SingleChildExpressionNode):
                     stack=self.stack,
                 )
             )
-
-        # keep order of variable indices
-        indices = tuple(variable_vector.to_indices())
 
         def gen_polynomial_matrix():
             for row in range(child.shape[0]):

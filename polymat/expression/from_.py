@@ -1,13 +1,14 @@
 from typing import Iterable
 
+from polymat.expressiontree.from_ import FromAnyTypes, from_any_or_raise_exception
+from polymat.expressiontree.operations.definevariable import DefineVariable
+from polymat.expressiontree.operations.product import Product
 from polymat.utils.getstacklines import get_frame_summary
 from polymat.symbol import Symbol
-from polymat.utils import typing
 from polymat.expression.typedexpressions import MatrixExpression, VectorExpression
 from polymat.expressiontree.operations.fromvariables import FromVariables
 from polymat.expressiontree.init import (
     init_define_variable,
-    init_from_,
     init_from_variables,
     init_from_variable_indices,
 )
@@ -17,7 +18,7 @@ from polymat.expression.init import (
 )
 
 
-def _split_first[T: typing.FROM_TYPES | MatrixExpression](
+def _split_first[T: FromAnyTypes | MatrixExpression](
     expressions: Iterable[T],
 ) -> tuple[T, tuple[T, ...]]:
     expressions_iter = iter(expressions)
@@ -30,7 +31,7 @@ def _split_first[T: typing.FROM_TYPES | MatrixExpression](
 
     others = tuple(expressions_iter)
 
-    return first, others # type: ignore
+    return first, others  # type: ignore
 
 
 def block_diag(expressions: Iterable[MatrixExpression]) -> MatrixExpression:
@@ -46,9 +47,9 @@ def concat(expressions: Iterable[Iterable[MatrixExpression]]):
     return v_stack(gen_h_stack())
 
 
-def from_(value: typing.FROM_TYPES | MatrixExpression):
+def from_(value: FromAnyTypes | MatrixExpression):
     stack = get_frame_summary()
-    return init_expression(init_from_(value, stack=stack))
+    return init_expression(from_any_or_raise_exception(value, stack=stack))
 
 
 # used for type hinting
@@ -60,7 +61,7 @@ from_polynomial = from_
 
 def define_variable(
     name: str | Symbol,
-    size: int | MatrixExpression | None = None,
+    size: DefineVariable.SizeType | None = None,
 ):
     if not isinstance(name, Symbol):
         symbol = Symbol(name)
@@ -92,9 +93,11 @@ def h_stack(expressions: Iterable[MatrixExpression]) -> MatrixExpression:
     return v_stack((expr.T for expr in expressions)).T
 
 
-def product(expressions: Iterable[VectorExpression]) -> VectorExpression:
+def product(
+    expressions: Iterable[VectorExpression], degrees: Product.DegreeType = None,
+) -> VectorExpression:
     first, others = _split_first(expressions)
-    return first.product(others=others)
+    return first.product(others=others, degrees=degrees)
 
 
 def v_stack(expressions: Iterable[MatrixExpression]) -> MatrixExpression:

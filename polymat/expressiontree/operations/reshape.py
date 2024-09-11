@@ -1,6 +1,4 @@
 from abc import abstractmethod
-import functools
-import operator
 from typing import override
 
 from polymat.sparserepr.sparserepr import SparseRepr
@@ -21,29 +19,19 @@ class Reshape(SingleChildExpressionNode):
     def apply(self, state: State) -> tuple[State, SparseRepr]:
         state, child = self.child.apply(state=state)
 
-        # replace '-1' by the remaining number of elements
-        if -1 in self.new_shape:
-            n_total = child.shape[0] * child.shape[1]
+        def remaining(n_used):
+            return int(child.n_entries / n_used)
 
-            remaining_shape = tuple(e for e in self.new_shape if e != -1)
+        match self.new_shape:
+            # replace '-1' by the remaining number of elements
+            case (-1, n_used):
+                shape = (remaining(n_used), n_used)
 
-            assert len(remaining_shape) + 1 == len(self.new_shape)
+            case (n_used, -1):
+                shape = (n_used, remaining(n_used))
 
-            n_used = functools.reduce(operator.mul, remaining_shape)
-
-            n_remaining = int(n_total / n_used)
-
-            def gen_shape():
-                for e in self.new_shape:
-                    if e == -1:
-                        yield n_remaining
-                    else:
-                        yield e
-
-            shape = tuple(gen_shape())
-
-        else:
-            shape = self.new_shape
+            case _:
+                shape = self.new_shape
 
         return state, init_reshape_sparse_repr(
             child=child,

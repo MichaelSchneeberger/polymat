@@ -21,11 +21,11 @@ from polymat.symbol import Symbol
 
 
 class Evaluate(FrameSummaryMixin, SingleChildExpressionNode):
-    SUBSTITUTION_TYPE = tuple[tuple[Symbol, tuple[float, ...]], ...]
+    SubstitutionType = tuple[tuple[Symbol, tuple[float, ...]], ...]
 
     @property
     @abstractmethod
-    def substitutions(self) -> SUBSTITUTION_TYPE: ...
+    def substitutions(self) -> SubstitutionType: ...
 
     def __str__(self):
         return f"eval({self.child}, {self.substitutions})"
@@ -34,11 +34,13 @@ class Evaluate(FrameSummaryMixin, SingleChildExpressionNode):
     def apply(self, state: State) -> tuple[State, SparseRepr]:
         state, child = self.child.apply(state=state)
 
-        def acc_indices_and_values(acc, next):
+        def acc_indices_and_values(
+            acc: tuple[State, dict[int, float]], next: tuple[Symbol, tuple[float, ...]]
+        ):
             state, mapping = acc
-            variable, values = next
+            symbol, values = next
 
-            index_range = state.get_index_range(variable)
+            index_range = state.get_index_range(symbol)
 
             if index_range is None:
                 return acc
@@ -50,7 +52,10 @@ class Evaluate(FrameSummaryMixin, SingleChildExpressionNode):
                 if not (len(index_range) == len(values)):
                     raise AssertionError(
                         to_operator_traceback(
-                            message=f"{variable=}, {index_range=} ({len(index_range)}), {values=} ({len(values)})",
+                            message=(
+                                f"Cannot replace symbol {symbol} that has an index range {index_range} with {values}, "
+                                f"because the {len(index_range)} does not equal {len(values)}."
+                            ),
                             stack=self.stack,
                         )
                     )
@@ -98,9 +103,7 @@ class Evaluate(FrameSummaryMixin, SingleChildExpressionNode):
 
                         yield eval_monomial, eval_coeff
 
-                result = add_polynomial_terms_iterable(
-                    terms=gen_polynomial_data()
-                )
+                result = add_polynomial_terms_iterable(terms=gen_polynomial_data())
 
                 if result:
                     yield index, result

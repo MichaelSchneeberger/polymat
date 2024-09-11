@@ -8,13 +8,16 @@ from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_traceback
 
 class AssertShape(FrameSummaryMixin, SingleChildExpressionNode):
 
-    @property
-    @abstractmethod
-    def fn(self) -> Callable[[int, int], bool]: ...
+    AssertionType = Callable[[int, int], bool]
+    MessageType = Callable[[int, int], str]
 
     @property
     @abstractmethod
-    def msg(self) -> Callable[[int, int], str]: ...
+    def func(self) -> AssertionType: ...
+
+    @property
+    @abstractmethod
+    def message(self) -> MessageType: ...
 
     def __str__(self):
         return str(self.child)
@@ -23,10 +26,10 @@ class AssertShape(FrameSummaryMixin, SingleChildExpressionNode):
     def apply(self, state: State) -> tuple[State, SparseRepr]:
         state, child = self.child.apply(state=state)
 
-        if not self.fn(*child.shape):
+        if not self.func(*child.shape):
             raise AssertionError(
                 to_operator_traceback(
-                    message=self.msg(*child.shape),
+                    message=self.message(*child.shape),
                     stack=self.stack,
                 )
             )

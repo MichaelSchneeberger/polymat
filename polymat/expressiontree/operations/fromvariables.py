@@ -8,6 +8,7 @@ from polymat.symbol import Symbol
 from polymat.sparserepr.init import init_from_polynomial_matrix
 
 
+# delete?
 class FromVariables(ExpressionNode):
     """Underlying object for VariableExpression"""
 

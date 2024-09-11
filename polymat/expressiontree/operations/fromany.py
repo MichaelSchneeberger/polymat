@@ -23,7 +23,7 @@ from polymat.symbol import Symbol
 
 
 class FromAny(FrameSummaryMixin, ExpressionNode):
-    VALUE_TYPES = float | int | np.number | sympy.Expr | ExpressionNode
+    ValueType = float | int | np.number | sympy.Expr | ExpressionNode
 
     def __str__(self):
         if len(self.data) == 1:
@@ -39,14 +39,14 @@ class FromAny(FrameSummaryMixin, ExpressionNode):
 
     @property
     @abstractmethod
-    def data(self) -> tuple[tuple[VALUE_TYPES, ...], ...]:
+    def data(self) -> tuple[tuple[ValueType, ...], ...]:
         """The matrix of numbers in row major order."""
 
     @override
     def apply(self, state: State) -> tuple[State, SparseRepr]:
         def acc_polynomial_matrix_data(
             acc: tuple[State, tuple[tuple[MatrixIndexType, PolynomialType], ...]],
-            next: tuple[int, int, FromAny.VALUE_TYPES],
+            next: tuple[int, int, FromAny.ValueType],
         ):
             state, data = acc
             row, col, entry = next

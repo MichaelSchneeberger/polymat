@@ -10,12 +10,12 @@ from polymat.sparserepr.init import init_get_item_sparse_repr
 
 
 class GetItem(SingleChildExpressionNode):
-    KEY_VALUE_TYPE = int | slice | tuple[int, ...]
-    KEY_TYPE = tuple[KEY_VALUE_TYPE, KEY_VALUE_TYPE]
+    KeyValueType = int | slice | tuple[int, ...]
+    KeyType = tuple[KeyValueType, KeyValueType]
 
     @property
     @abstractmethod
-    def key(self) -> KEY_TYPE:
+    def key(self) -> KeyType:
         """The slice."""
         # Type / format of this property must match of slice accepted by
         # SlicePolyMatrix, since it directly uses that see
@@ -31,7 +31,7 @@ class GetItem(SingleChildExpressionNode):
     def apply(self, state: State) -> tuple[State, SparseRepr]:
         state, child = self.child.apply(state=state)
 
-        def format_key(state: State, key: GetItem.KEY_VALUE_TYPE):
+        def format_key(state: State, key: GetItem.KeyValueType):
             match key:
                 case int():
                     fkey = (key,)

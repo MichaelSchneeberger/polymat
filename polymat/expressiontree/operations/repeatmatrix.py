@@ -21,8 +21,11 @@ class RepeatMatrix(SingleChildExpressionNode):
     def apply(self, state: State) -> tuple[State, SparseRepr]:
         state, child = self.child.apply(state=state)
 
+        n_rows, n_cols = child.shape
+        row_rep, col_rep = self.repetition
+
         return state, init_repmat_sparse_repr(
             child=child,
-            shape=tuple(s * r for s, r in zip(child.shape, self.repetition)),
+            shape=(n_rows * row_rep, n_cols * col_rep),
             child_shape=child.shape,
         )

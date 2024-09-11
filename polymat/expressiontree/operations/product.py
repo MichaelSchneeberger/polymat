@@ -18,10 +18,10 @@ class Product(FrameSummaryMixin, MultiChildrenExpressionNode):
     [[x], [y]]  ->  [[1], [x], [y], [x**2], [x*y], [y**2]]
     """
 
-    DEGREE_TYPES = tuple[int, ...] | None
+    DegreeType = tuple[int, ...] | None
 
     def __str__(self):
-        children = ",".join(str(c) for c in self.children)
+        children = ", ".join(str(c) for c in self.children)
 
         match self.degrees:
             case tuple():
@@ -31,7 +31,7 @@ class Product(FrameSummaryMixin, MultiChildrenExpressionNode):
 
     @property
     @abc.abstractmethod
-    def degrees(self) -> DEGREE_TYPES:
+    def degrees(self) -> DegreeType:
         """
         Vector or scalar expression, or a list of integers.
         """

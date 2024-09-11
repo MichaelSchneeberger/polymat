@@ -7,11 +7,11 @@ from polymat.utils.getstacklines import to_operator_traceback
 
 
 class FilterPredicate(FilterMixin):
-    PREDICATE_TYPE = tuple[bool | int, ...]
+    PredicatorType = tuple[bool | int, ...]
 
     @property
     @abstractmethod
-    def predicate(self) -> PREDICATE_TYPE: ...
+    def predicate(self) -> PredicatorType: ...
 
     def __str__(self):
         return f"filter_predicate({self.child}, {self.predicate})"

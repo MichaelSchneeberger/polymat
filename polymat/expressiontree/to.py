@@ -217,18 +217,6 @@ def to_degree(
 
             return state, tuple(gen_tuple())
 
-            # A = np.zeros(polymatrix.shape, dtype=np.double)
-
-            # for (row, col), polynomial in polymatrix.entries():
-
-            #     def gen_degrees():
-            #         for monomial in polynomial.keys():
-            #             yield get_degree(monomial)
-
-            #     A[row, col] = max(gen_degrees())
-
-            # return state, A
-
     return statemonad.from_node(ToDegreeStateMonadTree(expr=expr, variables=variables))
 
 
