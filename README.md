@@ -205,12 +205,12 @@ The output functions listed below perform stateful computations. As a result, th
 - **Polynomial Degrees**: Obtain degrees of each polynomial matrix element.
     ``` python
     state, fdegree = polymat.to_degree(f).apply(state)
-    # (2, 2)
+    # ((0, 2), (2, 0))
     ```
 - **Shape of the Matrix**: Retrieve the shape of the polynomial matrix.
     ``` python
     state, fshape = polymat.to_shape(f).apply(state)
-    # ((0, 2), (2, 0))
+    # (2, 2)
     ```
 
 
