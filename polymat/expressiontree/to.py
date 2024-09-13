@@ -98,14 +98,10 @@ def to_array(
                         for index, power in monomial:
                             if index not in index_to_linear_column:
                                 variable_name = state.get_name(index)
-                                variable_names = set(
-                                    state.get_name(index)
-                                    for index in index_to_linear_column.keys()
-                                )
                                 raise Exception(
                                     f"While converting a polynomial expression {name} to an array representation, "
                                     f"the index {index} (associated with the variable {variable_name}) found in the expression "
-                                    f"is not an element of th eprovided list of indices {indices} (associated with variables {variable_names})."
+                                    f"is not an element of the provided list of variable indices."
                                 )
 
                             linear_col = index_to_linear_column[index]

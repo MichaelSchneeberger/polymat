@@ -411,11 +411,11 @@ class Expression(SingleChildExpressionNode, ABC):
         return self.diag().T.sum()
 
     def truncate_monomials(
-        self, variables: VariableType, degeees: TruncateMonomials.DegreeType
+        self, variables: VariableType, degrees: TruncateMonomials.DegreeType
     ):
         return self.copy(
             child=init_truncate_monomials(
-                child=self.child, variables=variables, degrees=degeees
+                child=self.child, variables=variables, degrees=degrees
             ),
         )
 

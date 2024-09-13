@@ -88,7 +88,7 @@ def monomial_degree_in(monomial: MonomialType, variables: set[int]) -> int:
 
 
 def sort_monomial(monomial: MonomialType) -> MonomialType:
-    assert len(monomial) == len(dict(monomial))
+    assert len(monomial) == len({index for index, _ in monomial})
 
     return tuple(sorted(monomial, key=lambda m: m[0]))
 
