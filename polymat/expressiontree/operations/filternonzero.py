@@ -1,7 +1,7 @@
 import math
 from typing import override
 
-from polymat.sparserepr.data.polynomial import PolynomialType
+from polymat.sparserepr.data.polynomial import PolynomialType, is_zero
 from polymat.expressiontree.operations.filtermixin import FilterMixin
 
 
@@ -14,6 +14,4 @@ class FilterNonZero(FilterMixin):
 
     @override
     def _filter(self, row: int, polynomial: PolynomialType) -> bool:
-        # filter non empty polynomials
-        is_empty = len(polynomial) == 0 or math.isclose(polynomial[tuple()], 0)
-        return not is_empty
+        return not is_zero(polynomial)

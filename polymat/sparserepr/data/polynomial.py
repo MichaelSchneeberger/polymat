@@ -132,6 +132,17 @@ def gen_multiplication_terms(
         yield monomial, coefficient
 
 
+def is_zero(polynomial: PolynomialType):
+    if len(polynomial) == 0:
+        return True
+    
+    elif len(polynomial) == 1:
+        if val := polynomial.get(tuple(), None):
+            return math.isclose(val, 0)
+        
+    return False
+
+
 def multiply_polynomials(
     left: PolynomialType, right: PolynomialType
 ) -> MaybePolynomialType:
