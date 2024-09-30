@@ -93,7 +93,6 @@ def sort_monomial(monomial: MonomialType) -> MonomialType:
     return tuple(sorted(monomial, key=lambda m: m[0]))
 
 
-# NP: Sort list of monomials according to ... what?
 def sort_monomials(monomials: Iterable[MonomialType]) -> tuple[MonomialType, ...]:
     """
     Sort list of monomials according to:
@@ -103,7 +102,12 @@ def sort_monomials(monomials: Iterable[MonomialType]) -> tuple[MonomialType, ...
     """
 
     def key(monomial: MonomialType):
-        return (monomial_degree(monomial), len(monomial))
+        def gen_variable_indices():
+            for var_index, power in monomial:
+                for _ in range(power):
+                    yield var_index
+
+        return (monomial_degree(monomial), sum(gen_variable_indices()))
 
     return tuple(sorted(monomials, key=key))
 
