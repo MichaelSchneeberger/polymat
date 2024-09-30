@@ -98,7 +98,7 @@ def sort_monomials(monomials: Iterable[MonomialType]) -> tuple[MonomialType, ...
     Sort list of monomials according to:
 
         1. degree of the monomial
-        2. the number of variables appearing in the monomial
+        2. the sum of the variable indices appearing in the monomial
     """
 
     def key(monomial: MonomialType):
