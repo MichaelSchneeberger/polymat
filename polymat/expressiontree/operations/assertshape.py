@@ -6,8 +6,8 @@ from polymat.state import State
 from polymat.expressiontree.nodes import SingleChildExpressionNode
 from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_traceback
 
-class AssertShape(FrameSummaryMixin, SingleChildExpressionNode):
 
+class AssertShape(FrameSummaryMixin, SingleChildExpressionNode):
     AssertionType = Callable[[int, int], bool]
     MessageType = Callable[[int, int], str]
 

@@ -405,7 +405,7 @@ class Expression(SingleChildExpressionNode, ABC):
         )
 
     def to_vector(self):
-        return self.assert_vector(stack=get_frame_summary())
+        return self.reshape(-1, 1)
 
     def trace(self):
         return self.diag().T.sum()
