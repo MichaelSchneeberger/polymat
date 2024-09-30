@@ -98,14 +98,24 @@ class ArrayRepr:
         n_var: int,
         variable_indices: tuple[int, ...],
     ) -> set[int]:
-        # NP: document this function, especially magic return line
+        """
+        Given a matrix storing the coefficients of the polynomial terms for a specified degree, this function
+        returns the column indices corresponding to a specified monomia.
+
+        Consider the polynomial:
+
+            (x1 + x2 + x3)**2 = x1**2 + x1*x2 + x1*x3 + x1*x3 + x2**2 + x2*x3 + x1*x3 + x2*x3 + x3**2
+
+        For the monomial x1*x2 (represented by variable_indices=(0,1)), the function return the set of column
+        indices, such as {1, 3}, which map to the position of this monomial in the matrix.
+        """
         
         variable_indices_perm = itertools.permutations(variable_indices)
 
         return set(
             sum(
-                idx * (n_var**level)
-                for level, idx in enumerate(monomial)
+                var_index * (n_var**index)
+                for index, var_index in enumerate(monomial)
             )
             for monomial in variable_indices_perm
         )

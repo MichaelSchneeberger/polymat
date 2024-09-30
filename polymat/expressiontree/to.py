@@ -51,7 +51,7 @@ def to_array(
     @dataclassabc(frozen=True, slots=True)
     class ToArrayStateMonadTree(StateMonadNode):
         expr: ExpressionNode
-        variables: ExpressionNode
+        variables: ExpressionNode | tuple[int, ...]
 
         def __str__(self):
             return f"to_array({self.expr}, {self.variables})"
@@ -77,8 +77,8 @@ def to_array(
                 indices = tuple(variables.to_indices())
 
             n_param = len(indices)
-            index_to_linear_column = {index: col for col, index in enumerate(indices)}
-            assert len(index_to_linear_column) == len(indices)
+            index_to_array_index = {index: col for col, index in enumerate(indices)}
+            assert len(index_to_array_index) == len(indices)
 
             array_repr = init_array_repr(
                 n_eq=n_eq,
@@ -94,9 +94,9 @@ def to_array(
 
                 for monomial, value in polynomial.items():
 
-                    def gen_linear_columns():
+                    def gen_array_variable_indices():
                         for index, power in monomial:
-                            if index not in index_to_linear_column:
+                            if index not in index_to_array_index:
                                 variable_name = state.get_name(index)
                                 raise Exception(
                                     f"While converting a polynomial expression {name} to an array representation, "
@@ -104,14 +104,14 @@ def to_array(
                                     f"is not an element of the provided list of variable indices."
                                 )
 
-                            linear_col = index_to_linear_column[index]
+                            array_index = index_to_array_index[index]
 
                             for _ in range(power):
-                                yield linear_col
+                                yield array_index
 
-                    linear_columns = tuple(gen_linear_columns())
+                    array_variable_indices = tuple(gen_array_variable_indices())
 
-                    columns = ArrayRepr.to_column_indices(n_param, linear_columns)
+                    columns = ArrayRepr.to_column_indices(n_param, array_variable_indices)
 
                     col_value = value / len(columns)
 
@@ -124,45 +124,6 @@ def to_array(
         ToArrayStateMonadTree(
             expr=expr,
             variables=variables,
-        )
-    )
-
-
-def _to_tuple[U](
-    name: str,
-    expr: ExpressionNode,
-    func: Callable[[MaybePolynomialType], U],
-) -> StateMonad[State, U]:
-    @dataclassabc(frozen=True, slots=True)
-    class ToTupleStateMonadTree(StateMonadNode):
-        name: str
-        expr: ExpressionNode
-
-        def __str__(self):
-            return self.name
-
-        def apply(self, state: State):
-            state, polymatrix = self.expr.apply(state)
-
-            n_rows, n_cols = polymatrix.shape
-
-            def gen_tuple():
-                for row in range(n_rows):
-
-                    def gen_column():
-                        for col in range(n_cols):
-                            polynomial = polymatrix.at(row, col)
-
-                            yield func(polynomial)
-
-                    yield tuple(gen_column())
-
-            return state, tuple(gen_tuple())
-
-    return statemonad.from_node(
-        ToTupleStateMonadTree(
-            expr=expr,
-            name=name,
         )
     )
 
