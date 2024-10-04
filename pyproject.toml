@@ -1,6 +1,6 @@
 [project]
 name = "polymat"
-version = "0.0.4"
+version = "0.0.5"
 description = 'A library to represent and manipulate multivariate polynomials'
 authors = [
   {name="Michael Schneeberger", email="michael.schneeb@hotmail.com"},
@@ -11,7 +11,7 @@ dependencies = [
   "scipy>=1.14.0",
   "sympy>=1.13.0",
   "dataclassabc>=0.0.10",
-  "statemonad>=0.0.2",
+  "statemonad>=0.0.4",
 ]
 
 [project.urls]
