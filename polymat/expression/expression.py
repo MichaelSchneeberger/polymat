@@ -383,13 +383,16 @@ class Expression(SingleChildExpressionNode, ABC):
     def T(self):
         return self.copy(child=init_transpose(self.child))
 
+    # def from_vector_to_symmetric_matrix(self):
+    #     return self.copy(
+    #         child=from_vector_to_symmetric_matrix(
+    #             child=self.child,
+    #             stack=get_frame_summary(),
+    #         )
+    #     )
+    
     def to_symmetric_matrix(self):
-        return self.copy(
-            child=from_vector_to_symmetric_matrix(
-                child=self.child,
-                stack=get_frame_summary(),
-            )
-        )
+        return self
 
     def to_monomial_vector(self):
         return self.assert_vector(stack=get_frame_summary())
