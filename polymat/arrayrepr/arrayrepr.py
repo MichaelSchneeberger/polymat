@@ -23,6 +23,7 @@ class ArrayRepr:
     @property
     @abstractmethod
     def n_row(self) -> int | None: ...
+    # used to convert vector to a matrix
 
     def __getitem__(self, degree):
         if degree not in self.data:
@@ -39,6 +40,14 @@ class ArrayRepr:
             self.data[degree] = buffer
 
         return self.data[degree]
+    
+    def to_numpy(self, degree: int) -> np.ndarray:
+        array = self[degree]
+
+        if scipy.sparse.issparse(array):
+            return array.toarray()
+        else:
+            return array
 
     def __str__(self):
         def gen_deg_array():
