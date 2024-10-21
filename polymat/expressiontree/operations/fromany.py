@@ -124,8 +124,8 @@ class FromAny(FrameSummaryMixin, ExpressionNode):
                                             variable = Symbol(
                                                 str(sympy_poly.gens[sympy_index])
                                             )
-                                            index = state.indices[variable]
-                                            yield (index.start, power)
+                                            start, _ = state.indices[variable]
+                                            yield (start, power)
 
                                 monomial = sort_monomial(tuple(gen_monomial()))
 

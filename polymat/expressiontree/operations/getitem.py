@@ -17,12 +17,6 @@ class GetItem(SingleChildExpressionNode):
     @abstractmethod
     def key(self) -> KeyType:
         """The slice."""
-        # Type / format of this property must match of slice accepted by
-        # SlicePolyMatrix, since it directly uses that see
-        # polymatrix.polymatrix.init.init_poly_matrix
-
-        # TODO: allow slice to be an Expression that evaluates to a number or
-        # vector of numbers
 
     def __str__(self):
         return f"slice({self.child}, {self.key})"

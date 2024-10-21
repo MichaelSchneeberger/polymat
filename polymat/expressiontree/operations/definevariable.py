@@ -37,16 +37,14 @@ class DefineVariable(FrameSummaryMixin, ExpressionNode):
     def create_variable_vector(
         state: State, variable: Symbol, size: int, stack: tuple[FrameSummary, ...]
     ):
-        state, sym_index_range = state.register(
+        state, (start, stop) = state.register(
             variable,
             size=size,
             stack=stack,
         )
 
         def gen_polynomial_matrix() -> Iterable[tuple[MatrixIndexType, PolynomialType]]:
-            for row, sym_index in enumerate(
-                range(sym_index_range.start, sym_index_range.stop)
-            ):
+            for row, sym_index in enumerate(range(start, stop)):
                 polynomial = {((sym_index, 1),): 1.0}
                 yield (row, 0), polynomial
 

@@ -1,4 +1,4 @@
-from typing import NamedTuple, Self
+from typing import Self
 from dataclasses import replace
 from dataclassabc import dataclassabc
 
@@ -8,22 +8,9 @@ from polymat.symbol import Symbol
 
 @dataclassabc(frozen=True, slots=True)
 class State:
-    class IndexRange(NamedTuple):
-        start: int
-        """ Start of the indices """
-
-        stop: int
-        """ End of the indices, this value is not included """
-
-        def __len__(self) -> int:
-            return self.stop - self.start
-
-        def __iter__(self):
-            return iter(range(self.start, self.stop))
-
     n_indices: int
 
-    indices: dict[Symbol, IndexRange]
+    indices: dict[Symbol, tuple[int, int]]
     """ Map from variables to their indices given by a range. """
 
     cache: dict
@@ -37,18 +24,20 @@ class State:
 
     def register(
         self, symbol: Symbol, size: int, stack: tuple[FrameSummary, ...]
-    ) -> tuple[Self, IndexRange]:
+    ):
         """Index a variable and get its index range."""
 
         if symbol in self.indices:
-            irange = self.indices[symbol]
-            if size == irange.stop - irange.start:
-                return self, irange
+            start, stop = self.indices[symbol]
+
+            if size == stop - start:
+                return self, (start, stop)
+            
             else:
                 message = (
                     f"Symbols must be unique names! Cannot index symbol "
                     f"{symbol} with shape {size} because there is already a symbol "
-                    f"with the same name with shape {(irange.start, irange.stop)}"
+                    f"with the same name with shape {(start, stop)}"
                 )
                 raise AssertionError(
                     to_operator_traceback(
@@ -58,10 +47,7 @@ class State:
                 )
 
         # If not save new index
-        index = State.IndexRange(
-            start=self.n_indices,
-            stop=self.n_indices + size,
-        )
+        index = (self.n_indices, self.n_indices + size)
 
         return replace(
             self,
@@ -72,21 +58,22 @@ class State:
     # retrieval of indices
     ######################
 
-    def _get_symbol(self, index: int) -> tuple[Symbol, IndexRange]:
-        for symbol, index_range in self.indices.items():
-            if index_range.start <= index < index_range.stop:
-                return symbol, index_range
+    def _get_symbol(self, index: int):
+        for symbol, (start, stop) in self.indices.items():
+            if start <= index < stop:
+                return symbol, (start, stop)
 
         raise IndexError(f"There is no variable with index {index}.")
 
-    def get_symbol(self, index: int) -> Symbol:
+    def get_symbol(self, index: int):
         """Get the symbol that contains the given index."""
-        return self._get_symbol(index)[0]
+        symbol, _ = self._get_symbol(index)
+        return symbol
 
     def get_index_range(self, symbol: Symbol):
         return self.indices[symbol]
 
-    def get_name(self, index: int) -> str:
+    def get_name(self, index: int):
         """
         Retrieve the unique name of a variable based on the provided index.
 
@@ -100,11 +87,11 @@ class State:
             str: The unique name of the variable associated with the specified index.
         """
 
-        symbol, index_range = self._get_symbol(index)
+        symbol, (start, stop) = self._get_symbol(index)
 
         # Variable is not scalar
-        if index_range.stop - index_range.start > 1:
-            return f"{symbol}_{index - index_range.start}"
+        if stop - start > 1:
+            return f"{symbol}_{index - start}"
 
         return str(symbol)
 
