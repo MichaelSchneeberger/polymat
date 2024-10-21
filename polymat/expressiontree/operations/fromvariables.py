@@ -29,9 +29,9 @@ class FromVariables(ExpressionNode):
             row = 0
             for variable in self.variables:
                 # raises exception if variable doesn't exist
-                index_range = state.get_index_range(variable)
+                start, stop = state.get_index_range(variable)
 
-                for index in index_range:
+                for index in range(start, stop):
                     monomial = ((index, 1),)
                     yield (row, 0), {monomial: 1}
                     row += 1

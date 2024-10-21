@@ -40,21 +40,21 @@ class Evaluate(FrameSummaryMixin, SingleChildExpressionNode):
             state, mapping = acc
             symbol, values = next
 
-            index_range = state.get_index_range(symbol)
+            start, stop = state.get_index_range(symbol)
 
-            if index_range is None:
-                return acc
+            index_range = range(start, stop)
 
             if len(values) == 1:
                 values = tuple(values[0] for _ in index_range)
 
             else:
-                if not (len(index_range) == len(values)):
+                size = stop - start
+
+                if not (size == len(values)):
                     raise AssertionError(
                         to_operator_traceback(
                             message=(
-                                f"Cannot replace symbol {symbol} that has an index range {index_range} with {values}, "
-                                f"because the {len(index_range)} does not equal {len(values)}."
+                                f"Cannot replace symbol {symbol} of size {size} with tuple of values of size {len(values)}"
                             ),
                             stack=self.stack,
                         )
