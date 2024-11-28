@@ -1,5 +1,6 @@
 from abc import abstractmethod
 from functools import cached_property
+from collections.abc import Mapping
 import numpy as np
 import scipy.sparse
 import itertools
@@ -7,7 +8,7 @@ import itertools
 from numpy.typing import NDArray
 
 
-class ArrayRepr:
+class ArrayRepr(Mapping):
     @property
     @abstractmethod
     def data(self) -> dict[int, np.ndarray]: ...
@@ -25,10 +26,14 @@ class ArrayRepr:
     def n_row(self) -> int | None: ...
     # used to convert vector to a matrix
 
-    def __getitem__(self, degree):
-        if degree not in self.data:
-            # print(self.n_eq)
+    def __len__(self):
+        return len(self.data)
 
+    def __iter__(self):
+        return iter(self.data)
+
+    def __getitem__(self, degree: int):
+        if degree not in self.data:
             if degree <= 1:
                 buffer = np.zeros((self.n_eq, self.n_param**degree), dtype=np.double)
 

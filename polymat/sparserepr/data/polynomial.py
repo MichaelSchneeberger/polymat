@@ -100,8 +100,8 @@ def differentiate_polynomial(
     """Differentiate a varaible with respect to a variable"""
 
     def gen_derivative_terms():
-        for diff_monomial, coefficient in polynomial.items():
-            result = differentiate_monomial(diff_monomial, wrt)
+        for monomial, coefficient in polynomial.items():
+            result = differentiate_monomial(monomial, wrt)
 
             # term has not disappeared
             if result:

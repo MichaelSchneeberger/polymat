@@ -42,7 +42,6 @@ from polymat.expressiontree.init import (
     init_truncate_monomials,
     init_v_stack,
     init_variable_vector,
-    from_vector_to_symmetric_matrix,
 )
 from polymat.expressiontree.operations.combinations import Combinations
 from polymat.expressiontree.operations.filterpredicator import FilterPredicate

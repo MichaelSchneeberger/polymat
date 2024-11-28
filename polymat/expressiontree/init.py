@@ -1,6 +1,10 @@
 from dataclassabc import dataclassabc
 from numpy.typing import NDArray
 
+from polymat.symbol import Symbol
+from polymat.utils.getstacklines import FrameSummary
+from polymat.sparserepr.sparserepr import SparseRepr
+from polymat.expressiontree.nodes import ExpressionNode
 from polymat.expressiontree.data.variables import VariableType
 from polymat.expressiontree.operations.assertshape import AssertShape
 from polymat.expressiontree.operations.blockdiagonal import (
@@ -42,7 +46,6 @@ from polymat.expressiontree.operations.fromvectortosymmetricmatrix import (
 from polymat.expressiontree.operations.tovariablevector import (
     ToVariableVector,
 )
-from polymat.expressiontree.nodes import ExpressionNode
 from polymat.expressiontree.operations.addition import Addition
 from polymat.expressiontree.operations.combinations import (
     Combinations,
@@ -61,9 +64,6 @@ from polymat.expressiontree.operations.matrixmultiplication import MatrixMultipl
 from polymat.expressiontree.operations.transpose import Transpose
 from polymat.expressiontree.operations.truncatemonomials import TruncateMonomials
 from polymat.expressiontree.operations.verticalstack import VerticalStack
-from polymat.sparserepr.sparserepr import SparseRepr
-from polymat.symbol import Symbol
-from polymat.utils.getstacklines import FrameSummary
 
 
 @dataclassabc(frozen=True, repr=False)

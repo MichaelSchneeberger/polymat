@@ -14,6 +14,6 @@ class ElementwiseMult(ElementwiseOpMixin):
     def operator_name(self) -> str:
         return "mul"
 
-    @property
-    def is_addition(self) -> bool:
+    @staticmethod
+    def is_addition() -> bool:
         return False

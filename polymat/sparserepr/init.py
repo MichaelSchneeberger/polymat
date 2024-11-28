@@ -1,3 +1,4 @@
+from typing import Iterable
 from dataclassabc import dataclassabc
 
 from polymat.sparserepr.data.polynomialmatrix import (
@@ -41,7 +42,6 @@ from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.sparserepr.operations.vstacksparsereprmixin import (
     VStackSparseReprMixin,
 )
-from typing import Iterable
 
 
 @dataclassabc(frozen=True, slots=True)
@@ -51,7 +51,12 @@ class BlockDiagonalSparseReprImpl(BlockDiagonalSparseReprMixin):
     shape: tuple[int, int]
 
 
-init_block_diagonal_sparse_repr = BlockDiagonalSparseReprImpl
+def init_block_diagonal_sparse_repr(
+    children: tuple[SparseRepr],
+    row_col_ranges: tuple[tuple[range, range], ...],
+    shape: tuple[int, int],
+):
+    return BlockDiagonalSparseReprImpl(children=children, row_col_ranges=row_col_ranges, shape=shape)
 
 
 @dataclassabc(frozen=True, slots=True)
@@ -60,7 +65,11 @@ class BroadcastSparseReprImpl(BroadcastSparseReprMixin):
     shape: tuple[int, int]
 
 
-init_broadcast_sparse_repr = BroadcastSparseReprImpl
+def init_broadcast_sparse_repr(
+    polynomial: PolynomialType,
+    shape: tuple[int, int],
+):
+    return BroadcastSparseReprImpl(polynomial=polynomial, shape=shape)
 
 
 @dataclassabc(frozen=True, slots=True)
@@ -69,7 +78,11 @@ class DiagMatrixFromVecSparseReprImpl(DiagMatrixFromVecSparseReprMixin):
     shape: tuple[int, int]
 
 
-init_diag_matrix_from_vec_sparse_repr = DiagMatrixFromVecSparseReprImpl
+def init_diag_matrix_from_vec_sparse_repr(
+    child: SparseRepr,
+    shape: tuple[int, int],
+):
+    return DiagMatrixFromVecSparseReprImpl(child=child, shape=shape)
 
 
 @dataclassabc(frozen=True, slots=True)
@@ -79,7 +92,12 @@ class KronSparseReprImpl(KronSparseReprMixin):
     shape: tuple[int, int]
 
 
-init_kron_sparse_repr = KronSparseReprImpl
+def init_kron_sparse_repr(
+    left: SparseRepr,
+    right: SparseRepr,
+    shape: tuple[int, int],
+):
+    return KronSparseReprImpl(left=left, right=right, shape=shape)
 
 
 @dataclassabc(frozen=True, slots=True)
@@ -89,7 +107,12 @@ class GetItemSparseReprImpl(GetItemSparseReprMixin):
     shape: tuple[int, int]
 
 
-init_get_item_sparse_repr = GetItemSparseReprImpl
+def init_get_item_sparse_repr(
+    child: SparseRepr,
+    key: tuple[tuple[int, ...], tuple[int, ...]],
+    shape: tuple[int, int],
+):
+    return GetItemSparseReprImpl(child=child, key=key, shape=shape)
 
 
 @dataclassabc(frozen=True, slots=True)
@@ -98,7 +121,7 @@ class FromPolynomialMatrixImpl(FromPolynomialMatrixMixin):
     shape: tuple[int, int]
 
 
-def init_from_polynomial_matrix(
+def init_sparse_repr_from_data(
     data: PolynomialMatrixType,
     shape: tuple[int, int],
 ):
@@ -130,7 +153,12 @@ class RepMatSparseReprImpl(RepMatSparseReprMixin):
     shape: tuple[int, int]
 
 
-init_repmat_sparse_repr = RepMatSparseReprImpl
+def init_repmat_sparse_repr(
+    child: SparseRepr,
+    child_shape: tuple[int, int],
+    shape: tuple[int, int],
+):
+    return RepMatSparseReprImpl(child=child, child_shape=child_shape, shape=shape)
 
 
 @dataclassabc(frozen=True, slots=True)
@@ -164,7 +192,11 @@ class VecFromDiagMatrixSparseReprImpl(VecFromDiagMatrixSparseReprMixin):
     shape: tuple[int, int]
 
 
-init_vec_from_diag_matrix_sparse_repr = VecFromDiagMatrixSparseReprImpl
+def init_vec_from_diag_matrix_sparse_repr(
+    child: SparseRepr,
+    shape: tuple[int, int],
+):
+    return VecFromDiagMatrixSparseReprImpl(child=child, shape=shape)
 
 
 @dataclassabc(frozen=True, slots=True)
@@ -174,4 +206,9 @@ class VStackSparseReprImpl(VStackSparseReprMixin):
     shape: tuple[int, int]
 
 
-init_vstack_sparse_repr = VStackSparseReprImpl
+def init_vstack_sparse_repr(
+    children: tuple[SparseRepr, ...],
+    row_ranges: tuple[range, ...],
+    shape: tuple[int, int],
+):
+    return VStackSparseReprImpl(children=children, row_ranges=row_ranges, shape=shape)

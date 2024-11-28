@@ -39,12 +39,26 @@ def block_diag(expressions: Iterable[MatrixExpression]) -> MatrixExpression:
     return first.block_diag(others=others)
 
 
-def concat(expressions: Iterable[Iterable[MatrixExpression]]):
-    def gen_h_stack():
-        for col_expressions in expressions:
-            yield h_stack(col_expressions)
+def concat(expressions: Iterable[tuple[MatrixExpression]]):
+    def gen_rows_expr():
+        for row in expressions:
+            if len(row) == 1:
+                yield row[0]
+            else:
+                yield h_stack(row)
 
-    return v_stack(gen_h_stack())
+    rows_expr = tuple(gen_rows_expr())
+
+    if len(rows_expr) == 1:
+        return rows_expr[0]
+    else:
+        return v_stack(rows_expr)
+
+    # def gen_h_stack():
+    #     for col_expressions in expressions:
+    #         yield h_stack(col_expressions)
+
+    # return v_stack(gen_h_stack())
 
 
 def from_(value: FromAnyTypes | MatrixExpression):

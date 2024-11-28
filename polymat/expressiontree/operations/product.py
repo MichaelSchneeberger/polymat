@@ -7,7 +7,7 @@ from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_traceback
 from polymat.expressiontree.nodes import MultiChildrenExpressionNode
 from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
-from polymat.sparserepr.init import init_from_polynomial_matrix
+from polymat.sparserepr.init import init_sparse_repr_from_data
 
 
 class Product(FrameSummaryMixin, MultiChildrenExpressionNode):
@@ -70,7 +70,7 @@ class Product(FrameSummaryMixin, MultiChildrenExpressionNode):
 
         data = dict(gen_polynomial_matrix())
 
-        return state, init_from_polynomial_matrix(
+        return state, init_sparse_repr_from_data(
             data=data,
             shape=(len(data), 1),
         )

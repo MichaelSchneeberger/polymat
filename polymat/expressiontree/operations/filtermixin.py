@@ -6,7 +6,7 @@ from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
 from polymat.expressiontree.nodes import SingleChildExpressionNode
 from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_traceback
-from polymat.sparserepr.init import init_from_polynomial_matrix
+from polymat.sparserepr.init import init_sparse_repr_from_data
 
 
 class FilterMixin(FrameSummaryMixin, SingleChildExpressionNode):
@@ -44,7 +44,7 @@ class FilterMixin(FrameSummaryMixin, SingleChildExpressionNode):
         n_row = len(polymatrix)
         n_col = 0 if n_row == 0 else 1
 
-        return state, init_from_polynomial_matrix(
+        return state, init_sparse_repr_from_data(
             data=polymatrix,
             shape=(n_row, n_col),
         )

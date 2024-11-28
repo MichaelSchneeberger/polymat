@@ -23,10 +23,14 @@ class State:
         return replace(self, cache=cache)
 
     def register(
-        self, symbol: Symbol, size: int, stack: tuple[FrameSummary, ...]
+        self, 
+        size: int, 
+        stack: tuple[FrameSummary, ...],
+        symbol: Symbol | None = None,
     ):
         """Index a variable and get its index range."""
 
+        # symbol already exists
         if symbol in self.indices:
             start, stop = self.indices[symbol]
 
@@ -46,12 +50,19 @@ class State:
                     )
                 )
 
-        # If not save new index
+        n_indices = self.n_indices + size
         index = (self.n_indices, self.n_indices + size)
+
+        # anonymous symbol
+        if symbol is None:
+            return replace(
+                self,
+                n_indices=n_indices,
+            ), index
 
         return replace(
             self,
-            n_indices=self.n_indices + size,
+            n_indices=n_indices,
             indices=self.indices | {symbol: index},
         ), index
 

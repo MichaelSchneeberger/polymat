@@ -38,7 +38,7 @@ class DefineVariable(FrameSummaryMixin, ExpressionNode):
         state: State, variable: Symbol, size: int, stack: tuple[FrameSummary, ...]
     ):
         state, (start, stop) = state.register(
-            variable,
+            symbol=variable,
             size=size,
             stack=stack,
         )

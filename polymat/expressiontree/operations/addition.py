@@ -16,6 +16,6 @@ class Addition(ElementwiseOpMixin):
     def operator_name(self) -> str:
         return "add"
 
-    @property
-    def is_addition(self) -> bool:
+    @staticmethod
+    def is_addition() -> bool:
         return True

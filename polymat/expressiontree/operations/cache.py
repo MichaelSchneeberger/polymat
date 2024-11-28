@@ -1,6 +1,6 @@
 from typing import override
 
-from polymat.sparserepr.init import init_from_polynomial_matrix
+from polymat.sparserepr.init import init_sparse_repr_from_data
 from polymat.sparserepr.operations.frompolynomialmixin import (
     FromPolynomialMatrixMixin,
 )
@@ -36,7 +36,7 @@ class Cache(FrameSummaryMixin, SingleChildExpressionNode):
         else:
             cached_data = dict(child.entries())
 
-        polymatrix = init_from_polynomial_matrix(
+        polymatrix = init_sparse_repr_from_data(
             data=cached_data,
             shape=child.shape,
         )

@@ -5,7 +5,7 @@ from polymat.expressiontree.nodes import ExpressionNode
 from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
 from polymat.symbol import Symbol
-from polymat.sparserepr.init import init_from_polynomial_matrix
+from polymat.sparserepr.init import init_sparse_repr_from_data
 
 
 # delete?
@@ -39,4 +39,4 @@ class FromVariables(ExpressionNode):
         data = dict(gen_polynomial_matrix())
         shape = (len(data), 1)
 
-        return state, init_from_polynomial_matrix(data=data, shape=shape)
+        return state, init_sparse_repr_from_data(data=data, shape=shape)

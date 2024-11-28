@@ -9,7 +9,7 @@ from polymat.expressiontree.nodes import (
     SingleChildExpressionNode,
 )
 from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_traceback
-from polymat.sparserepr.init import init_from_polynomial_matrix
+from polymat.sparserepr.init import init_sparse_repr_from_data
 
 
 class Differentiate(FrameSummaryMixin, SingleChildExpressionNode):
@@ -46,7 +46,7 @@ class Differentiate(FrameSummaryMixin, SingleChildExpressionNode):
 
         data = dict(gen_polynomial_matrix())
 
-        return state, init_from_polynomial_matrix(
+        return state, init_sparse_repr_from_data(
             data=data,
             shape=(child.shape[0], len(indices)),
         )

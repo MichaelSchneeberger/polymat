@@ -14,7 +14,7 @@ from polymat.sparserepr.data.polynomialmatrix import MatrixIndexType
 from polymat.sparserepr.data.polynomial import PolynomialType, constant_polynomial
 from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state import State
-from polymat.sparserepr.init import init_from_polynomial_matrix
+from polymat.sparserepr.init import init_sparse_repr_from_data
 from polymat.utils.getstacklines import (
     FrameSummaryMixin,
     to_operator_traceback,
@@ -152,7 +152,7 @@ class FromAny(FrameSummaryMixin, ExpressionNode):
             gen_entries(), acc_polynomial_matrix_data, initial=(state, tuple())
         )
 
-        return state, init_from_polynomial_matrix(
+        return state, init_sparse_repr_from_data(
             data=dict(data),
             shape=(len(self.data), len(self.data[0])),
         )
