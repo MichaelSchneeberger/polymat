@@ -1,19 +1,19 @@
 # Multivariate Polynomial Library
 
-PolyMat is a Python library designed for the representation and manipulation of multivariate polynomial matrices.
+**PolyMat** is a Python library designed for the representation and manipulation of multivariate polynomial matrices.
 
 
 ## Features
 
 * Expression Building: Create polynomial expressions using various operators provided by the library.
 * Efficient Internal Representation: Uses a sparse internal structure to optimize intermediate computations.
-* Deferred Computation: Polynomial matrices are evaluated lazily using the [statemonad](https://github.com/MichaelSchneeberger/state-monad) library, meaning expressions are computed only when needed.
+* Stateful Computation: The sparse internal structures are computed based on a state object. This eliminates any dependency on global variables and provides control over the sparse intermediate structures stored in memory for reuse.
 * Performance Optimized: Designed for speed, the library outperforms other symbolic computation tools like `sympy`, making it ideal for large matrix expressions.
 
 
 ## Installation
 
-You can install PolyMat via pip:
+You can install **PolyMat** via pip:
 
 ```
 pip install polymat
@@ -42,7 +42,8 @@ x = polymat.v_stack((x1, x2))
 # Create a polynomial expression using arithmetic operations
 f = (x1 + x2) + (x1 + x1*x2)
 
-# Print a human-readable string representation
+# Print the human-readable string representation
+# add(add(x1, x2), add(x1, mul(x1, x2)))
 print(f'{f}')
 
 # Print the internal Python representation of the expression
@@ -186,23 +187,23 @@ Specialized methods:
 
 The output functions listed below perform stateful computations. As a result, they return a StateMonad object, which must be applied with a state object to generate the desired output value.
 
-- **Sympy Representation**: Convert an experssion to a `sympy` representation.
+- **Sympy Representation**: Convert a polynomial expression to a `sympy` expression.
     ``` python
     state, sympy_repr = polymat.to_sympy(f).apply(state)
     # Matrix([[-1.0, -1.0*x**2], [x**2, -1.0]])
     ```
-- **Array Representation**: Convert polynomial expressions to an array representation (implemented through numpy and scipy array)..
+- **Array Representation**: Convert polynomial expressions to an array representation (implemented through numpy and scipy array).
     ``` python
     state, farray = polymat.to_array(f, x).apply(state)
     # {0: array([[-1.], [ 0.], [ 0.], [-1.]]), 2: array([[ 0.], [ 1.], [-1.], [ 0.]])}
     ```
-- **Tuple Representation**: Outputs constant parts as nested tuple.
+- **Tuple Representation**: Output the constant parts of each component of the polynomial matrix as nested tuples.
     ``` python
     # Setting assert_constant=False will prevent an exception form being raised, even if f is not a constant polynomial expression
     state, ftuple = polymat.to_tuple(f, assert_constant=False).apply(state)
     # ((-1.0,), (-1.0,))
     ```
-- **Polynomial Degrees**: Obtain degrees of each polynomial matrix element.
+- **Polynomial Degrees**: Obtain degrees of each component of the polynomial matrix.
     ``` python
     state, fdegree = polymat.to_degree(f).apply(state)
     # ((0, 2), (2, 0))
