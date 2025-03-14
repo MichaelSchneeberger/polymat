@@ -4,7 +4,7 @@ from itertools import accumulate
 from statemonad.abc import StateMonadNode
 
 from polymat.sparserepr.sparserepr import SparseRepr
-from polymat.state import State
+from polymat.state.state import State
 
 
 class ExpressionNode(StateMonadNode[State, SparseRepr]): ...

@@ -1,30 +1,38 @@
-from typing import Self
-from dataclasses import replace
-from dataclassabc import dataclassabc
+from __future__ import annotations
+
+from abc import ABC, abstractmethod
 
 from polymat.utils.getstacklines import FrameSummary, to_operator_traceback
 from polymat.symbol import Symbol
 
 
-@dataclassabc(frozen=True, slots=True)
-class State:
-    n_indices: int
+class State(ABC):
 
-    indices: dict[Symbol, tuple[int, int]]
-    """ Map from variables to their indices given by a range. """
+    @property
+    @abstractmethod
+    def n_indices(self) -> int: ...
 
-    cache: dict
-    """ 
-    Used to cache the computed value of an expressions (that is a SparseReprMixin object) so that
-    it does not need to be recomputed again. 
-    """
+    @property
+    @abstractmethod
+    def indices(self) -> dict[Symbol, tuple[int, int]]:
+        """
+        Map from variables to two indices defining the index range.
+        """
 
-    def copy(self, cache: dict) -> Self:
-        return replace(self, cache=cache)
+    @property
+    @abstractmethod
+    def cache(self) -> dict:
+        """
+        Used to cache the computed sparse representation of an expressions so that
+        it does not need to be recomputed again.
+        """
+
+    def copy(self, /, **changes) -> State:
+        ...
 
     def register(
-        self, 
-        size: int, 
+        self,
+        size: int,
         stack: tuple[FrameSummary, ...],
         symbol: Symbol | None = None,
     ):
@@ -36,7 +44,7 @@ class State:
 
             if size == stop - start:
                 return self, (start, stop)
-            
+
             else:
                 message = (
                     f"Symbols must be unique names! Cannot index symbol "
@@ -55,13 +63,9 @@ class State:
 
         # anonymous symbol
         if symbol is None:
-            return replace(
-                self,
-                n_indices=n_indices,
-            ), index
+            return self.copy(n_indices=n_indices), index
 
-        return replace(
-            self,
+        return self.copy(
             n_indices=n_indices,
             indices=self.indices | {symbol: index},
         ), index
@@ -100,16 +104,8 @@ class State:
 
         symbol, (start, stop) = self._get_symbol(index)
 
-        # Variable is not scalar
+        # if the symbol refers a range, attach the relative index to the name
         if stop - start > 1:
             return f"{symbol}_{index - start}"
 
         return str(symbol)
-
-
-def init_state():
-    return State(
-        n_indices=0,
-        indices={},
-        cache={},
-    )

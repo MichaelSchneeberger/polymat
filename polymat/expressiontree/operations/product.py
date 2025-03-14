@@ -6,7 +6,7 @@ from polymat.sparserepr.data.polynomial import multiply_polynomial_iterable
 from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_traceback
 from polymat.expressiontree.nodes import MultiChildrenExpressionNode
 from polymat.sparserepr.sparserepr import SparseRepr
-from polymat.state import State
+from polymat.state.state import State
 from polymat.sparserepr.init import init_sparse_repr_from_data
 
 

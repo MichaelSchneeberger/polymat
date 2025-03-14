@@ -13,7 +13,7 @@ from polymat.sparserepr.data.monomial import sort_monomial
 from polymat.sparserepr.data.polynomialmatrix import MatrixIndexType
 from polymat.sparserepr.data.polynomial import PolynomialType, constant_polynomial
 from polymat.sparserepr.sparserepr import SparseRepr
-from polymat.state import State
+from polymat.state.state import State
 from polymat.sparserepr.init import init_sparse_repr_from_data
 from polymat.utils.getstacklines import (
     FrameSummaryMixin,
@@ -33,7 +33,7 @@ class FromAny(FrameSummaryMixin, ExpressionNode):
         def gen_elem():
             for row, row_data in enumerate(self.data):
                 for col, elem in enumerate(row_data):
-                    yield f"{(row, col)=}: {elem}"
+                    yield f"({row}, {col}): {elem}"
 
         return "\n".join(gen_elem())
 

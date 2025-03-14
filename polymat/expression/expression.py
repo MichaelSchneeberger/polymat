@@ -3,6 +3,10 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Iterable, override
 
+from polymat.symbol import Symbol
+from polymat.utils.getstacklines import FrameSummary, get_frame_summary
+from polymat.state.state import State
+from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.expressiontree.data.variables import VariableType
 from polymat.expressiontree.from_ import (
     FromAnyTypes,
@@ -13,6 +17,10 @@ from polymat.expressiontree.nodes import (
     SingleChildExpressionNode,
     ExpressionNode,
 )
+from polymat.expressiontree.operations.combinations import Combinations
+from polymat.expressiontree.operations.filterpredicator import FilterPredicate
+from polymat.expressiontree.operations.product import Product
+from polymat.expressiontree.operations.truncatemonomials import TruncateMonomials
 from polymat.expressiontree.init import (
     init_addition,
     init_assert_polynomial,
@@ -43,14 +51,6 @@ from polymat.expressiontree.init import (
     init_v_stack,
     init_variable_vector,
 )
-from polymat.expressiontree.operations.combinations import Combinations
-from polymat.expressiontree.operations.filterpredicator import FilterPredicate
-from polymat.expressiontree.operations.product import Product
-from polymat.expressiontree.operations.truncatemonomials import TruncateMonomials
-from polymat.sparserepr.sparserepr import SparseRepr
-from polymat.state import State
-from polymat.utils.getstacklines import FrameSummary, get_frame_summary
-from polymat.symbol import Symbol
 
 
 class Expression(SingleChildExpressionNode, ABC):

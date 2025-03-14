@@ -10,7 +10,7 @@ from polymat.sparserepr.data.polynomial import (
     add_polynomial_terms_iterable,
 )
 from polymat.sparserepr.sparserepr import SparseRepr
-from polymat.state import State
+from polymat.state.state import State
 from polymat.expressiontree.nodes import SingleChildExpressionNode
 from polymat.sparserepr.init import init_sparse_repr_from_iterable
 from polymat.utils.getstacklines import (

@@ -1,7 +1,7 @@
 from typing import override
 
 from polymat.sparserepr.sparserepr import SparseRepr
-from polymat.state import State
+from polymat.state.state import State
 from polymat.expressiontree.nodes import SingleChildExpressionNode
 from polymat.sparserepr.init import (
     init_diag_matrix_from_vec_sparse_repr,

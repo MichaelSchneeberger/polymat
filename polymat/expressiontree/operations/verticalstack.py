@@ -5,7 +5,7 @@ from typing import override
 from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_traceback
 from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.sparserepr.init import init_vstack_sparse_repr
-from polymat.state import State
+from polymat.state.state import State
 from polymat.expressiontree.nodes import MultiChildrenExpressionNode
 
 

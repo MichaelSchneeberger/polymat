@@ -6,7 +6,7 @@ from polymat.expressiontree.nodes import ExpressionNode
 from polymat.sparserepr.data.polynomialmatrix import MatrixIndexType
 from polymat.sparserepr.data.polynomial import PolynomialType
 from polymat.sparserepr.sparserepr import SparseRepr
-from polymat.state import State
+from polymat.state.state import State
 from polymat.utils.getstacklines import (
     FrameSummary,
     FrameSummaryMixin,

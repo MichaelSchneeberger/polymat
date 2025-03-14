@@ -1,7 +1,7 @@
 from typing import override
 
 from polymat.sparserepr.sparserepr import SparseRepr
-from polymat.state import State
+from polymat.state.state import State
 from polymat.expressiontree.nodes import SingleChildExpressionNode
 from polymat.sparserepr.init import init_sparse_repr_from_iterable, init_symmetric_sparse_repr, init_transpose_sparse_repr
 from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_traceback

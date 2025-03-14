@@ -1,5 +1,5 @@
 from polymat.expressiontree.nodes import ExpressionNode
-from polymat.state import State
+from polymat.state.state import State
 
 
 type VariableType = ExpressionNode | tuple[int, ...]

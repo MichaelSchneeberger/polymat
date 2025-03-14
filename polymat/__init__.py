@@ -3,7 +3,7 @@ The root modules of polymat are meant to be self-containing and could be placed 
 They all contain an abc.py exposing the interfaces that can be extended by an external library.
 """
 
-from polymat.state import (
+from polymat.state.init import (
     init_state as _init_state,
 )
 from polymat.expression.from_ import (

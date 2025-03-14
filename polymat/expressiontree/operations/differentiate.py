@@ -4,7 +4,7 @@ from typing import override
 from polymat.expressiontree.data.variables import VariableType, to_indices
 from polymat.sparserepr.data.polynomial import differentiate_polynomial
 from polymat.sparserepr.sparserepr import SparseRepr
-from polymat.state import State
+from polymat.state.state import State
 from polymat.expressiontree.nodes import (
     SingleChildExpressionNode,
 )

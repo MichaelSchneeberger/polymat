@@ -2,7 +2,7 @@ from itertools import accumulate, pairwise
 from typing import override
 
 from polymat.sparserepr.sparserepr import SparseRepr
-from polymat.state import State
+from polymat.state.state import State
 from polymat.expressiontree.nodes import MultiChildrenExpressionNode
 from polymat.sparserepr.init import init_block_diagonal_sparse_repr
 

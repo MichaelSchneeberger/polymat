@@ -5,7 +5,7 @@ from typing_extensions import override
 from polymat.expressiontree.nodes import TwoChildrenExpressionNode
 from polymat.sparserepr.data.polynomial import MaybePolynomialType
 from polymat.sparserepr.sparserepr import SparseRepr
-from polymat.state import State
+from polymat.state.state import State
 from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_traceback
 from polymat.sparserepr.init import (
     init_sparse_repr_from_data,

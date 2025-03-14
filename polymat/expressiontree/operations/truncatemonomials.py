@@ -7,7 +7,7 @@ from polymat.expressiontree.nodes import (
 from polymat.expressiontree.data.variables import VariableType, to_indices
 from polymat.sparserepr.init import init_sparse_repr_from_iterable
 from polymat.sparserepr.sparserepr import SparseRepr
-from polymat.state import State
+from polymat.state.state import State
 
 
 class TruncateMonomials(SingleChildExpressionNode):

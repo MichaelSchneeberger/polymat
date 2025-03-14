@@ -1,6 +1,6 @@
 from polymat.arrayrepr.arrayrepr import ArrayRepr as _ArrayRepr
 from polymat.symbol import Symbol as _Symbol
-from polymat.state import (
+from polymat.state2 import (
     State as _State,
 )
 from polymat.expressiontree.nodes import (

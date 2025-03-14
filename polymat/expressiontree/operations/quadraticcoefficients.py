@@ -1,4 +1,5 @@
 import abc
+import itertools
 from typing import override
 
 from polymat.expressiontree.data.variables import VariableType, to_indices
@@ -6,10 +7,10 @@ from polymat.expressiontree.nodes import (
     ExpressionNode,
     SingleChildExpressionNode,
 )
-from polymat.sparserepr.data.monomial import split_monomial_indices
+from polymat.sparserepr.data.monomial import add_monomials, split_monomial_indices
 from polymat.sparserepr.init import init_sparse_repr_from_iterable
 from polymat.sparserepr.sparserepr import SparseRepr
-from polymat.state import State
+from polymat.state.state import State
 from polymat.utils.getstacklines import FrameSummaryMixin, to_operator_traceback
 
 
@@ -90,7 +91,9 @@ class QuadraticCoefficients(FrameSummaryMixin, SingleChildExpressionNode):
             if polynomial:
                 for monomial, value in polynomial.items():  # type: ignore
                     x_monomial = tuple(
-                        (index, count) for index, count in monomial if index in indices
+                        (index, count) 
+                        for index, count in monomial 
+                        if index in indices
                     )
                     p_monomial = tuple(
                         (index, count)

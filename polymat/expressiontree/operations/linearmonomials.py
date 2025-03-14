@@ -8,7 +8,7 @@ from polymat.expressiontree.nodes import (
 from polymat.sparserepr.data.monomial import sort_monomials
 from polymat.sparserepr.init import init_sparse_repr_from_iterable
 from polymat.sparserepr.sparserepr import SparseRepr
-from polymat.state import State
+from polymat.state.state import State
 
 
 class LinearMonomials(SingleChildExpressionNode):

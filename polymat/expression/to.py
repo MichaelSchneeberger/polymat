@@ -5,7 +5,7 @@ from statemonad.typing import StateMonad
 
 from polymat.arrayrepr.arrayrepr import ArrayRepr
 from polymat.symbol import Symbol
-from polymat.state import State
+from polymat.state.state import State
 from polymat.expressiontree.to import (
     to_array as _to_array,
     to_degree as _to_degree,

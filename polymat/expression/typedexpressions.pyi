@@ -12,7 +12,7 @@ from polymat.expressiontree.operations.getitem import GetItem
 from polymat.expressiontree.operations.product import Product
 from polymat.expressiontree.operations.truncatemonomials import TruncateMonomials
 from polymat.sparserepr.sparserepr import SparseRepr
-from polymat.state import State
+from polymat.state.state import State
 from polymat.symbol import Symbol
 
 # The following classes are defined solely in the stub file for type checking and have no impact during code execution.
@@ -49,7 +49,8 @@ class MatrixExpression(SingleChildExpressionNode):
         self, variables: VariableVectorType
     ) -> MonomialVectorExpression: ...
     def to_quadratic_monomials(
-        self, variables: VariableVectorType
+        self,
+        variables: VariableVectorType
     ) -> MonomialVectorExpression: ...
     def rep_mat(self, n: int, m: int) -> MatrixExpression: ...
     def reshape(self, n: int, m: int) -> MatrixExpression: ...

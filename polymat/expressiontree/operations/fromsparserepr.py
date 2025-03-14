@@ -1,7 +1,7 @@
 from abc import abstractmethod
 from typing_extensions import override
 
-from polymat.state import State
+from polymat.state.state import State
 from polymat.expressiontree.nodes import ExpressionNode
 from polymat.sparserepr.sparserepr import SparseRepr
 

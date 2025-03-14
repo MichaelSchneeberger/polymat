@@ -11,8 +11,6 @@ import statemonad
 from statemonad.abc import StateMonadNode
 from statemonad.typing import StateMonad
 
-from polymat.sparserepr.data.polynomial import MaybePolynomialType
-from polymat.sparserepr.init import init_reshape_sparse_repr
 from polymat.symbol import Symbol
 from polymat.arrayrepr.arrayrepr import ArrayRepr
 from polymat.arrayrepr.init import init_array_repr
@@ -22,7 +20,8 @@ from polymat.sparserepr.data.monomial import (
     monomial_degree_in,
 )
 from polymat.sparserepr.sparserepr import SparseRepr
-from polymat.state import State
+from polymat.sparserepr.init import init_reshape_sparse_repr
+from polymat.state.state import State
 from polymat.expressiontree.nodes import ExpressionNode
 
 
@@ -72,6 +71,7 @@ def to_array(
 
             if isinstance(self.variables, tuple):
                 indices = self.variables
+                
             else:
                 state, variables = self.variables.apply(state)
                 indices = tuple(variables.to_indices())
@@ -99,9 +99,9 @@ def to_array(
                             if index not in index_to_array_index:
                                 variable_name = state.get_name(index)
                                 raise Exception(
-                                    f"While converting a polynomial expression {name} to an array representation, "
-                                    f"the index {index} (associated with the variable {variable_name}) found in the expression "
-                                    f"is not an element of the provided list of variable indices."
+                                    f'While converting a polynomial expression "{name}" to an array representation, '
+                                    f'the index {index} (associated with the variable "{variable_name}") found in the expression '
+                                    f'is not an element of the provided list of variable indices {indices[:6]}.'
                                 )
 
                             array_index = index_to_array_index[index]
@@ -169,6 +169,9 @@ def to_degree(
                                         yield get_degree(monomial)
 
                                 yield max(gen_degrees())
+
+                            else:
+                                yield 0
 
                     yield tuple(gen_column())
 

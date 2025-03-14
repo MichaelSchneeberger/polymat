@@ -2,7 +2,7 @@ import unittest
 
 from polymat.expressiontree.init import init_from_sparse_repr, init_matrix_mult
 from polymat.sparserepr.init import init_sparse_repr_from_data
-from polymat.state import init_state
+from polymat import init_state
 
 
 class TestMatrixMult(unittest.TestCase):

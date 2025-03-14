@@ -114,6 +114,13 @@ def sort_monomials(monomials: Iterable[MonomialType]) -> tuple[MonomialType, ...
 
 # NP: what does this function do? split according to what?
 def split_monomial_indices(monomial: MonomialType) -> tuple[MonomialType, MonomialType]:
+    """
+    Split monomial into two monomials by dividing each the power of each variable in two.
+
+    x**2 y**2 -> (x y, x y)
+    x y**2 -> (x y, y)
+    """
+    
     left = []
     right = []
 
@@ -122,10 +129,13 @@ def split_monomial_indices(monomial: MonomialType) -> tuple[MonomialType, Monomi
     for index, power in monomial:
         count_left = power // 2
 
+        # power is uneven
         if power % 2:
+            # the remainder is included to the left group if left is active
             if is_left:
                 count_left = count_left + 1
 
+            # flip active group
             is_left = not is_left
 
         count_right = power - count_left

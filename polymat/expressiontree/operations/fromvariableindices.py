@@ -3,7 +3,7 @@ from typing_extensions import override
 
 from polymat.expressiontree.nodes import ExpressionNode
 from polymat.sparserepr.sparserepr import SparseRepr
-from polymat.state import State
+from polymat.state.state import State
 from polymat.sparserepr.init import init_sparse_repr_from_iterable
 
 

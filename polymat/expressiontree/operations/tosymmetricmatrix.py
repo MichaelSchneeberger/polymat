@@ -2,7 +2,7 @@ from typing_extensions import override
 
 from polymat.sparserepr.init import init_symmetric_sparse_repr
 from polymat.sparserepr.sparserepr import SparseRepr
-from polymat.state import State
+from polymat.state.state import State
 from polymat.expressiontree.nodes import SingleChildExpressionNode
 
 
