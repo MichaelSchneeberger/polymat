@@ -1,6 +1,6 @@
 from polymat.arrayrepr.arrayrepr import ArrayRepr as _ArrayRepr
 from polymat.symbol import Symbol as _Symbol
-from polymat.state2 import (
+from polymat.state.state import (
     State as _State,
 )
 from polymat.expressiontree.nodes import (
@@ -11,10 +11,10 @@ from polymat.expression.typedexpressions import (
     SymmetricMatrixExpression as _SymmetricMatrixExpression,
     VectorExpression as _VectorExpression,
     RowVectorExpression as _RowVectorExpression,
-    PolynomialExpression as _PolynomialExpression,
+    ScalarPolynomialExpression as _ScalarPolynomialExpression,
     VariableVectorExpression as _VariableVectorExpression,
-    SingleValueVariableExpression as _SingleValueVariableExpression,
     VariableExpression as _VariableExpression,
+    VariableVectorSymbolExpression as _VariableVectorSymbolExpression,
     MonomialVectorExpression as _MonomialVectorExpression,
     MonomialExpression as _MonomialExpression,
 )
@@ -30,10 +30,10 @@ MatrixExpression = _MatrixExpression
 SymmetricMatrixExpression = _SymmetricMatrixExpression
 VectorExpression = _VectorExpression
 RowVectorExpression = _RowVectorExpression
-PolynomialExpression = _PolynomialExpression
+ScalarPolynomialExpression = _ScalarPolynomialExpression
 VariableVectorExpression = _VariableVectorExpression
 MonomialVectorExpression = _MonomialVectorExpression
-SingleValueVariableExpression = _SingleValueVariableExpression
 VariableExpression = _VariableExpression
+VariableVectorSymbolExpression = _VariableVectorSymbolExpression
 MonomialExpression = _MonomialExpression
 

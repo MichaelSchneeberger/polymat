@@ -5,7 +5,7 @@ from typing import Iterable, override
 
 from polymat.symbol import Symbol
 from polymat.utils.getstacklines import FrameSummary, get_frame_summary
-from polymat.state.state import State
+from polymat.state.state import State as BaseState
 from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.expressiontree.data.variables import VariableType
 from polymat.expressiontree.from_ import (
@@ -53,7 +53,7 @@ from polymat.expressiontree.init import (
 )
 
 
-class Expression(SingleChildExpressionNode, ABC):
+class Expression[State: BaseState](SingleChildExpressionNode, ABC):
     def __add__(self, other: FromAnyTypes):
         return self._binary(init_addition, self, other)
 

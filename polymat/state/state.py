@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from typing import Self
 
 from polymat.utils.getstacklines import FrameSummary, to_operator_traceback
 from polymat.symbol import Symbol
@@ -27,7 +28,7 @@ class State(ABC):
         it does not need to be recomputed again.
         """
 
-    def copy(self, /, **changes) -> State:
+    def copy(self, /, **changes) -> Self:
         ...
 
     def register(

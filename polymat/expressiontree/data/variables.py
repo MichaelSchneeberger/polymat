@@ -1,11 +1,13 @@
 from polymat.expressiontree.nodes import ExpressionNode
-from polymat.state.state import State
+from polymat.state.state import State as BaseState
 
 
-type VariableType = ExpressionNode | tuple[int, ...]
+type VariableType[State: BaseState] = ExpressionNode[State] | tuple[int, ...]
 
 
-def to_indices(state: State, variables: VariableType):
+def to_indices[State: BaseState](
+    state: State, variables: VariableType[State],
+) -> tuple[State, tuple[int, ...]]:
     match variables:
         case ExpressionNode():
             n_state, variable_vector = variables.apply(state=state)

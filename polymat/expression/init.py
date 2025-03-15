@@ -3,7 +3,7 @@ from dataclassabc import dataclassabc
 
 from polymat.expression.expression import Expression
 from polymat.expression.typedexpressions import (
-    VariableExpression,
+    VariableVectorSymbolExpression,
 )
 from polymat.expressiontree.nodes import ExpressionNode
 from polymat.symbol import Symbol
@@ -25,7 +25,7 @@ def init_expression(child: ExpressionNode):
 
 
 @dataclassabc(frozen=True, slots=True)
-class VariableExpressionImpl(VariableExpression):
+class VariableExpressionImpl(VariableVectorSymbolExpression):
     child: ExpressionNode
     symbol: Symbol
 
