@@ -32,8 +32,8 @@ class TestEval(unittest.TestCase):
         x1 = Symbol("x1")
         x2 = Symbol("x2")
 
-        state, _ = state.register(x1, 1, stack=tuple())
-        state, _ = state.register(x2, 1, stack=tuple())
+        state, _ = state.register(symbol=x1, size=1, stack=tuple())
+        state, _ = state.register(symbol=x2, size=1, stack=tuple())
 
         expr = init_evaluate(expr, substitutions=(
             (x1, (2.0,)), (x2, (3.0,)),
