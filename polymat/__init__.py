@@ -1,10 +1,9 @@
-"""
-The root modules of polymat are meant to be self-containing and could be placed in a package of its own.
-They all contain an abc.py exposing the interfaces that can be extended by an external library.
-"""
-
 from polymat.state.init import (
     init_state as _init_state,
+)
+from polymat.sparserepr.init import (
+    init_sparse_repr_from_data as _init_sparse_repr_from_data,
+    init_sparse_repr_from_iterable as _init_sparse_repr_from_iterable,
 )
 from polymat.expression.from_ import (
     from_ as _from_,
@@ -31,6 +30,9 @@ from polymat.expression.to import (
 )
 
 init_state = _init_state
+
+init_sparse_repr_from_data = _init_sparse_repr_from_data
+init_sparse_repr_from_iterable = _init_sparse_repr_from_iterable
 
 from_ = _from_
 from_symmetric = _from_symmetric

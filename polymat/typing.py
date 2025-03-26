@@ -1,8 +1,12 @@
-from polymat.arrayrepr.arrayrepr import ArrayRepr as _ArrayRepr
+"""
+This module (`typing.py`) provides support for type hints in Python, which are used to
+specify the expected types of variables, function arguments, and return values.
+"""
+
 from polymat.symbol import Symbol as _Symbol
-from polymat.state.state import (
-    State as _State,
-)
+from polymat.state.state import State as _State
+from polymat.arrayrepr.arrayrepr import ArrayRepr as _ArrayRepr
+from polymat.sparserepr.sparserepr import SparseRepr as _SparseRepr
 from polymat.expressiontree.nodes import (
     ExpressionNode as _ExpressionNode,
 )
@@ -24,6 +28,8 @@ Symbol = _Symbol
 
 ArrayRepr = _ArrayRepr
 
+SparseRepr = _SparseRepr
+
 ExpressionNode = _ExpressionNode
 
 MatrixExpression = _MatrixExpression
@@ -36,4 +42,3 @@ MonomialVectorExpression = _MonomialVectorExpression
 VariableExpression = _VariableExpression
 VariableVectorSymbolExpression = _VariableVectorSymbolExpression
 MonomialExpression = _MonomialExpression
-
