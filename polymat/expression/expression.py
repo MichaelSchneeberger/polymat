@@ -218,7 +218,7 @@ class Expression[_](SingleChildExpressionNode, ABC):
             )
         )
     
-    SubstitutionType = dict[Symbol, tuple[float, ...]]
+    type SubstitutionType[S: Symbol] = dict[S, tuple[float, ...]]
 
     def eval(self, substitutions: SubstitutionType):
         return self.copy(
@@ -253,8 +253,7 @@ class Expression[_](SingleChildExpressionNode, ABC):
     def kron(self, other: Expression):
         return self.copy(child=init_kronecker(left=self.child, right=other.child))
 
-    # this method only applies to vectors
-    def to_linear_coefficients(
+    def coefficients_vector(
         self,
         variables: ExpressionNode.VariableType,
         monomials: Expression | None = None,
@@ -268,15 +267,23 @@ class Expression[_](SingleChildExpressionNode, ABC):
             )
         )
 
-    # deprecated method name, use to_linear_coefficient_vector instead
+    # deprecated
+    def to_linear_coefficients(
+        self,
+        variables: ExpressionNode.VariableType,
+        monomials: Expression | None = None,
+    ):
+        return self.coefficients_vector(variables=variables, monomials=monomials)
+
+    # deprecated
     def linear_in(
         self,
         variables: ExpressionNode.VariableType,
         monomials: Expression | None = None,
     ):
-        return self.to_linear_coefficients(variables=variables, monomials=monomials)
+        return self.coefficients_vector(variables=variables, monomials=monomials)
 
-    def to_linear_monomials(self, variables: Expression):
+    def monomial_vector2(self, variables: Expression):
         return self.copy(
             child=init_linear_monomials(
                 child=self.child,
@@ -284,9 +291,13 @@ class Expression[_](SingleChildExpressionNode, ABC):
             )
         )
 
-    # deprecated method name, use to_linear_monomials instead
+    # deprecated
+    def to_linear_monomials(self, variables: Expression):
+        return self.monomial_vector2(variables=variables)
+
+    # deprecated
     def linear_monomials_in(self, variables: Expression):
-        return self.to_linear_monomials(variables=variables)
+        return self.monomial_vector2(variables=variables)
 
     def product(
         self,
@@ -303,7 +314,7 @@ class Expression[_](SingleChildExpressionNode, ABC):
             )
         )
 
-    # this method only applies to polynomials
+    # deprecated
     def to_gram_matrix(
         self,
         variables: Expression,
@@ -320,6 +331,7 @@ class Expression[_](SingleChildExpressionNode, ABC):
             )
         )
 
+    # deprecated
     def to_quadratic_coefficients(
         self,
         variables: Expression,
@@ -327,7 +339,7 @@ class Expression[_](SingleChildExpressionNode, ABC):
     ):
         return self.to_gram_matrix(variables=variables, monomials=monomials)
 
-    # deprecated method name, use to_quadratic_coefficient_matrix instead
+    # deprecated
     def quadratic_in(
         self,
         variables: Expression,
@@ -335,6 +347,7 @@ class Expression[_](SingleChildExpressionNode, ABC):
     ):
         return self.to_gram_matrix(variables=variables, monomials=monomials)
 
+    # deprecated
     def to_quadratic_monomials(self, variables: ExpressionNode.VariableType):
         return self.copy(
             child=init_quadratic_monomials(
@@ -343,7 +356,7 @@ class Expression[_](SingleChildExpressionNode, ABC):
             )
         )
 
-    # deprecated method name, use to_quadratic_monomials instead
+    # deprecated
     def quadratic_monomials_in(self, variables: ExpressionNode.VariableType):
         return self.to_quadratic_monomials(variables=variables)
 
