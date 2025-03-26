@@ -253,10 +253,10 @@ This array representation serves two purposes.
 First, it enables efficient evaluation of a polynomial at multiple points.
 Second, it provides a structured format suitable for input to an SDP solver.
 For example, when applied to a polynomial vector expression $r(x) \in R[x]^n$, the resulting `ArrayRepr` object contains a matrix $R_d$ for each degree $d$ of the polynomial expression, such that
-$$
-    r(x) = R_0 + R_1 x + R_2 (x \otimes x) + ...
-$$
-where $R_0 \in \R^n$, $R_1 \in \R^{n \times n}$, and $R_2 \in \R^{n \times n^2}$.
+
+$$r(x) = R_0 + R_1 x + R_2 (x \otimes x) + ...$$
+
+where $R_0 \in \mathbb R^n$, $R_1 \in \mathbb R^{n \times n}$, and $R_2 \in \mathbb R^{n \times n^2}$.
 To optimize performance, low-degree coefficient matrices ($R_0$ and $R_1$) are stored as dense matrices using *numpy*, whereas higher degree matrices ($R_2$, ...) are stored as sparse matrices using *scipy*.
 The following code snippet demonstrates how to evaluate the polynomial $r(x)$ at different points:
 
@@ -274,11 +274,12 @@ for i in range(5):
 
 ## Example
 
-In this example, we define a polynomial expressions using the `+` and `*` operators:
+The following example computes a vector field defined by the gradient of a scalar polynomial
 
-$f(x_1, x_2) = (x_1 + x_2) + (x_1 + x_1 x_2)$
+$$f(x_1, x_2) := (0.1 x_1^2 + 0.2 x_1 x_2 + 0.1 x_2^2 - 1) (x_1 x_2 + x_1 + x_2- 1).$$
 
-Finally, different representations of the polynomial are printed.
+The vector field is visualized by first converting the polnyomial expression into its array representation and then evaluating it at each point within the plot domain.
+
 
 ``` python
 import polymat
@@ -309,6 +310,23 @@ state = polymat.init_state()
 # sympy representation
 state, sympy_repr = polymat.to_sympy(f).apply(state)
 print(f'{sympy_repr}')
+
+# array representation
+context, df1_array = polymat.to_array(df[0, 0], x).apply(context)
+context, df2_array = polymat.to_array(df[0, 1], x).apply(context)
+
+def plot_vector_field(ax):
+    x1 = np.linspace(-2, 2, 20)
+    x2 = np.linspace(-2, 2, 20)
+    X1, X2 = np.meshgrid(x1, x2)
+
+    def to_array(x1, x2):
+        return np.array((x1, x2)).reshape(-1, 1)
+
+    U1 = np.vectorize(lambda x1, x2: df1_array(to_array(x1, x2)))(X1, X2)
+    U2 = np.vectorize(lambda x1, x2: df2_array(to_array(x1, x2)))(X1, X2)
+
+    ax.quiver(X1, X2, U1, U2)
 ```
 
 
