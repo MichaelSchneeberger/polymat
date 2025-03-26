@@ -18,6 +18,14 @@ class FromVariableIndices(ExpressionNode):
 
     @override
     def apply(self, state: State) -> tuple[State, SparseRepr]:
+        # if not isinstance(self.indices, tuple):
+        #     raise AssertionError(
+        #         self.to_operator_traceback(
+        #             message=f"Indices {self.indices} should be of type tuple.",
+        #             stack=self.stack,
+        #         )
+        #     )
+
         def gen_polynomial_matrix():
             for row, index in enumerate(self.indices):
                 monomial = ((index, 1),)
