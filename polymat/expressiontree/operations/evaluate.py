@@ -35,33 +35,34 @@ class Evaluate(FrameSummaryMixin, SingleChildExpressionNode):
         state, child = self.child.apply(state=state)
 
         def acc_indices_and_values(
-            acc: tuple[State, dict[int, float]], next: tuple[Symbol, tuple[float, ...]]
+            acc: tuple[State, dict[int, float]],
+            next: tuple[Symbol, tuple[float, ...]]
         ):
             state, mapping = acc
             symbol, values = next
 
-            start, stop = state.get_index_range(symbol)
+            match state.get_index_range(symbol):
+                case start, stop:
+                    index_range = range(start, stop)
 
-            index_range = range(start, stop)
+                    if len(values) == 1:
+                        values = tuple(values[0] for _ in index_range)
 
-            if len(values) == 1:
-                values = tuple(values[0] for _ in index_range)
+                    else:
+                        size = stop - start
 
-            else:
-                size = stop - start
+                        if not (size == len(values)):
+                            raise AssertionError(
+                                to_operator_traceback(
+                                    message=(
+                                        f"Cannot replace symbol {symbol} of size {size} with tuple of values of size {len(values)}"
+                                    ),
+                                    stack=self.stack,
+                                )
+                            )
 
-                if not (size == len(values)):
-                    raise AssertionError(
-                        to_operator_traceback(
-                            message=(
-                                f"Cannot replace symbol {symbol} of size {size} with tuple of values of size {len(values)}"
-                            ),
-                            stack=self.stack,
-                        )
-                    )
-
-            for index, value in zip(index_range, values):
-                mapping[index] = value
+                    for index, value in zip(index_range, values):
+                        mapping[index] = value
 
             return state, mapping
 

@@ -1,5 +1,4 @@
 import math
-from typing import Callable
 import sympy
 
 import numpy as np
@@ -12,6 +11,7 @@ from statemonad.abc import StateMonadNode
 from statemonad.typing import StateMonad
 
 from polymat.symbol import Symbol
+from polymat.state.state import State as BaseState
 from polymat.arrayrepr.arrayrepr import ArrayRepr
 from polymat.arrayrepr.init import init_array_repr
 from polymat.sparserepr.data.monomial import (
@@ -21,14 +21,13 @@ from polymat.sparserepr.data.monomial import (
 )
 from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.sparserepr.init import init_reshape_sparse_repr
-from polymat.state.state import State
 from polymat.expressiontree.nodes import ExpressionNode
 
 
-def to_array(
-    expr: ExpressionNode,
-    variables: ExpressionNode | tuple[int, ...],
-    name: str | None = None  # for debugging purposes
+def to_array[State: BaseState](
+    expr: ExpressionNode[State],
+    variables: ExpressionNode[State] | tuple[int, ...],
+    name: str | None = None,  # for debugging purposes
 ) -> StateMonad[State, ArrayRepr]:
     """
     Given a monomial of degree d, this function returns the indices of a monomial
@@ -71,14 +70,14 @@ def to_array(
 
             if isinstance(self.variables, tuple):
                 indices = self.variables
-                
+
             else:
                 state, variables = self.variables.apply(state)
                 indices = tuple(variables.to_indices())
 
             n_param = len(indices)
             index_to_array_index = {index: col for col, index in enumerate(indices)}
-            assert len(index_to_array_index) == len(indices)
+            assert len(index_to_array_index) == len(indices), f'Indcies contains duplicates: {indices=}.'
 
             array_repr = init_array_repr(
                 n_eq=n_eq,
@@ -98,11 +97,12 @@ def to_array(
                         for index, power in monomial:
                             if index not in index_to_array_index:
                                 variable_name = state.get_name(index)
-                                raise Exception(
-                                    f'While converting a polynomial expression "{name}" to an array representation, '
-                                    f'the index {index} (associated with the variable "{variable_name}") found in the expression '
-                                    f'is not an element of the provided list of variable indices {indices[:6]}.'
-                                )
+
+                                raise Exception(''.join((
+                                    f'While converting a polynomial expression "{name}" to an array representation, the index {index} ',
+                                    f'(associated with the variable "{variable_name}") ' if variable_name else '',
+                                    f"found in the expression is not an element of the provided list of variable indices {indices}.",
+                                )))
 
                             array_index = index_to_array_index[index]
 
@@ -111,7 +111,9 @@ def to_array(
 
                     array_variable_indices = tuple(gen_array_variable_indices())
 
-                    columns = ArrayRepr.to_column_indices(n_param, array_variable_indices)
+                    columns = ArrayRepr.to_column_indices(
+                        n_param, array_variable_indices
+                    )
 
                     col_value = value / len(columns)
 
@@ -128,14 +130,15 @@ def to_array(
     )
 
 
-def to_degree(
-    expr: ExpressionNode,
-    variables: ExpressionNode | None = None,
+def to_degree[State: BaseState](
+    expr: ExpressionNode[State],
+    variables: ExpressionNode[State].VariableType | None = None,
 ) -> StateMonad[State, NDArray]:
+    
     @dataclassabc(frozen=True, slots=True)
     class ToDegreeStateMonadTree(StateMonadNode):
-        expr: ExpressionNode
-        variables: ExpressionNode | None = None
+        expr: ExpressionNode[State]
+        variables: ExpressionNode[State].VariableType | None = None
 
         def __str__(self):
             return f"to_degree({self.expr}, {self.variables})"
@@ -144,7 +147,8 @@ def to_degree(
             state, polymatrix = self.expr.apply(state)
 
             if self.variables:
-                state, variables_ = to_variable_indices(self.variables).apply(state)
+                state, variables_ = ExpressionNode[State].to_variable_indices(state, self.variables)
+                # state, variables_ = to_variable_indices(self.variables).apply(state)
 
                 def get_degree(monomial: MonomialType):
                     return monomial_degree_in(monomial, set(variables_))
@@ -164,6 +168,7 @@ def to_degree(
                             polynomial = polymatrix.at(row, col)
 
                             if polynomial:
+
                                 def gen_degrees():
                                     for monomial in polynomial.keys():
                                         yield get_degree(monomial)
@@ -180,8 +185,8 @@ def to_degree(
     return statemonad.from_node(ToDegreeStateMonadTree(expr=expr, variables=variables))
 
 
-def to_numpy(
-    expr: ExpressionNode, assert_constant: bool = True
+def to_numpy[State: BaseState](
+    expr: ExpressionNode[State], assert_constant: bool = True
 ) -> StateMonad[State, NDArray]:
     @dataclassabc(frozen=True, slots=True)
     class ToNumpyStateMonadTree(StateMonadNode):
@@ -211,7 +216,9 @@ def to_numpy(
     )
 
 
-def to_shape(expr: ExpressionNode) -> StateMonad[State, tuple[int, int]]:
+def to_shape[State: BaseState](
+    expr: ExpressionNode[State],
+) -> StateMonad[State, tuple[int, int]]:
     @dataclassabc(frozen=True, slots=True)
     class ToShapeStateMonadTree(StateMonadNode):
         expr: ExpressionNode
@@ -227,11 +234,15 @@ def to_shape(expr: ExpressionNode) -> StateMonad[State, tuple[int, int]]:
     return statemonad.from_node(ToShapeStateMonadTree(expr=expr))
 
 
-def to_sparse_repr(expr: ExpressionNode) -> StateMonad[State, SparseRepr]:
+def to_sparse_repr[State: BaseState](
+    expr: ExpressionNode[State],
+) -> StateMonad[State, SparseRepr]:
     return statemonad.from_node(expr)
 
 
-def to_sympy(expr: ExpressionNode) -> StateMonad[State, sympy.Expr]:
+def to_sympy[State: BaseState](
+    expr: ExpressionNode[State],
+) -> StateMonad[State, sympy.Expr]:
     @dataclassabc(frozen=True, slots=True)
     class ToSympyStateMonadTree(StateMonadNode):
         expr: ExpressionNode
@@ -244,12 +255,28 @@ def to_sympy(expr: ExpressionNode) -> StateMonad[State, sympy.Expr]:
 
             sympy_matrix = sympy.zeros(*polymatrix.shape)
 
+            anonymous_variables = {}
+
             for (row, col), polynomial in polymatrix.entries():
                 # print(f'{row=}, {col=}, {polynomial=}')
                 sympy_poly_terms = []
                 for monomial, coeff in polynomial.items():
+
+                    def get_name(index):
+                        match state.get_name(index):
+                            case None:
+                                if index in anonymous_variables:
+                                    name = anonymous_variables[index]
+                                else:
+                                    name = f"_{len(anonymous_variables)}"
+                                    anonymous_variables[index] = name
+                            case name:
+                                pass
+
+                        return name
+
                     sympy_monomial = math.prod(
-                        sympy.Symbol(state.get_name(index)) ** power
+                        sympy.Symbol(get_name(index)) ** power
                         for index, power in monomial
                     )
 
@@ -271,8 +298,8 @@ def to_sympy(expr: ExpressionNode) -> StateMonad[State, sympy.Expr]:
     return statemonad.from_node(ToSympyStateMonadTree(expr=expr))
 
 
-def to_tuple(
-    expr: ExpressionNode, assert_constant: bool = True
+def to_tuple[State: BaseState](
+    expr: ExpressionNode[State], assert_constant: bool = True
 ) -> StateMonad[State, tuple[tuple[float, ...], ...]]:
     @dataclassabc(frozen=True, slots=True)
     class ToTupleStateMonadTree(StateMonadNode):
@@ -317,8 +344,8 @@ def to_tuple(
     )
 
 
-def to_variable_indices(
-    expr: ExpressionNode,
+def to_variable_indices[State: BaseState](
+    expr: ExpressionNode[State],
 ) -> StateMonad[State, tuple[int, ...]]:
     """
     Convert a variable vector expression into a tuple of variable indices.
@@ -357,15 +384,15 @@ def to_variable_indices(
             state, polymatrix = self.expr.apply(state)
 
             # keep order of variables indices
-            indices = tuple(polymatrix.to_indices())
+            indices = tuple(set(polymatrix.to_indices()))
 
             return state, indices
 
     return statemonad.from_node(ToVariableIndicesStateMonadTree(expr=expr))
 
 
-def to_variables(
-    expr: ExpressionNode,
+def to_symbols[State: BaseState](
+    expr: ExpressionNode[State],
 ) -> StateMonad[State, tuple[Symbol, ...]]:
     @dataclassabc(frozen=True, slots=True)
     class ToVariablesStateMonadTree(StateMonadNode[State, tuple[Symbol, ...]]):
@@ -377,12 +404,14 @@ def to_variables(
         def apply(self, state: State):
             state, polymatrix = self.expr.apply(state)
 
-            unsorted_variables = (
-                state.get_symbol(index) for index in polymatrix.to_indices()
+            unsorted_symbols = (
+                symbol
+                for index in polymatrix.to_indices()
+                if (symbol := state.get_symbol(index)) # ignore anonymous variables
             )
 
             # no need to sort variables
-            variables = tuple(set(unsorted_variables))
+            variables = tuple(set(unsorted_symbols))
 
             return state, variables
 

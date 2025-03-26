@@ -2,10 +2,10 @@ import numpy as np
 from numpy.typing import NDArray
 import sympy
 
-from polymat.expressiontree.init import init_from_any
-from polymat.expressiontree.nodes import ExpressionNode
-from polymat.expressiontree.operations.fromany import FromAny
 from polymat.utils.getstacklines import FrameSummary
+from polymat.expressiontree.nodes import ExpressionNode
+from polymat.expressiontree.sources.fromany import FromAny
+from polymat.expressiontree.init import init_from_any
 
 
 # Types that can be converted to an Expression
@@ -33,8 +33,6 @@ def from_any_or_none(
         # Case when it is a (n,) array
         if len(value.shape) != 2:
             value = value.reshape(-1, 1)
-
-        # if value.dtype == np.object_ or True:
 
         def gen_elements():
             for row in value:

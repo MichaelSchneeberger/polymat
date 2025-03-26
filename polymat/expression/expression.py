@@ -5,14 +5,8 @@ from typing import Iterable, override
 
 from polymat.symbol import Symbol
 from polymat.utils.getstacklines import FrameSummary, get_frame_summary
-from polymat.state.state import State as BaseState
+from polymat.state.state import State
 from polymat.sparserepr.sparserepr import SparseRepr
-from polymat.expressiontree.data.variables import VariableType
-from polymat.expressiontree.from_ import (
-    FromAnyTypes,
-    from_any_or_raise_exception,
-    from_any_or_none,
-)
 from polymat.expressiontree.nodes import (
     SingleChildExpressionNode,
     ExpressionNode,
@@ -51,9 +45,14 @@ from polymat.expressiontree.init import (
     init_v_stack,
     init_variable_vector,
 )
+from polymat.expressiontree.from_ import (
+    FromAnyTypes,
+    from_any_or_raise_exception,
+    from_any_or_none,
+)
 
 
-class Expression[State: BaseState](SingleChildExpressionNode, ABC):
+class Expression[_](SingleChildExpressionNode, ABC):
     def __add__(self, other: FromAnyTypes):
         return self._binary(init_addition, self, other)
 
@@ -210,7 +209,7 @@ class Expression[State: BaseState](SingleChildExpressionNode, ABC):
             )
         )
 
-    def diff(self, variables: VariableType):
+    def diff(self, variables: ExpressionNode.VariableType):
         return self.copy(
             child=init_differentiate(
                 child=self.child,
@@ -257,7 +256,7 @@ class Expression[State: BaseState](SingleChildExpressionNode, ABC):
     # this method only applies to vectors
     def to_linear_coefficients(
         self,
-        variables: VariableType,
+        variables: ExpressionNode.VariableType,
         monomials: Expression | None = None,
     ):
         return self.copy(
@@ -272,7 +271,7 @@ class Expression[State: BaseState](SingleChildExpressionNode, ABC):
     # deprecated method name, use to_linear_coefficient_vector instead
     def linear_in(
         self,
-        variables: VariableType,
+        variables: ExpressionNode.VariableType,
         monomials: Expression | None = None,
     ):
         return self.to_linear_coefficients(variables=variables, monomials=monomials)
@@ -336,7 +335,7 @@ class Expression[State: BaseState](SingleChildExpressionNode, ABC):
     ):
         return self.to_gram_matrix(variables=variables, monomials=monomials)
 
-    def to_quadratic_monomials(self, variables: VariableType):
+    def to_quadratic_monomials(self, variables: ExpressionNode.VariableType):
         return self.copy(
             child=init_quadratic_monomials(
                 child=self.child,
@@ -345,7 +344,7 @@ class Expression[State: BaseState](SingleChildExpressionNode, ABC):
         )
 
     # deprecated method name, use to_quadratic_monomials instead
-    def quadratic_monomials_in(self, variables: VariableType):
+    def quadratic_monomials_in(self, variables: ExpressionNode.VariableType):
         return self.to_quadratic_monomials(variables=variables)
 
     def rep_mat(self, n: int, m: int):
@@ -413,7 +412,7 @@ class Expression[State: BaseState](SingleChildExpressionNode, ABC):
         return self.diag().T.sum()
 
     def truncate_monomials(
-        self, variables: VariableType, degrees: TruncateMonomials.DegreeType
+        self, variables: ExpressionNode.VariableType, degrees: TruncateMonomials.DegreeType
     ):
         return self.copy(
             child=init_truncate_monomials(
@@ -426,7 +425,7 @@ class Expression[State: BaseState](SingleChildExpressionNode, ABC):
         return self.copy(child=self._v_stack(others=others, stack=stack))
 
 
-class VariableExpression(Expression):
+class VariableExpression[_](Expression):
     @property
     @abstractmethod
     def symbol(self) -> Symbol: ...

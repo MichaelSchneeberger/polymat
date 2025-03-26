@@ -1,13 +1,11 @@
 import abc
-import itertools
 from typing import override
 
-from polymat.expressiontree.data.variables import VariableType, to_indices
 from polymat.expressiontree.nodes import (
     ExpressionNode,
     SingleChildExpressionNode,
 )
-from polymat.sparserepr.data.monomial import add_monomials, split_monomial_indices
+from polymat.sparserepr.data.monomial import split_monomial_indices
 from polymat.sparserepr.init import init_sparse_repr_from_iterable
 from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state.state import State
@@ -59,7 +57,7 @@ class QuadraticCoefficients(FrameSummaryMixin, SingleChildExpressionNode):
 
     @property
     @abc.abstractmethod
-    def variables(self) -> VariableType: ...
+    def variables(self) -> SingleChildExpressionNode.VariableType: ...
 
     @property
     @abc.abstractmethod
@@ -72,7 +70,7 @@ class QuadraticCoefficients(FrameSummaryMixin, SingleChildExpressionNode):
     def apply(self, state: State) -> tuple[State, SparseRepr]:
         state, child = self.child.apply(state=state)
         state, monomial_vector = self.monomials.apply(state=state)
-        state, indices = to_indices(state, self.variables)
+        state, indices = self.to_variable_indices(state, self.variables)
 
         if not (child.shape == (1, 1)):
             raise AssertionError(

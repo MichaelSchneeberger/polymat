@@ -1,15 +1,39 @@
 from abc import ABC, abstractmethod
 from typing import Iterable
 
+import polymat.sparserepr.data.variableindex
+import polymat.sparserepr.data.monomial
+import polymat.sparserepr.data.polynomial
+import polymat.sparserepr.data.polynomialmatrix
+
 from polymat.sparserepr.data.monomial import MonomialType
 from polymat.sparserepr.data.polynomialmatrix import MatrixIndexType
 from polymat.sparserepr.data.polynomial import MaybePolynomialType, PolynomialType
+
+
+# class VariableOp:
+#     pass
+
+# class MonomialOp:
+#     pass
+
+# class PolynomialOp:
+#     pass
+
+# class PolynomialMatrixOp:
+#     pass
 
 
 class SparseRepr(ABC):
     """
     Matrix with polynomial entries.
     """
+
+    # todo: implement operations through classes
+    variable_op = polymat.sparserepr.data.variableindex
+    monomial_op = polymat.sparserepr.data.monomial
+    polynomial_op = polymat.sparserepr.data.polynomial
+    polynomial_matrix_op = polymat.sparserepr.data.polynomialmatrix
 
     @property
     @abstractmethod

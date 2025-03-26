@@ -1,7 +1,6 @@
 import abc
 from typing import override
 
-from polymat.expressiontree.data.variables import VariableType, to_indices
 from polymat.expressiontree.nodes import (
     SingleChildExpressionNode,
 )
@@ -48,7 +47,7 @@ class QuadraticMonomials(SingleChildExpressionNode):
 
     @property
     @abc.abstractmethod
-    def variables(self) -> VariableType: ...
+    def variables(self) -> SingleChildExpressionNode.VariableType: ...
 
     def __str__(self):
         return f"quadratic_monomials({self.child}, {self.variables})"
@@ -57,9 +56,9 @@ class QuadraticMonomials(SingleChildExpressionNode):
     @override
     def apply(self, state: State) -> tuple[State, SparseRepr]:
         state, child = self.child.apply(state=state)
-        state, indices = to_indices(state, self.variables)
+        state, indices = self.to_variable_indices(state, self.variables)
 
-        def gen_linear_monomials():
+        def gen_quadratic_monomials():
             for _, polynomial in child.entries():
                 for monomial in polynomial.keys():
                     x_monomials = tuple(
@@ -74,7 +73,7 @@ class QuadraticMonomials(SingleChildExpressionNode):
                     yield right_monomials
 
         # sort monomials for clearer visual representation in the output
-        sorted_monomials = sort_monomials(set(gen_linear_monomials()))
+        sorted_monomials = sort_monomials(set(gen_quadratic_monomials()))
 
         def gen_polynomial_matrix():
             for index, monomial in enumerate(sorted_monomials):

@@ -1,19 +1,23 @@
+"""
+The following assignments serve as placeholders for classes that are defined in the stub file `typedexpressions.pyi`. 
+These placeholders are used only for type hinting and should have no impact on the runtime behavior.
+They are dedeclared here to enable imports without requiring a check for the typing.TYPE_CHECKING constant.
+"""
+
 from polymat.expression.expression import (
     Expression as _Expression,
     VariableExpression as _VariableExpression,
 )
 
 
-# These global variables serve as placeholders for classes that are defined only in the stub file for type checking. 
-# They are irrelevant during code execution but are declared here to allow imports without checking the typing.TYPE_CHECKING constant.
 MatrixExpression = _Expression
-SymmetricMatrixExpression = _Expression
-VectorExpression = _Expression
-RowVectorExpression = _Expression
-ScalarPolynomialExpression = _Expression
-MonomialVectorExpression = _Expression
-MonomialExpression = _Expression
-VariableVectorExpression = _Expression
-VariableMatrixExpression = _Expression
+SymmetricMatrixExpression = MatrixExpression
+VectorExpression = MatrixExpression
+RowVectorExpression = MatrixExpression
+ScalarPolynomialExpression = MatrixExpression
+MonomialVectorExpression = MatrixExpression
+MonomialExpression = MatrixExpression
+VariableVectorExpression = MatrixExpression
+VariableMatrixExpression = MatrixExpression
 VariableVectorSymbolExpression = _VariableExpression
-VariableExpression = _VariableExpression
+VariableExpression = VariableVectorSymbolExpression

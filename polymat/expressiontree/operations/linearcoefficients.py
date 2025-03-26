@@ -1,7 +1,6 @@
 import abc
 from typing import override
 
-from polymat.expressiontree.data.variables import VariableType, to_indices
 from polymat.expressiontree.nodes import (
     ExpressionNode,
     SingleChildExpressionNode,
@@ -42,7 +41,7 @@ class LinearCoefficients(FrameSummaryMixin, SingleChildExpressionNode):
 
     @property
     @abc.abstractmethod
-    def variables(self) -> VariableType: ...
+    def variables(self) -> SingleChildExpressionNode.VariableType: ...
 
     @property
     @abc.abstractmethod
@@ -55,7 +54,7 @@ class LinearCoefficients(FrameSummaryMixin, SingleChildExpressionNode):
     def apply(self, state: State) -> tuple[State, SparseRepr]:
         state, child = self.child.apply(state=state)
         state, monomial_vector = self.monomials.apply(state=state)
-        state, indices = to_indices(state, self.variables)
+        state, indices = self.to_variable_indices(state, self.variables)
 
         if not (child.shape[1] == 1):
             raise AssertionError(

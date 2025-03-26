@@ -7,7 +7,23 @@ from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state.state import State as BaseState
 
 
-class ExpressionNode[State: BaseState](StateMonadNode[State, SparseRepr]): ...
+class ExpressionNode[State: BaseState](
+    StateMonadNode[State, SparseRepr],
+):
+    type VariableType = ExpressionNode[State] | tuple[int, ...]
+
+    @staticmethod
+    def to_variable_indices(
+        state: State, 
+        variables: VariableType,
+    ) -> tuple[State, tuple[int, ...]]:
+        match variables:
+            case ExpressionNode():
+                n_state, variable_vector = variables.apply(state=state)
+                return n_state, tuple(variable_vector.to_indices())
+                
+            case _:
+                return state, variables
 
 
 class SingleChildExpressionNode[State: BaseState](

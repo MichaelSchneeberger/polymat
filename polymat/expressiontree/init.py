@@ -5,7 +5,6 @@ from polymat.symbol import Symbol
 from polymat.utils.getstacklines import FrameSummary
 from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.expressiontree.nodes import ExpressionNode
-from polymat.expressiontree.data.variables import VariableType
 from polymat.expressiontree.operations.assertshape import AssertShape
 from polymat.expressiontree.operations.blockdiagonal import (
     BlockDiagonal,
@@ -17,12 +16,12 @@ from polymat.expressiontree.operations.filternonzero import FilterNonZero
 from polymat.expressiontree.operations.filterpredicator import (
     FilterPredicate,
 )
-from polymat.expressiontree.operations.fromany import FromAny
-from polymat.expressiontree.operations.fromsparserepr import FromSparseRepr
-from polymat.expressiontree.operations.fromvariableindices import (
+from polymat.expressiontree.sources.fromany import FromAny
+from polymat.expressiontree.sources.fromsparserepr import FromSparseRepr
+from polymat.expressiontree.sources.fromvariableindices import (
     FromVariableIndices,
 )
-from polymat.expressiontree.operations.fromvariables import FromVariables
+from polymat.expressiontree.sources.fromvariables import FromVariables
 from polymat.expressiontree.operations.kronecker import Kronecker
 from polymat.expressiontree.operations.linearcoefficients import LinearCoefficients
 from polymat.expressiontree.operations.linearmonomials import (
@@ -40,7 +39,7 @@ from polymat.expressiontree.operations.reshape import Reshape
 from polymat.expressiontree.operations.getitem import GetItem
 from polymat.expressiontree.operations.rowsummation import RowSummation
 from polymat.expressiontree.operations.tosymmetricmatrix import ToSymmetricMatrix
-from polymat.expressiontree.operations.fromvectortosymmetricmatrix import (
+from polymat.expressiontree.sources.fromvectortosymmetricmatrix import (
     FromVectorToSymmetricMatrix,
 )
 from polymat.expressiontree.operations.tovariablevector import (
@@ -56,7 +55,7 @@ from polymat.expressiontree.operations.differentiate import (
 from polymat.expressiontree.operations.elementwisemult import (
     ElementwiseMult,
 )
-from polymat.expressiontree.operations.fromnumpy import FromNumpy
+from polymat.expressiontree.sources.fromnumpy import FromNumpy
 from polymat.expressiontree.operations.definevariable import (
     DefineVariable,
 )
@@ -183,13 +182,13 @@ def init_define_variable(
 @dataclassabc(frozen=True, repr=False)
 class DifferentiateImpl(Differentiate):
     child: ExpressionNode
-    variables: VariableType
+    variables: ExpressionNode.VariableType
     stack: tuple[FrameSummary, ...]
 
 
 def init_differentiate(
     child: ExpressionNode,
-    variables: VariableType,
+    variables: ExpressionNode.VariableType,
     stack: tuple[FrameSummary, ...],
 ):
     return DifferentiateImpl(child=child, variables=variables, stack=stack)
@@ -325,10 +324,19 @@ def init_from_variables(variables: FromVariables.VARIABLE_TYPE):
 @dataclassabc(frozen=True, slots=True)
 class FromVariableIndicesImpl(FromVariableIndices):
     indices: tuple[int, ...]
+    # stack: tuple[FrameSummary, ...]
 
 
-def init_from_variable_indices(indices: tuple[int, ...]):
-    return FromVariableIndicesImpl(indices=indices)
+def init_from_variable_indices(
+    indices: tuple[int, ...],
+    # stack: tuple[FrameSummary, ...],
+):
+    assert isinstance(indices, tuple), f'Indices {indices} is not of type Tuple'
+
+    return FromVariableIndicesImpl(
+        indices=indices,
+        # stack=stack,
+    )
 
 
 @dataclassabc(frozen=True, slots=True)
@@ -348,14 +356,14 @@ def init_kronecker(
 class LinearCoefficientsImpl(LinearCoefficients):
     child: ExpressionNode
     monomials: ExpressionNode
-    variables: VariableType
+    variables: ExpressionNode.VariableType
     ignore_unmatched: bool
     stack: tuple[FrameSummary, ...]
 
 
 def init_linear_coefficients(
     child: ExpressionNode,
-    variables: VariableType,
+    variables: ExpressionNode.VariableType,
     stack: tuple[FrameSummary, ...],
     monomials: ExpressionNode | None = None,
     ignore_unmatched: bool = False,
@@ -378,12 +386,12 @@ def init_linear_coefficients(
 @dataclassabc(frozen=True, slots=True)
 class LinearMonomialsImpl(LinearMonomials):
     child: ExpressionNode
-    variables: VariableType
+    variables: ExpressionNode.VariableType
 
 
 def init_linear_monomials(
     child: ExpressionNode,
-    variables: VariableType,
+    variables: ExpressionNode.VariableType,
 ):
     return LinearMonomialsImpl(child=child, variables=variables)
 
@@ -426,14 +434,14 @@ def init_product(
 class QuadraticCoefficientsImpl(QuadraticCoefficients):
     child: ExpressionNode
     monomials: ExpressionNode
-    variables: VariableType
+    variables: ExpressionNode.VariableType
     ignore_unmatched: bool
     stack: tuple[FrameSummary, ...]
 
 
 def init_quadratic_coefficients(
     child: ExpressionNode,
-    variables: VariableType,
+    variables: ExpressionNode.VariableType,
     stack: tuple[FrameSummary, ...],
     monomials: ExpressionNode | None = None,
     ignore_unmatched: bool = False,
@@ -453,12 +461,12 @@ def init_quadratic_coefficients(
 @dataclassabc(frozen=True, slots=True)
 class QuadraticMonomialsImpl(QuadraticMonomials):
     child: ExpressionNode
-    variables: VariableType
+    variables: ExpressionNode.VariableType
 
 
 def init_quadratic_monomials(
     child: ExpressionNode,
-    variables: VariableType,
+    variables: ExpressionNode.VariableType,
 ):
     return QuadraticMonomialsImpl(child=child, variables=variables)
 
@@ -557,13 +565,13 @@ def init_transpose(child: ExpressionNode):
 @dataclassabc(frozen=True, slots=True)
 class TruncateMonomialsImpl(TruncateMonomials):
     child: ExpressionNode
-    variables: VariableType
+    variables: ExpressionNode.VariableType
     degrees: TruncateMonomials.DegreeType
 
 
 def init_truncate_monomials(
     child: ExpressionNode,
-    variables: VariableType,
+    variables: ExpressionNode.VariableType,
     degrees: TruncateMonomials.DegreeType,
 ):
     return TruncateMonomialsImpl(child=child, variables=variables, degrees=degrees)

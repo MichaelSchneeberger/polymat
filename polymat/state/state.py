@@ -17,7 +17,7 @@ class State(ABC):
     @abstractmethod
     def indices(self) -> dict[Symbol, tuple[int, int]]:
         """
-        Map from variables to two indices defining the index range.
+        Map from symbols (variables) to two indices defining the index range.
         """
 
     @property
@@ -37,7 +37,9 @@ class State(ABC):
         stack: tuple[FrameSummary, ...],
         symbol: Symbol | None = None,
     ):
-        """Index a variable and get its index range."""
+        """
+        Index a variable and get its index range.
+        """
 
         # symbol already exists
         if symbol in self.indices:
@@ -59,35 +61,39 @@ class State(ABC):
                     )
                 )
 
-        n_indices = self.n_indices + size
-        index = (self.n_indices, self.n_indices + size)
+        else:
+            n_indices = self.n_indices + size
+            index = (self.n_indices, self.n_indices + size)
 
-        # anonymous symbol
-        if symbol is None:
-            return self.copy(n_indices=n_indices), index
+            # anonymous symbol
+            if symbol is None:
+                return self.copy(n_indices=n_indices), index
 
-        return self.copy(
-            n_indices=n_indices,
-            indices=self.indices | {symbol: index},
-        ), index
+            else:
+                return self.copy(
+                    n_indices=n_indices,
+                    indices=self.indices | {symbol: index},
+                ), index
 
     # retrieval of indices
     ######################
 
-    def _get_symbol(self, index: int):
+    def _get_symbol_and_range(self, index: int):
         for symbol, (start, stop) in self.indices.items():
             if start <= index < stop:
                 return symbol, (start, stop)
 
-        raise IndexError(f"There is no variable with index {index}.")
+        # raise IndexError(f"There is no variable with index {index}.")
 
     def get_symbol(self, index: int):
         """Get the symbol that contains the given index."""
-        symbol, _ = self._get_symbol(index)
-        return symbol
+
+        match self._get_symbol_and_range(index):
+            case symbol, _: 
+                return symbol
 
     def get_index_range(self, symbol: Symbol):
-        return self.indices[symbol]
+        return self.indices.get(symbol)
 
     def get_name(self, index: int):
         """
@@ -103,10 +109,11 @@ class State(ABC):
             str: The unique name of the variable associated with the specified index.
         """
 
-        symbol, (start, stop) = self._get_symbol(index)
+        match self._get_symbol_and_range(index):
+            case symbol, (start, stop):
 
-        # if the symbol refers a range, attach the relative index to the name
-        if stop - start > 1:
-            return f"{symbol}_{index - start}"
+                # if the symbol refers a range, attach the relative index to the name
+                if stop - start > 1:
+                    return f"{symbol}_{index - start}"
 
-        return str(symbol)
+                return str(symbol)

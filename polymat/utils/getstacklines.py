@@ -52,6 +52,10 @@ class FrameSummaryMixin:
     def stack(self) -> tuple[FrameSummary, ...]:
         ...
 
+    # todo: move implementation into the class
+    get_frame_summary = staticmethod(get_frame_summary)
+    to_operator_traceback = staticmethod(to_operator_traceback)
+
     # implement custom __repr__ method that returns a representation without the stack
     def __repr__(self):
         fields_str = ','.join(f'{field.name}={repr(getattr(self, field.name))}' for field in fields(self) if field.name != 'stack') # type: ignore
