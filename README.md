@@ -148,7 +148,7 @@ graph TD
     ```
 - **Repmat**: Repeat polynomial expressions.
     ``` python
-    xrepmat = x.repmat(3, 1)
+    xrepmat = x.rep_mat(3, 1)
     Matrix([[x], [x], [x]])
     ```
 - **Reshape**: Modify the shape of polynomial matrices.
@@ -163,16 +163,16 @@ graph TD
     ```
 
 Specialized methods:
-- **Monomials Terms**: Construct a monomial vector $Z(x)$ appearing in a polynomial expression.
+- **Monomial Vector**: Construct a monomial vector $Z(x)$ appearing in a polynomial expression.
     ``` python
     p = x**3 - 2*x + 3
 
-    p_monom = p.to_linear_monomials(x)
+    p_monom = p.monomial_vector(x)
     # Matrix([[1], [x], [x**3]])
     ```
-- **Linear Coefficient Vector**: Compute a coefficient matrix $Q$ associated with a vector of monomials $Z(x)$ and a polynomial vector $p(x) = Q Z(x)$.
+- **Coefficient Vector**: Compute a coefficient matrix $Q$ associated with a vector of monomials $Z(x)$ and a polynomial vector $p(x) = Q Z(x)$.
     ``` python
-    p_coeff = p.to_linear_coefficients(x, monomials=p_monom)
+    p_coeff = p.coefficient_vector(x, monomials=p_monom)
     # Matrix([[3, -2.0, 1]])
     ```
 <!-- - [**Quadratic Monomial Terms**](https://github.com/MichaelSchneeberger/polymat/blob/main/polymat/expressiontree/operations/quadraticmonomials.py): Construct a monomial vector $Z(x)$ for the quadratic form of the polynomial $p(x) = Z(x)^\top Q Z(x)$.
@@ -252,7 +252,7 @@ The first output function `polymat.to_array` returns an object of type `ArrayRep
 This array representation serves two purposes.
 First, it enables efficient evaluation of a polynomial at multiple points.
 Second, it provides a structured format suitable for input to an SDP solver.
-For example, when applied to a polynomial vector expression $r(x) \in R[x]^n$, the resulting `ArrayRepr` object contains a matrix $R_d$ for each degree $d$ of the polynomial expression, such that
+For example, when applied to a polynomial vector expression $r(x) \in (R[x])^n$, the resulting `ArrayRepr` object contains a matrix $R_d$ for each degree $d$ of the polynomial expression, such that
 
 $$r(x) = R_0 + R_1 x + R_2 (x \otimes x) + ...$$
 
@@ -332,8 +332,9 @@ def plot_vector_field(ax):
 
 ## References
 
-Here are some references related to this probject:
+Here are some references related to the probject:
 
 * [State-Monad](https://github.com/MichaelSchneeberger/state-monad) is a Python library that encapsulates stateful computations into a monadic structure.
 * [CasADi](https://web.casadi.org/) is a tool for nonlinear optimization and algorithmic differentiation.
 * [Drake](https://drake.mit.edu/) is a tool for model-based design and verification for robotics.
+* [DynamicPolynomials.jl](https://github.com/JuliaAlgebra/DynamicPolynomials.jl) is a Julia library that provides a sparse dynamic representation of multivariate polynomials.

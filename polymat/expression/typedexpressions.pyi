@@ -50,9 +50,9 @@ class MatrixExpression[State: BaseState](SingleChildExpressionNode[State]):
     def cache(self) -> MatrixExpression[State]: ...
     def copy(self, child: ExpressionNode) -> MatrixExpression[State]: ...
     def diff(self, variables: VariableVectorType[State]) -> MatrixExpression[State]: ...
-    def eval(
+    def eval[S: Symbol](
         self,
-        substitutions: Expression.SubstitutionType,
+        substitutions: Expression.SubstitutionType[S],
     ) -> MatrixExpression[State]: ...
     def h_stack(
         self, others: Iterable[MatrixExpression[State]]
@@ -133,9 +133,9 @@ class SymmetricMatrixExpression[State: BaseState](MatrixExpression[State]):
     def diff(
         self, variables: VariableVectorType[State]
     ) -> SymmetricMatrixExpression[State]: ...
-    def eval(
+    def eval[S: Symbol](
         self,
-        substitutions: Expression.SubstitutionType,
+        substitutions: Expression.SubstitutionType[S],
     ) -> SymmetricMatrixExpression[State]: ...
     @overload
     def kron(
@@ -175,9 +175,9 @@ class VectorExpression[State: BaseState](MatrixExpression[State]):
     def copy(self, child: ExpressionNode) -> VectorExpression[State]: ...
     def diag(self) -> SymmetricMatrixExpression[State]: ...
     def diff(self, variables: VariableVectorType[State]) -> VectorExpression[State]: ...
-    def eval(
+    def eval[S: Symbol](
         self,
-        substitutions: Expression.SubstitutionType,
+        substitutions: Expression.SubstitutionType[S],
     ) -> VectorExpression[State]: ...
     def filter_predicate(
         self, predicate: FilterPredicate.PredicatorType
@@ -237,9 +237,9 @@ class RowVectorExpression[State: BaseState](MatrixExpression[State]):
     def diff(
         self, variables: VariableVectorType[State]
     ) -> RowVectorExpression[State]: ...
-    def eval(
+    def eval[S: Symbol](
         self,
-        substitutions: Expression.SubstitutionType,
+        substitutions: Expression.SubstitutionType[S],
     ) -> RowVectorExpression[State]: ...
     def h_stack(
         self, others: Iterable[RowVectorExpression[State]]
@@ -272,9 +272,9 @@ class ScalarPolynomialExpression[State: BaseState](VectorExpression[State]):
     def diff(
         self, variables: VariableVectorType[State]
     ) -> RowVectorExpression[State]: ...
-    def eval(
+    def eval[S: Symbol](
         self,
-        substitutions: Expression.SubstitutionType,
+        substitutions: Expression.SubstitutionType[S],
     ) -> ScalarPolynomialExpression[State]: ...
     def h_stack(
         self, others: Iterable[MatrixExpression[State]]

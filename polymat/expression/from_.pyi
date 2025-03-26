@@ -25,34 +25,38 @@ def block_diag[State: BaseState](
     expressions: Iterable[MatrixExpression[State]],
 ) -> MatrixExpression[State]: ...
 def concat[State: BaseState](
-    expressions: Iterable[Iterable[MatrixExpression]],
+    expressions: Iterable[Iterable[MatrixExpression[State]]],
 ) -> MatrixExpression[State]: ...
-def from_[State: BaseState](value: FromAnyTypes) -> MatrixExpression[State]: ...
-def from_symmetric[State: BaseState](
-    value: FromAnyTypes,
-) -> SymmetricMatrixExpression[State]: ...
-def from_vector[State: BaseState](value: FromAnyTypes) -> VectorExpression[State]: ...
-def from_row_vector[State: BaseState](
-    value: FromAnyTypes,
-) -> RowVectorExpression[State]: ...
-def from_polynomial[State: BaseState](
-    value: FromAny.ValueType,
-) -> ScalarPolynomialExpression[State]: ...
-@overload
-def define_variable[State: BaseState](
-    name: str,
-    size: int | MatrixExpression[State] | None,
-) -> VariableVectorSymbolExpression[State]: ...
-@overload
-def define_variable[State: BaseState](
-    name: str,
-) -> VariableExpression[State]: ...
-def from_variables[State: BaseState](
-    variables: FromVariables.VARIABLE_TYPE,
-) -> VariableVectorExpression[State]: ...
-def from_variable_indices[State: BaseState](
-    indices: tuple[int, ...],
-) -> VariableVectorExpression[State]: ...
+
+class from_[State: BaseState]:
+    def __new__(_, value: FromAnyTypes) -> MatrixExpression[State]: ...
+
+class from_symmetric[State: BaseState]:
+    def __new__(_, value: FromAnyTypes) -> SymmetricMatrixExpression[State]: ...
+
+class from_vector[State: BaseState]:
+    def __new__(_, value: FromAnyTypes) -> VectorExpression[State]: ...
+
+class from_row_vector[State: BaseState]:
+    def __new__(_, value: FromAnyTypes) -> RowVectorExpression[State]: ...
+
+class from_polynomial[State: BaseState]:
+    def __new__(_, value: FromAny.ValueType) -> ScalarPolynomialExpression[State]: ...
+
+class define_variable[State: BaseState]:
+    @overload
+    def __new__(_, name: str) -> VariableExpression[State]: ...
+    @overload
+    def __new__(
+        _, name: str, size: int | MatrixExpression[State] | None
+    ) -> VariableVectorSymbolExpression[State]: ...
+
+class from_variables[State: BaseState]:
+    def __new__(_, value: FromVariables.VARIABLE_TYPE) -> VariableVectorExpression[State]: ...
+
+class from_variable_indices[State: BaseState]:
+    def __new__(_, indices: tuple[int, ...]) -> VariableVectorExpression[State]: ...
+
 @overload
 def h_stack[State: BaseState](
     expressions: Iterable[RowVectorExpression[State]],
@@ -61,9 +65,11 @@ def h_stack[State: BaseState](
 def h_stack[State: BaseState](
     expressions: Iterable[MatrixExpression[State]],
 ) -> MatrixExpression[State]: ...
+
 def product[State: BaseState](
     expressions: Iterable[VectorExpression[State]], degrees: Product.DegreeType = None
 ) -> VectorExpression[State]: ...
+
 @overload
 def v_stack[State: BaseState](
     expressions: Iterable[VariableVectorSymbolExpression[State]],
