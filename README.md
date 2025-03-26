@@ -8,7 +8,8 @@
 * Expression Building: Create polynomial expressions using various operators provided by the library.
 * Efficient Internal Representation: Uses a sparse internal structure to optimize intermediate computations.
 * Stateful Computation: The sparse internal structures are computed based on a state object. This eliminates any dependency on global variables and provides control over the sparse intermediate structures stored in memory for reuse.
-* Performance Optimized: Designed for speed, the library outperforms other symbolic computation tools like `sympy`, making it ideal for large matrix expressions.
+* Performance Optimized: Designed for speed, it outperforms symbolic computation tools like *sympy*, while remaining lightweidgth and purely written in Python, unlike *CasADi* or [*Drake*](https://drake.mit.edu/).
+<!-- Designed for speed, the library outperforms other symbolic computation tools like `sympy`, making it ideal for large matrix expressions. -->
 
 
 ## Installation
@@ -22,45 +23,50 @@ pip install polymat
 
 ## Basic Usage
 
-In this example, we define a polynomial expressions using the `+` and `*` operators:
-
-$f(x_1, x_2) = (x_1 + x_2) + (x_1 + x_1 x_2)$
-
-Finally, different representations of the polynomial are printed.
+Polynomial expressions are built from constants and variables.
+The variable $x$ can be defined as follows:
 
 ``` python
 import polymat
 
-# Initialize state
-state = polymat.init_state()
-
-# Define polynomial variables and stack them into a vector
-names = ('x1', 'x2')
-x1, x2 = (polymat.define_variable(n) for n in names)
-x = polymat.v_stack((x1, x2))
-
-# Create a polynomial expression using arithmetic operations
-f = (x1 + x2) + (x1 + x1*x2)
-
-# Print the human-readable string representation
-# add(add(x1, x2), add(x1, mul(x1, x2)))
-print(f'{f}')
-
-# Print the internal Python representation of the expression
-print(f'{f=}')
-
-# sympy representation
-state, sympy_repr = polymat.to_sympy(f).apply(state)
-print(f'{sympy_repr}')
-
-# array representation
-state, array_repr = polymat.to_array(f, x).apply(state)
-print(f'{array_repr.data[1]=}')   # Dense numpy array
-print(f'{array_repr.data[2].toarray()=}')  # Sparse scipy array converted to numpy
+x = polymat.define_variable('x')
 ```
 
+This variable can then be used to define the polynomial matrix expression:
+``` python
+p = polymat.from_((
+    (1 + x, 1 + 2*x + x**2),
+    (1, 1 - x**2),
+))
+```
+
+The package provides various operators to construct new polynomial expressions from existing ones.
+For instance, matrix multiplication can be performed as:
+``` python
+ones = polymat.from_(np.ones((2, 1)))
+
+# matrix multiplication
+p @ ones
+```
+
+Polynomial expressions in **PolyMat** stores the necessary information to compute the polynomial monomials and coefficients.
+Internally, they are represented as tree-like structures, where each node corresponds to an operation (e.g. addition or multiplication) or a terminal value (e.g. a constant or a variable).
+For example, the polynomial expression $p_{12}(x) = 1 + 2 x + x^2$ can be visualized as the following tree stucture:
+```mermaid
+graph TD
+    A[add] --> B[add]
+    A --> C[mult]
+    B --> D[1]
+    B --> E[mult]
+    E --> F[2]
+    E --> G[x]
+    C --> H[x]
+    C --> I[x]
+```
 
 ## Operations
+
+**PolyMat** defines the following operations to create or manipulate polynomial expressions.
 
 ### Creating Polynomial Expressions
 
@@ -115,7 +121,7 @@ print(f'{array_repr.data[2].toarray()=}')  # Sparse scipy array converted to num
     ``` python
     x = x.cache()
     ```
-- [**Combinations**](https://github.com/MichaelSchneeberger/polymat/blob/main/polymat/expressiontree/operations/combinations.py): Stack multiplied combinations of elements from polynomial vectors.
+- [**Combinations**](https://github.com/MichaelSchneeberger/polymat/blob/main/polymat/expressiontree/operations/combinations.py): Stack multiplied combinations of elements from polynomial vectors. For instance, the vector of monomials $\begin{bmatrix}1&x&x^2\end{bmatrix}$ can be created as follows:
     ``` python
     m = x.combinations((0, 1, 2))
     # Matrix([[1], [x], [x**2]])
@@ -169,23 +175,49 @@ Specialized methods:
     p_coeff = p.to_linear_coefficients(x, monomials=p_monom)
     # Matrix([[3, -2.0, 1]])
     ```
-- [**Quadratic Monomial Terms**](https://github.com/MichaelSchneeberger/polymat/blob/main/polymat/expressiontree/operations/quadraticmonomials.py): Construct a monomial vector $Z(x)$ for the quadratic form of the polynomial $p(x) = Z(x)^\top Q Z(x)$.
+<!-- - [**Quadratic Monomial Terms**](https://github.com/MichaelSchneeberger/polymat/blob/main/polymat/expressiontree/operations/quadraticmonomials.py): Construct a monomial vector $Z(x)$ for the quadratic form of the polynomial $p(x) = Z(x)^\top Q Z(x)$.
     ``` python
     p_monom = p.to_quadratic_monomials(x)
     # Matrix([[1], [x], [x**2]])
-    ```
-- [**Quadratic Coefficient Matrix**](https://github.com/MichaelSchneeberger/polymat/blob/main/polymat/expressiontree/operations/quadraticcoefficients.py): Compute the symmetric coefficient matrix $Q$ appearing in the quadratic form of the polynomial $p(x) = Z(x)^\top Q Z(x)$.
+    ``` -->
+<!-- - [**Quadratic Coefficient Matrix**](https://github.com/MichaelSchneeberger/polymat/blob/main/polymat/expressiontree/operations/quadraticcoefficients.py): Compute the symmetric coefficient matrix $Q$ appearing in the quadratic form of the polynomial $p(x) = Z(x)^\top Q Z(x)$.
     ``` python
     p_coeff = p.to_gram_matrix(x, monomials=p_monom)
     # Matrix([[3.0, -1.0, 0], [-1.0, 0, 0.5], [0, 0.5, 0]])
-    ```
+    ``` -->
 
 
+## Internal Sparse Representation
+
+**PolyMat** uses an internal sparse polynomial structure to optimize intermediate computations.
+This internal structure can be accessed by calling the `apply` method of the polynomial expression using a state object:
+``` python
+state = polymat.init_state()
+
+state, internal_repr = p.apply(state)
+
+# prints the internal sparse structure
+# FromPolynomialMatrixImpl(
+#   data={
+#     (0, 0): {(): 1, ((0, 1),): 1.0}, 
+#     (0, 1): {(): 1}, 
+#     (1, 0): {(): 1, ((0, 1),): 2.0, ((0, 2),): 1.0},
+#     (1, 1): {(): 1, ((0, 2),): -1.0}}, 
+#  shape=(2, 2))
+print(internal_repr)
+```
+
+The internal sparse structure is built using nested Python dictionaries and tuples, allowing for efficient construction and modifications of sparse representations.
+While polynomial expressions only maintain a tree-structured representation of how to construct the polynomial matrix, the internal sparse structure explicitly computes and stores the coefficient for each monomial in the matrix.
+As a result, generating an internal sparse structure is computationally expensive and has been carefully designed to optimize performance.
 
 
-### Output
+## Output Functions
 
-The output functions listed below perform stateful computations. As a result, they return a StateMonad object, which must be applied with a state object to generate the desired output value.
+<!-- The output functions listed below perform stateful computations. As a result, they return a StateMonad object, which must be applied with a state object to generate the desired output value. -->
+
+**PolyMat** provides output functions that convert polynomial expressions into structured objects for use outside of **PolyMat**.
+The following list summarizes these output functions:
 
 - **Sympy Representation**: Convert a polynomial expression to a `sympy` expression.
     ``` python
@@ -214,9 +246,76 @@ The output functions listed below perform stateful computations. As a result, th
     # (2, 2)
     ```
 
+### Array Representation
+
+The first output function `polymat.to_array` returns an object of type `ArrayRepr`, a class included in the \textit{PolyMat} package.
+This array representation serves two purposes.
+First, it enables efficient evaluation of a polynomial at multiple points.
+Second, it provides a structured format suitable for input to an SDP solver.
+For example, when applied to a polynomial vector expression $r(x) \in R[x]^n$, the resulting `ArrayRepr` object contains a matrix $R_d$ for each degree $d$ of the polynomial expression, such that
+$$
+    r(x) = R_0 + R_1 x + R_2 (x \otimes x) + ...
+$$
+where $R_0 \in \R^n$, $R_1 \in \R^{n \times n}$, and $R_2 \in \R^{n \times n^2}$.
+To optimize performance, low-degree coefficient matrices ($R_0$ and $R_1$) are stored as dense matrices using *numpy*, whereas higher degree matrices ($R_2$, ...) are stored as sparse matrices using *scipy*.
+The following code snippet demonstrates how to evaluate the polynomial $r(x)$ at different points:
+
+``` python
+import numpy as np
+
+context, array_repr = polymat.to_array(r).apply(context)
+
+for i in range(5):
+    x_eval = np.array(i, 0, 0).reshape(-1, 1)
+
+    # evaluation is implemented by calling the array object
+    print(array_repr(x_eval))
+```
+
+## Example
+
+In this example, we define a polynomial expressions using the `+` and `*` operators:
+
+$f(x_1, x_2) = (x_1 + x_2) + (x_1 + x_1 x_2)$
+
+Finally, different representations of the polynomial are printed.
+
+``` python
+import polymat
+
+# Define polynomial variables and stack them into a vector
+names = ('x1', 'x2')
+x1, x2 = (polymat.define_variable(n) for n in names)
+x = polymat.v_stack((x1, x2))
+
+# Create a polynomial expressions using arithmetic operations
+f1 = 0.1*x1**2 + 0.2*x1*x2 + 0.1*x2**2 - 1
+f2 = x1*x2 + x1 + x2 - 1
+f = f1 * f2
+
+# compute the gradient of the scalar polynomial expression
+df = f.diff(x)
+
+# Print the human-readable string representation
+# diff(mul(add(add(add(mul(0.1, mul(x1, x1)), mul(mul(0.2, x1), x2)), mul(0.1, mul(x2, x2))), -1), add(add(add(mul(x1, x2), x1), x2), -1)), v_stack(x1,x2))
+print(f'{df}')
+
+# Print the internal Python representation of the expression
+print(f'{df=}')
+
+# Initialize state
+state = polymat.init_state()
+
+# sympy representation
+state, sympy_repr = polymat.to_sympy(f).apply(state)
+print(f'{sympy_repr}')
+```
+
 
 ## References
 
 Here are some references related to this probject:
 
 * [State-Monad](https://github.com/MichaelSchneeberger/state-monad) is a Python library that encapsulates stateful computations into a monadic structure.
+* [CasADi](https://web.casadi.org/) is a tool for nonlinear optimization and algorithmic differentiation.
+* [Drake](https://drake.mit.edu/) is a tool for model-based design and verification for robotics.
