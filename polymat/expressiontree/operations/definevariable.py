@@ -11,7 +11,7 @@ from polymat.utils.getstacklines import (
     FrameSummary,
     FrameSummaryMixin,
 )
-from polymat.symbol import Symbol
+from polymat.symbols.symbol import Symbol
 from polymat.sparserepr.init import init_sparse_repr_from_iterable
 
 
@@ -35,7 +35,10 @@ class DefineVariable(FrameSummaryMixin, ExpressionNode):
 
     @staticmethod
     def create_variable_vector(
-        state: State, variable: Symbol, size: int, stack: tuple[FrameSummary, ...]
+        state: State, 
+        variable: Symbol, 
+        size: int, 
+        stack: tuple[FrameSummary, ...]
     ):
         state, (start, stop) = state.register(
             symbol=variable,
@@ -67,5 +70,6 @@ class DefineVariable(FrameSummaryMixin, ExpressionNode):
         )
 
         return state, init_sparse_repr_from_iterable(
-            data=gen_polynomial_matrix(), shape=(size, 1)
+            data=gen_polynomial_matrix(), 
+            shape=(size, 1)
         )

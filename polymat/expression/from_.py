@@ -1,6 +1,7 @@
 from typing import Iterable
 
-from polymat.symbol import Symbol
+from polymat.symbols.strsymbol import StrSymbol
+from polymat.symbols.symbol import Symbol
 from polymat.utils.getstacklines import get_frame_summary
 from polymat.expressiontree.from_ import FromAnyTypes, from_any_or_raise_exception
 from polymat.expressiontree.sources.fromvariables import FromVariables
@@ -78,7 +79,7 @@ def define_variable(
     size: DefineVariable.SizeType | None = None,
 ):
     if not isinstance(name, Symbol):
-        symbol = Symbol(name)
+        symbol = StrSymbol(name)
     else:
         symbol = name
 
@@ -102,7 +103,6 @@ def from_variables(variables: FromVariables.VARIABLE_TYPE):
 def from_variable_indices(indices: tuple[int, ...]):
     return init_expression(init_from_variable_indices(
         indices=indices,
-        # stack=get_frame_summary(),
     ))
 
 

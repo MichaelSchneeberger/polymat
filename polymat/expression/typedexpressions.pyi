@@ -19,7 +19,7 @@ from polymat.expressiontree.operations.product import Product
 from polymat.expressiontree.operations.truncatemonomials import TruncateMonomials
 from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state.state import State as BaseState
-from polymat.symbol import Symbol
+from polymat.symbols.symbol import Symbol
 
 type VariableVectorType[State: BaseState] = (
     VariableVectorExpression[State] | tuple[int, ...]

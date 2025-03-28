@@ -2,7 +2,7 @@ from dataclasses import replace
 from typing import override
 from dataclassabc import dataclassabc
 
-from polymat.symbol import Symbol
+from polymat.symbols.symbol import Symbol
 from polymat.state.state import State
 
 

@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from typing import Self
 
 from polymat.utils.getstacklines import FrameSummary, to_operator_traceback
-from polymat.symbol import Symbol
+from polymat.symbols.symbol import Symbol
 
 
 class State(ABC):

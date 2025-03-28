@@ -1,7 +1,7 @@
 from dataclassabc import dataclassabc
 from numpy.typing import NDArray
 
-from polymat.symbol import Symbol
+from polymat.symbols.symbol import Symbol
 from polymat.utils.getstacklines import FrameSummary
 from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.expressiontree.nodes import ExpressionNode

@@ -15,11 +15,12 @@ from polymat.sparserepr.data.polynomial import PolynomialType, constant_polynomi
 from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state.state import State
 from polymat.sparserepr.init import init_sparse_repr_from_data
+from polymat.symbols.strsymbol import StrSymbol
 from polymat.utils.getstacklines import (
     FrameSummaryMixin,
     to_operator_traceback,
 )
-from polymat.symbol import Symbol
+from polymat.symbols.symbol import Symbol
 
 
 class FromAny(FrameSummaryMixin, ExpressionNode):
@@ -104,7 +105,7 @@ class FromAny(FrameSummaryMixin, ExpressionNode):
                     else:
                         for symbol in sympy_poly.gens:
                             state, _ = state.register(
-                                symbol=Symbol(str(symbol)),
+                                symbol=StrSymbol(str(symbol)),
                                 size=1,
                                 stack=self.stack,
                             )
@@ -121,7 +122,7 @@ class FromAny(FrameSummaryMixin, ExpressionNode):
                                 def gen_monomial():
                                     for sympy_index, power in enumerate(variable_powers):
                                         if 0 < power:
-                                            variable = Symbol(
+                                            variable = StrSymbol(
                                                 str(sympy_poly.gens[sympy_index])
                                             )
                                             start, _ = state.indices[variable]

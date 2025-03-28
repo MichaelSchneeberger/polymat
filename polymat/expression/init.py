@@ -1,7 +1,7 @@
 from typing import override
 from dataclassabc import dataclassabc
 
-from polymat.symbol import Symbol
+from polymat.symbols.symbol import Symbol
 from polymat.expressiontree.nodes import ExpressionNode
 from polymat.expression.expression import Expression
 from polymat.expression.typedexpressions import (

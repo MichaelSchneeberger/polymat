@@ -3,7 +3,7 @@ import sympy
 
 from statemonad.typing import StateMonad
 
-from polymat.symbol import Symbol
+from polymat.symbols.symbol import Symbol
 from polymat.state.state import State as BaseState
 from polymat.arrayrepr.arrayrepr import ArrayRepr
 from polymat.expressiontree.to import (

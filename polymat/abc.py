@@ -3,7 +3,7 @@ This module (`abc.py`) contains abstract base classes (ABCs) that are designed t
 through inheritance in other Python projects.
 """
 
-from polymat.symbol import Symbol as _Symbol
+from polymat.symbols.symbol import Symbol as _Symbol
 from polymat.utils.getstacklines import FrameSummaryMixin as _FrameSummaryMixin
 from polymat.expressiontree.nodes import (
     ExpressionNode as _ExpressionNode,

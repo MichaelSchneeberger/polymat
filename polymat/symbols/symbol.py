@@ -1,4 +1,4 @@
-class Symbol(str):
+class Symbol:
     """
     A class representing a human-readable identifier of a variable in a polynomial expression.
 

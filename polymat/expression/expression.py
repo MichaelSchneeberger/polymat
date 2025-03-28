@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Iterable, override
 
-from polymat.symbol import Symbol
+from polymat.symbols.symbol import Symbol
 from polymat.utils.getstacklines import FrameSummary, get_frame_summary
 from polymat.state.state import State
 from polymat.sparserepr.sparserepr import SparseRepr

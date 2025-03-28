@@ -4,7 +4,7 @@ from typing_extensions import override
 from polymat.expressiontree.nodes import ExpressionNode
 from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state.state import State
-from polymat.symbol import Symbol
+from polymat.symbols.symbol import Symbol
 from polymat.sparserepr.init import init_sparse_repr_from_data
 
 

@@ -10,7 +10,7 @@ import statemonad
 from statemonad.abc import StateMonadNode
 from statemonad.typing import StateMonad
 
-from polymat.symbol import Symbol
+from polymat.symbols.symbol import Symbol
 from polymat.state.state import State as BaseState
 from polymat.arrayrepr.arrayrepr import ArrayRepr
 from polymat.arrayrepr.init import init_array_repr
@@ -268,7 +268,7 @@ def to_sympy[State: BaseState](
                                 if index in anonymous_variables:
                                     name = anonymous_variables[index]
                                 else:
-                                    name = f"_{len(anonymous_variables)}"
+                                    name = f"*_{len(anonymous_variables)}"
                                     anonymous_variables[index] = name
                             case name:
                                 pass

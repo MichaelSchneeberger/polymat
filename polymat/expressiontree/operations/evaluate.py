@@ -17,7 +17,7 @@ from polymat.utils.getstacklines import (
     FrameSummaryMixin,
     to_operator_traceback,
 )
-from polymat.symbol import Symbol
+from polymat.symbols.symbol import Symbol
 
 
 class Evaluate(FrameSummaryMixin, SingleChildExpressionNode):
