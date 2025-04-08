@@ -1,3 +1,4 @@
+from polymat.utils.uniquenameselector import UniqueNameSelector as _UniqueNameSelector
 from polymat.state.init import (
     init_state as _init_state,
 )
@@ -28,6 +29,8 @@ from polymat.expression.to import (
     to_tuple as _to_tuple,
     to_variable_indices as _to_variable_indices,
 )
+
+init_unique_name_selector = _UniqueNameSelector
 
 init_state = _init_state
 

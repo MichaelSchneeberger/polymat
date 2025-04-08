@@ -10,7 +10,7 @@ from polymat.sparserepr.sparserepr import SparseRepr
 from polymat.state.state import State
 
 
-class LinearMonomials(SingleChildExpressionNode):
+class MonomialVector(SingleChildExpressionNode):
     """
     Maps a polynomial matrix
 

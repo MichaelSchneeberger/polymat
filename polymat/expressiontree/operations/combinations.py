@@ -1,6 +1,7 @@
 import abc
 
 from itertools import combinations_with_replacement
+from typing import Iterable
 
 from polymat.sparserepr.data.polynomial import (
     constant_polynomial,
@@ -44,7 +45,7 @@ class Combinations(FrameSummaryMixin, SingleChildExpressionNode):
         A polynomial vector containing all the combinations of the input vector elements.
     """
 
-    DegreeType = tuple[int, ...]
+    DegreeType = Iterable[int]
 
     def __str__(self):
         match self.degrees:

@@ -58,10 +58,7 @@ class MatrixExpression[State: BaseState](SingleChildExpressionNode[State]):
         self, others: Iterable[MatrixExpression[State]]
     ) -> MatrixExpression[State]: ...
     def kron(self, other: MatrixExpression[State]) -> MatrixExpression[State]: ...
-    def to_linear_monomials(
-        self, variables: VariableVectorType[State]
-    ) -> MonomialVectorExpression[State]: ...
-    def to_quadratic_monomials(
+    def monomial_vector(
         self, variables: VariableVectorType[State]
     ) -> MonomialVectorExpression[State]: ...
     def rep_mat(self, n: int, m: int) -> MatrixExpression[State]: ...
@@ -187,9 +184,9 @@ class VectorExpression[State: BaseState](MatrixExpression[State]):
     def kron(self, other: VectorExpression[State]) -> VectorExpression[State]: ...
     @overload
     def kron(self, other: MatrixExpression[State]) -> MatrixExpression[State]: ...
-    def to_linear_coefficients(
+    def coefficients_vector(
         self,
-        variables: VariableVectorType[State],
+        variables: VariableVectorType[State] | None = None,
         monomials: MonomialVectorExpression[State] | None = None,
     ) -> MatrixExpression[State]: ...
     def parametrize(
@@ -279,16 +276,11 @@ class ScalarPolynomialExpression[State: BaseState](VectorExpression[State]):
     def h_stack(
         self, others: Iterable[MatrixExpression[State]]
     ) -> RowVectorExpression[State]: ...
-    def to_linear_coefficients(
+    def coefficients_vector(
         self,
-        variables: VariableVectorType[State],
+        variables: VariableVectorType[State] | None = None,
         monomials: MonomialVectorExpression[State] | None = None,
     ) -> RowVectorExpression[State]: ...
-    def to_gram_matrix(
-        self,
-        variables: VariableVectorType[State],
-        monomials: MonomialVectorExpression[State] | None = None,
-    ) -> SymmetricMatrixExpression[State]: ...
     def sum(self) -> ScalarPolynomialExpression[State]: ...
     def truncate_monomials(
         self,

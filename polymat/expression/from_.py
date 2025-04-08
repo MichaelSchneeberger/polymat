@@ -61,19 +61,6 @@ def concat(expressions: Iterable[tuple[MatrixExpression]]):
         return v_stack(rows_expr)
 
 
-def from_(value: FromAnyTypes | MatrixExpression):
-    stack = get_frame_summary()
-    return init_expression(from_any_or_raise_exception(value, stack=stack))
-
-
-# used for type hinting
-from_symmetric = from_
-from_vector = from_
-from_row_vector = from_
-from_polynomial = from_
-
-
-
 def define_variable(
     name: str | Symbol,
     size: DefineVariable.SizeType | None = None,
@@ -96,14 +83,28 @@ def define_variable(
     )
 
 
+def from_(value: FromAnyTypes | MatrixExpression):
+    stack = get_frame_summary()
+    return init_expression(from_any_or_raise_exception(value, stack=stack))
+
+
+# used for type hinting
+from_symmetric = from_
+from_vector = from_
+from_row_vector = from_
+from_polynomial = from_
+
+
 def from_variables(variables: FromVariables.VARIABLE_TYPE):
     return init_expression(init_from_variables(variables=variables))
 
 
 def from_variable_indices(indices: tuple[int, ...]):
-    return init_expression(init_from_variable_indices(
-        indices=indices,
-    ))
+    return init_expression(
+        init_from_variable_indices(
+            indices=indices,
+        )
+    )
 
 
 def h_stack(expressions: Iterable[MatrixExpression]) -> MatrixExpression:

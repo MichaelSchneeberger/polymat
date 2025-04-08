@@ -94,6 +94,9 @@ class State(ABC):
 
     def get_index_range(self, symbol: Symbol):
         return self.indices.get(symbol)
+    
+    def get_index_range_or_raise(self, symbol: Symbol):
+        return self.indices[symbol]
 
     def get_name(self, index: int):
         """

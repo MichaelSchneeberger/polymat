@@ -3,6 +3,8 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Iterable, override
 
+from statemonad.typing import StateMonad
+
 from polymat.symbols.symbol import Symbol
 from polymat.utils.getstacklines import FrameSummary, get_frame_summary
 from polymat.state.state import State
@@ -29,8 +31,8 @@ from polymat.expressiontree.init import (
     init_filter_predicate,
     init_filter_non_zero,
     init_kronecker,
-    init_linear_monomials,
-    init_linear_coefficients,
+    init_monomial_vector,
+    init_coefficient_vector,
     init_matrix_mult,
     init_product,
     init_quadratic_coefficients,
@@ -217,7 +219,7 @@ class Expression[_](SingleChildExpressionNode, ABC):
                 stack=get_frame_summary(),
             )
         )
-    
+
     type SubstitutionType[S: Symbol] = dict[S, tuple[float, ...]]
 
     def eval(self, substitutions: SubstitutionType):
@@ -255,11 +257,11 @@ class Expression[_](SingleChildExpressionNode, ABC):
 
     def coefficients_vector(
         self,
-        variables: ExpressionNode.VariableType,
+        variables: ExpressionNode.VariableType | None = None,
         monomials: Expression | None = None,
     ):
         return self.copy(
-            child=init_linear_coefficients(
+            child=init_coefficient_vector(
                 child=self.child,
                 monomials=monomials,
                 variables=variables,
@@ -283,9 +285,9 @@ class Expression[_](SingleChildExpressionNode, ABC):
     ):
         return self.coefficients_vector(variables=variables, monomials=monomials)
 
-    def monomial_vector2(self, variables: Expression):
+    def monomial_vector(self, variables: Expression):
         return self.copy(
-            child=init_linear_monomials(
+            child=init_monomial_vector(
                 child=self.child,
                 variables=variables,
             )
@@ -293,11 +295,11 @@ class Expression[_](SingleChildExpressionNode, ABC):
 
     # deprecated
     def to_linear_monomials(self, variables: Expression):
-        return self.monomial_vector2(variables=variables)
+        return self.monomial_vector(variables=variables)
 
     # deprecated
     def linear_monomials_in(self, variables: Expression):
-        return self.monomial_vector2(variables=variables)
+        return self.monomial_vector(variables=variables)
 
     def product(
         self,
@@ -401,7 +403,7 @@ class Expression[_](SingleChildExpressionNode, ABC):
     #             stack=get_frame_summary(),
     #         )
     #     )
-    
+
     def to_symmetric_matrix(self):
         return self
 
@@ -425,7 +427,9 @@ class Expression[_](SingleChildExpressionNode, ABC):
         return self.diag().T.sum()
 
     def truncate_monomials(
-        self, variables: ExpressionNode.VariableType, degrees: TruncateMonomials.DegreeType
+        self,
+        variables: ExpressionNode.VariableType,
+        degrees: TruncateMonomials.DegreeType,
     ):
         return self.copy(
             child=init_truncate_monomials(
@@ -443,5 +447,3 @@ class VariableExpression[_](Expression):
     @abstractmethod
     def symbol(self) -> Symbol: ...
 
-    def iterate_symbols(self):
-        yield self.symbol

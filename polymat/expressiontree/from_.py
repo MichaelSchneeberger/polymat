@@ -70,7 +70,8 @@ def from_any_or_none(
 
 
 def from_any_or_raise_exception(
-    value: FromAnyTypes, stack: tuple[FrameSummary, ...]
+    value: FromAnyTypes, 
+    stack: tuple[FrameSummary, ...]
 ):
     """
     Attempt create an expression object from a value. Raises an exception if

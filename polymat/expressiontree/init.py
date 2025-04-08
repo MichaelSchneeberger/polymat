@@ -23,9 +23,9 @@ from polymat.expressiontree.sources.fromvariableindices import (
 )
 from polymat.expressiontree.sources.fromvariables import FromVariables
 from polymat.expressiontree.operations.kronecker import Kronecker
-from polymat.expressiontree.operations.linearcoefficients import LinearCoefficients
-from polymat.expressiontree.operations.linearmonomials import (
-    LinearMonomials,
+from polymat.expressiontree.operations.coefficientvector import CoefficientVector
+from polymat.expressiontree.operations.monomialvector import (
+    MonomialVector,
 )
 from polymat.expressiontree.operations.product import Product
 from polymat.expressiontree.operations.quadraticcoefficients import (
@@ -353,7 +353,7 @@ def init_kronecker(
 
 
 @dataclassabc(frozen=True, repr=False)
-class LinearCoefficientsImpl(LinearCoefficients):
+class CoefficientVectorImpl(CoefficientVector):
     child: ExpressionNode
     monomials: ExpressionNode
     variables: ExpressionNode.VariableType
@@ -361,20 +361,27 @@ class LinearCoefficientsImpl(LinearCoefficients):
     stack: tuple[FrameSummary, ...]
 
 
-def init_linear_coefficients(
+def init_coefficient_vector(
     child: ExpressionNode,
-    variables: ExpressionNode.VariableType,
     stack: tuple[FrameSummary, ...],
+    variables: ExpressionNode.VariableType | None = None,
     monomials: ExpressionNode | None = None,
     ignore_unmatched: bool = False,
 ):
-    if monomials is None:
-        monomials = init_linear_monomials(
-            child=child,
-            variables=variables,
-        )
+    match variables, monomials:
+        case None, None:
+            raise Exception('Either variables or monomials need to be provided.')
+        case _, None:
+            monomials = init_monomial_vector(
+                child=child,
+                variables=variables,
+            )
+        case None, _:
+            variables = init_variable_vector(
+                monomials
+            )
 
-    return LinearCoefficientsImpl(
+    return CoefficientVectorImpl(
         child=child,
         variables=variables,
         monomials=monomials,
@@ -384,16 +391,16 @@ def init_linear_coefficients(
 
 
 @dataclassabc(frozen=True, slots=True)
-class LinearMonomialsImpl(LinearMonomials):
+class MonomialVectorImpl(MonomialVector):
     child: ExpressionNode
     variables: ExpressionNode.VariableType
 
 
-def init_linear_monomials(
+def init_monomial_vector(
     child: ExpressionNode,
     variables: ExpressionNode.VariableType,
 ):
-    return LinearMonomialsImpl(child=child, variables=variables)
+    return MonomialVectorImpl(child=child, variables=variables)
 
 
 @dataclassabc(frozen=True, repr=False)
