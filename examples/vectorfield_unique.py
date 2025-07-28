@@ -1,9 +1,13 @@
 import numpy as np
 from matplotlib import pyplot
+import pprint
 
 import polymat
+import polymat.typing
 
-x1, x2 = (polymat.define_variable(name) for name in ('x1', 'x2'))
+unique_name = polymat.init_unique_name_selector()
+
+x1, x2 = (polymat.define_variable(unique_name(name)) for name in ('x1', 'x2', 'x1'))
 x = polymat.v_stack((x1, x2))
 
 f1 = 0.1*x1**2 + 0.2*x1*x2 + 0.1*x2**2 - 1
@@ -12,6 +16,10 @@ f2 = x1*x2 + x1 + x2 - 1
 f = f1 * f2
 
 df = f.diff(x)
+
+# print(df)
+
+# pprint.pprint(df)
 
 state = polymat.init_state()
 
@@ -34,7 +42,7 @@ def plot_vector_field(ax):
     ax.quiver(X1, X2, U1, U2)
 
 pyplot.close()
-fig = pyplot.figure(figsize=(6, 6))
+fig = pyplot.figure(figsize=(8, 8))
 ax = fig.subplots()
 
 plot_vector_field(ax)
@@ -42,5 +50,5 @@ plot_vector_field(ax)
 ax.set_xlabel(r'$x_1$')
 ax.set_ylabel(r'$x_2$')
 
-# pyplot.show()
-fig.savefig('vector_field.pdf', bbox_inches='tight')
+pyplot.show()
+# fig.savefig('vectorfield.pdf', bbox_inches='tight')

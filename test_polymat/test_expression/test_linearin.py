@@ -1,6 +1,6 @@
 import unittest
 
-from polymat.expressiontree.init import init_from_sparse_repr, init_linear_coefficients
+from polymat.expressiontree.init import init_from_sparse_repr, init_coefficient_vector
 from polymat.sparserepr.init import init_sparse_repr_from_data
 from polymat import init_state
 
@@ -55,7 +55,7 @@ class TestQuadraticIn(unittest.TestCase):
             )
         )
 
-        expr = init_linear_coefficients(
+        expr = init_coefficient_vector(
             child=child, monomials=monomials, variables=variables, stack=tuple()
         )
 
